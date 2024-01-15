@@ -6,11 +6,11 @@ use Illuminate\Http\Request;
 
 class UrlTestController extends Controller
 {
-    public function receiveUrl(Request $request)
+    public function receiveUrlData(Request $request)
     {
         // Get the 'url' from request body
         $url = $request->input('url');
 
-        return response()->json(['url' => $url], 200);
+        return response()->json(['Database_Response' => $url], 200);
     }
 }

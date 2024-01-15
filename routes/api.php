@@ -15,7 +15,7 @@ use App\Http\Controllers\UrlTestController;
 |
 */
 
-Route::post('/url', [UrlTestController::class, 'receiveUrl']);
+Route::post('/receiveUrlData', [UrlTestController::class, 'receiveUrlData']);
 
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
