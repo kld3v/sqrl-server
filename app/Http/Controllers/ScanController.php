@@ -7,22 +7,27 @@ use App\Models\URL;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Validation\ValidationException;
 
 class ScanController extends Controller
 {
     // Create a new Scan instance
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'url_id' => 'required|exists:urls,id',
-            'trust_score' => 'required|numeric',
-            'user_id' => 'required|exists:users,id',
-            'latitude' => 'required|numeric',
-            'longitude' => 'required|numeric',
-        ]);
+        try {
+            $validatedData = $request->validate([
+                'url_id' => 'required|exists:urls,id',
+                'trust_score' => 'required|numeric|min:0|max:1000',
+                'user_id' => 'required|exists:users,id',
+                'latitude' => 'required|numeric',
+                'longitude' => 'required|numeric',
+            ]);
 
-        $scan = Scan::create($validatedData);
-        return response()->json($scan, 201);
+            $scan = Scan::create($validatedData);
+            return response()->json($scan, 201);
+        } catch (ValidationException $e) {
+            return response()->json(['message' => 'The given data was invalid.'], 422);
+        }
     }
 
     // Retrieve a specific Scan instance
@@ -41,17 +46,34 @@ class ScanController extends Controller
     {
         try {
             $scan = Scan::findOrFail($id);
-
+    
             $validatedData = $request->validate([
-                'trust_score' => 'sometimes|numeric',
+                // Assuming trust_score should be a positive integer within a specific range, e.g., 0 to 100
+                'trust_score' => 'sometimes|numeric|min:0|max:1000',
             ]);
-
+    
             $scan->update($validatedData);
             return response()->json($scan);
         } catch (ModelNotFoundException $e) {
             return response()->json(['message' => 'Scan not found'], 404);
+        } catch (ValidationException $e) {
+            return response()->json(['message' => 'The given data was invalid.'], 422);
         }
     }
+    
+
+    // Delete a specific Scan instance
+    public function destroy($id)
+    {
+        try {
+            $scan = Scan::findOrFail($id);
+            $scan->delete();
+            return response()->json(null, 204);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['message' => 'Scan not found'], 404);
+        }
+    }
+
 
     // Retrieve all Scan instances
     public function index()

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('url_id');
             $table->foreign('url_id')->references('id')->on('URLs');
-            $table->smallInteger('trust_score')->nullable();
+            $table->smallInteger('trust_score');
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
             $table->decimal('latitude', 9, 6)->nullable();
