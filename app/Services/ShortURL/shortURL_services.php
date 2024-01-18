@@ -33,7 +33,7 @@ class shortURL_services
         "fumacrom.com",
         "geni.us",
         "git.io",
-        "goo.gl",s
+        "goo.gl",
         "gns.io",
         "hmm.rs",
         "ht.ly",
