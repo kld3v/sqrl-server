@@ -5,9 +5,22 @@ namespace App\Http\Controllers;
 use App\Models\URL;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+
+use Illuminate\Support\Facades\Log;
 
 class URLController extends Controller
 {
+    private function validateURL(Request $request)
+    {
+        // Validate the request data
+        $validatedData = $request->validate([
+            'URL' => 'required|url|max:2048',
+            'trust_score' => 'required|integer|min:0|max:1000',
+        ]);
+
+        return $validatedData;
+    }
     public function store(Request $request)
     {
         $validatedData = $this->validateURL($request);
@@ -33,14 +46,27 @@ class URLController extends Controller
         return response()->json($url);
     }
 
-    private function validateURL(Request $request)
+    public function findUrlByString($urlString)
     {
-        // Validate the request data
-        $validatedData = $request->validate([
-            'URL' => 'required|url|max:2048',
-            'trust_score' => 'required|integer|min:0|max:1000',
-        ]);
+        Log::info("Finding URL by string: $urlString");
+        $result = URL::where('URL', $urlString)->first();
+        Log::info("URL find complete for string: $urlString");
+        return $result;
+    }
+    
+    public function updateTrustScore($urlId, $newTrustScore)
+    {
+        try {
+            $url = URL::findOrFail($urlId);
+            $url->trust_score = $newTrustScore;
+            $url->save();
 
-        return $validatedData;
+            return response()->json($url);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['message' => 'URL not found'], 404);
+        } catch (\Exception $e) {
+            // Handle any other exceptions
+            return response()->json(['message' => 'An error occurred'], 500);
+        }
     }
 }

@@ -8,21 +8,57 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\ValidationException;
+use App\Services\ScanProcessingService;
 
 class ScanController extends Controller
-{
+{   
+    protected $ScanProcessingService;
+
+    public function __construct(ScanProcessingService $ScanProcessingService)
+    {
+        $this->ScanProcessingService = $ScanProcessingService;
+    }
+
+    public function processScan(Request $request)
+    {
+        $request->validate([
+            'url' => 'required|url',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric'
+        ]);
+
+    
+        $url = $request->input('url');
+        $coordinates = ['latitude' => $request->input('latitude'), 'longitude' => $request->input('longitude')];
+    
+        $scanData = $this->ScanProcessingService->processRequest($url);
+    
+        // Create scan record using the store method
+        $scanRequest = new Request(array_merge($scanData, $coordinates));
+        $scan = $this->store($scanRequest);
+
+        return response()->json($scan);
+    }
+
+    private function validateData(Request $request)
+    {
+        $rules = [
+            'url_id' => 'required|exists:urls,id',
+            'trust_score' => 'required|numeric|min:0|max:1000',
+            'user_id' => 'required|exists:users,id',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
+        ];
+
+        return $request->validate($rules);
+    }
+
+    
     // Create a new Scan instance
     public function store(Request $request)
     {
         try {
-            $validatedData = $request->validate([
-                'url_id' => 'required|exists:urls,id',
-                'trust_score' => 'required|numeric|min:0|max:1000',
-                'user_id' => 'required|exists:users,id',
-                'latitude' => 'required|numeric',
-                'longitude' => 'required|numeric',
-            ]);
-
+            $validatedData = $this->validateData($request);
             $scan = Scan::create($validatedData);
             return response()->json($scan, 201);
         } catch (ValidationException $e) {
@@ -38,26 +74,6 @@ class ScanController extends Controller
             return response()->json($scan);
         } catch (ModelNotFoundException $e) {
             return response()->json(['message' => 'Scan not found'], 404);
-        }
-    }
-
-    // Update a specific Scan instance
-    public function update(Request $request, $id)
-    {
-        try {
-            $scan = Scan::findOrFail($id);
-    
-            $validatedData = $request->validate([
-                // Assuming trust_score should be a positive integer within a specific range, e.g., 0 to 100
-                'trust_score' => 'sometimes|numeric|min:0|max:1000',
-            ]);
-    
-            $scan->update($validatedData);
-            return response()->json($scan);
-        } catch (ModelNotFoundException $e) {
-            return response()->json(['message' => 'Scan not found'], 404);
-        } catch (ValidationException $e) {
-            return response()->json(['message' => 'The given data was invalid.'], 422);
         }
     }
     
