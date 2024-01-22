@@ -15,7 +15,7 @@ class RiskEvaluationController extends Controller
 
     public function checkWebRisk(Request $request)
     {
-        $uri = 'discordsteams.com'; 
+        $uri = 'https://testsafebrowsing.appspot.com/s/phishing.html'; 
         $apiKey = env('WEB_RISK_API_KEY');
 
         $googleWebRiskResult = $this->webRiskService->checkWebRisk($uri, $apiKey);
