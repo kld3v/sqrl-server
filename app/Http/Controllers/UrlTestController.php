@@ -18,10 +18,7 @@ class UrlTestController extends Controller
         $altitude = isset($location['altitude']) ? $location['altitude'] : null;
 
         return response()->json([
-            'Database_Response' => $url,
-            'longitude:' => $longitude,
-            'latitude:' => $latitude,
-            'altitude:' => $altitude
+            'trust_score' => 100
         ], 200);
     }
 }
