@@ -19,7 +19,7 @@ class RiskEvaluationController extends Controller
 
     public function checkWebRisk(Request $request)
     {
-        $uri = 'www.google.com';
+        $uri = 'http://115.53.232.114:56123/i';
         $apiKeyWebRisk = env('WEB_RISK_API_KEY');
 
         // Check with Google Web Risk service
