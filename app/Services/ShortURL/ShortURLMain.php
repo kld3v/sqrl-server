@@ -2,15 +2,15 @@
 
 namespace App\Services\ShortUrl;
 
-use App\Services\ShortUrl\shortURL_services;
+use App\Services\ShortUrl\ShortURLServices;
 use App\Services\ShortUrl\resolvers\Generic;
 
-class shortURL_main
+class ShortURLMain
 {
-    protected $shortUrlServices;
-    protected $genericResolver;
+    private $shortUrlServices;
+    private $genericResolver;
 
-    public function __construct(shortURL_services $shortUrlServices)
+    public function __construct(ShortURLServices $shortUrlServices)
     {
         $this->shortUrlServices = $shortUrlServices;
         $this->genericResolver = new Generic();
@@ -20,7 +20,7 @@ class shortURL_main
         return $this->shortUrlServices->which_service($url) !== null;
     }
     public function unshorten($url, $timeout = null)
-    {   
+    {
         $service = $this->shortUrlServices->which_service($url);
 
         switch ($service) {

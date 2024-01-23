@@ -4,9 +4,9 @@ namespace App\Services\ShortUrl;
 
 use Illuminate\Support\Facades\Log;
 
-class shortURL_services 
+class ShortURLServices
 {
-    protected $services = [
+    private $services = [
         "adf.ly",
         "adfoc.us",
         "amzn.to",
@@ -99,13 +99,13 @@ class shortURL_services
         "zpr.io",
         ];
 
-    
+
     // Check and tell which URL Shortener Service is used
     public function which_service($url)
     {
-        
+
         foreach ($this->services as $service) {
-            if (strpos($url, $service) !== false) {
+            if (stripos($url, $service)) {
                 return $service;
             }
         }
