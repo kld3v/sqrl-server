@@ -1,58 +1,50 @@
 <?php
 
 namespace App\Providers\Services;
+
 class GoogleWebRisk
 {
-    public function checkWebRisk($uri, $apiKey)
-    {
-        $apiUrl = 'https://webrisk.googleapis.com/v1/uris:search';
+    protected $apiKey;
 
-        $threatTypes = [
+    public function __construct()
+    {
+        $this->apiKey = env("WEB_RISK_API_KEY");
+    }
+
+    public function getThreatTypes()
+    {
+        return [
+            'UNWANTED_SOFTWARE',
             'MALWARE',
             'SOCIAL_ENGINEERING',
-            'UNWANTED_SOFTWARE',
             'SOCIAL_ENGINEERING_EXTENDED_COVERAGE',
         ];
-
-        $correctResult = null;
-        $results = [];
+    }
+    public function checkForThreats($uri)
+    {
+        $threatTypes = $this->getThreatTypes();
+        $apiUrl = 'https://webrisk.googleapis.com/v1/uris:search';
 
         foreach ($threatTypes as $threatType) {
-            $url = $apiUrl . '?threatTypes=' . $threatType . '&uri=' . urlencode($uri) . '&key=' . $apiKey;
+            $url = $apiUrl . '?threatTypes=' . $threatType . '&uri=' . urlencode($uri) . '&key=' . $this->apiKey;
 
             try {
                 $response = $this->makeApiRequest($url);
-
                 $result = json_decode($response, true);
 
                 if (isset($result['matches']) && count($result['matches']) > 0) {
-                    $correctResult = [
-                        'body' => $result,
-                    ];
-                    break;
-                } elseif (isset($result['matches']) && count($result['matches']) == 0) {
-                    continue;
-                } else {
-                    $results[$threatType] = [
+                    return [
+                        'threat_detected' => true,
                         'body' => $result,
                     ];
                 }
             } catch (\Exception $e) {
-                $results[$threatType] = [
-                    'error' => $e->getMessage(),
-                ];
+                throw $e;
             }
         }
 
-        $resultsWithBody = array_filter($results, function ($result) {
-            return isset($result['body']) && !empty($result['body']);
-        });
-
-        $finalResult = $correctResult ?? $resultsWithBody;
-
-        return $finalResult;
+        return ['threat_detected' => false];
     }
-
     private function makeApiRequest($url)
     {
         $ch = curl_init($url);

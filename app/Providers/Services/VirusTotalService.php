@@ -1,5 +1,5 @@
 <?php
-// app/Services/VirusTotalService.php
+// app/Providers/Services/VirusTotalService.php
 
 namespace App\Providers\Services;
 
@@ -31,6 +31,7 @@ class VirusTotalService
 
         return json_decode($response->getBody(), true);
     }
+
     public function getAnalysisDetails($analysisId)
     {
         $client = new Client();
@@ -42,5 +43,24 @@ class VirusTotalService
         ]);
 
         return json_decode($response->getBody(), true);
+    }
+
+    public function checkMaliciousUrl($url)
+    {
+        $virusTotalResult = $this->scanUrl($url);
+
+        $analysisId = $virusTotalResult['data']['id'];
+        $analysisDetails = $this->getAnalysisDetails($analysisId);
+        $maliciousCount = isset($analysisDetails['data']['attributes']['stats']['malicious'])
+            ? $analysisDetails['data']['attributes']['stats']['malicious']
+            : 0;
+        if ($maliciousCount > 0) {
+            return [
+                'security_score' => 0,
+                'virus_total_malicious_count' => $maliciousCount,
+            ];
+        } else {
+            return null;
+        }
     }
 }
