@@ -11,6 +11,9 @@ use App\Http\Controllers\ScanController;
 use App\Models\Scan;                                 
 use Illuminate\Foundation\Testing\DatabaseMigrations; 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Services\ScanProcessingService;
+use App\Services\evaluateTrustService;
+use App\Services\shortURLService;
 
 class ScanControllerTest extends TestCase
 {
@@ -27,8 +30,13 @@ class ScanControllerTest extends TestCase
             'latitude' => 37.7749,
             'longitude' => -122.4194,
         ]);
+
+        $shortURLService = new shortURLService();
+        $evaluateTrustService = new evaluateTrustService();
+        $scanProcessingService = new scanProcessingService($shortURLService, $evaluateTrustService);
+
     
-        $controller = new ScanController();
+        $controller = new ScanController($scanProcessingService);
         $response = $controller->store($request);
 
         $this->assertEquals(201, $response->getStatusCode());
@@ -38,7 +46,13 @@ class ScanControllerTest extends TestCase
         // Retrieving a specific Scan instance with a valid ID should return a JSON response with the Scan data.
     public function test_retrieve_specific_scan_instance_with_valid_id()
     {
-        $controller = new ScanController();
+        $shortURLService = new shortURLService();
+        $evaluateTrustService = new evaluateTrustService();
+        $scanProcessingService = new scanProcessingService($shortURLService, $evaluateTrustService);
+
+    
+        $controller = new ScanController($scanProcessingService);
+
         $response = $controller->show(1);
 
     
@@ -52,7 +66,12 @@ class ScanControllerTest extends TestCase
             'trust_score' => 8,
         ]);
     
-        $controller = new ScanController();
+        $shortURLService = new shortURLService();
+        $evaluateTrustService = new evaluateTrustService();
+        $scanProcessingService = new scanProcessingService($shortURLService, $evaluateTrustService);
+
+    
+        $controller = new ScanController($scanProcessingService);
         $response = $controller->update($request, 1);
     
         $this->assertJson($response->getContent());
@@ -69,7 +88,12 @@ class ScanControllerTest extends TestCase
             'longitude' => -122.4194,
         ]);
     
-        $controller = new ScanController();
+        $shortURLService = new shortURLService();
+        $evaluateTrustService = new evaluateTrustService();
+        $scanProcessingService = new scanProcessingService($shortURLService, $evaluateTrustService);
+
+    
+        $controller = new ScanController($scanProcessingService);
         $response = $controller->store($request);
    
         $this->assertEquals(422, $response->getStatusCode());
@@ -79,7 +103,12 @@ class ScanControllerTest extends TestCase
         // Retrieving a specific Scan instance with an invalid ID should return a JSON response with a "Scan not found" message and status code 404.
     public function test_retrieve_specific_scan_instance_with_invalid_id()
     {
-        $controller = new ScanController();
+        $shortURLService = new shortURLService();
+        $evaluateTrustService = new evaluateTrustService();
+        $scanProcessingService = new scanProcessingService($shortURLService, $evaluateTrustService);
+
+    
+        $controller = new ScanController($scanProcessingService);
         $response = $controller->show(154134);
     
         $this->assertEquals(404, $response->getStatusCode());
@@ -93,7 +122,12 @@ class ScanControllerTest extends TestCase
             'trust_score' => 8,
         ]);
     
-        $controller = new ScanController();
+        $shortURLService = new shortURLService();
+        $evaluateTrustService = new evaluateTrustService();
+        $scanProcessingService = new scanProcessingService($shortURLService, $evaluateTrustService);
+
+    
+        $controller = new ScanController($scanProcessingService);
         $response = $controller->update($request, 2645564);
     
         $this->assertEquals(404, $response->getStatusCode());
@@ -107,7 +141,12 @@ class ScanControllerTest extends TestCase
             'trust_score' => 'invalid',
         ]);
     
-        $controller = new ScanController();
+        $shortURLService = new shortURLService();
+        $evaluateTrustService = new evaluateTrustService();
+        $scanProcessingService = new scanProcessingService($shortURLService, $evaluateTrustService);
+
+    
+        $controller = new ScanController($scanProcessingService);
         $response = $controller->update($request, 1);
 
 

@@ -15,7 +15,7 @@ class URLController extends Controller
     {
         // Validate the request data
         $validatedData = $request->validate([
-            'URL' => 'required|url|max:2048',
+            'url' => 'required|url|max:2048',
             'trust_score' => 'required|integer|min:0|max:1000',
         ]);
 
@@ -49,7 +49,7 @@ class URLController extends Controller
     public function findUrlByString($urlString)
     {
         Log::info("Finding URL by string: $urlString");
-        $result = URL::where('URL', $urlString)->first();
+        $result = URL::where('url', $urlString)->first();
         Log::info("URL find complete for string: $urlString");
         return $result;
     }

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class URL extends Model
 {
     protected $table = 'URLs';
-    protected $fillable = ['URL', 'trust_score'];
+    protected $fillable = ['url', 'trust_score'];
 
     public function urlCheckLogs()
     {

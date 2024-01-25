@@ -21,7 +21,7 @@ class URLSeeder extends Seeder
             $trustScore = (substr($index, -1) > 6) ? 1000 : $faker->numberBetween($min = 1, $max = 1000);
 
             URL::create([
-                'URL' => $faker->url,
+                'url' => $faker->url,
                 'trust_score' => $trustScore
             ]);
         }

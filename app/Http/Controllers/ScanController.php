@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\ValidationException;
 use App\Services\ScanProcessingService;
+use Illuminate\Support\Facades\Log; 
 
 class ScanController extends Controller
 {   
@@ -21,23 +22,28 @@ class ScanController extends Controller
 
     public function processScan(Request $request)
     {
+        echo "URL 25:" . $request . "\n";
+        Log::info('processScan called with request: ', $request->all());
         $request->validate([
             'url' => 'required|url',
+            'user_id' => 'required|exists:users,id',
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric'
         ]);
-
     
         $url = $request->input('url');
         $coordinates = ['latitude' => $request->input('latitude'), 'longitude' => $request->input('longitude')];
     
         $scanData = $this->ScanProcessingService->processRequest($url);
     
+        // Add user_id to the scan data
+        $scanData['user_id'] = $request->input('user_id'); 
+    
         // Create scan record using the store method
         $scanRequest = new Request(array_merge($scanData, $coordinates));
-        $scan = $this->store($scanRequest);
-
-        return response()->json($scan);
+        $this->store($scanRequest);
+    
+        return response()->json(['trust_score' => $scanData['trust_score']]);
     }
 
     private function validateData(Request $request)

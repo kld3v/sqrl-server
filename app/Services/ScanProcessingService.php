@@ -10,59 +10,46 @@ use App\Services\evaluateTrustService;
 use App\Services\shortURLService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use App\Models\URL;
 
 use Illuminate\Support\Facades\Log;
 
 class ScanProcessingService
 {
-    protected $urlController;
-    protected $scanController;
     protected $shortUrlService;
     protected $evaluateTrustService;
 
     public function __construct(shortURLService $shortUrlService, evaluateTrustService $evaluateTrustService)
     {
-        $this->urlController = App::make(URLController::class);
-        $this->scanController = App::make(ScanController::class);
         $this->shortUrlService = $shortUrlService;
         $this->evaluateTrustService = $evaluateTrustService;
     }
-
     public function processRequest($url)
     {   
-
         // Expanding shortened URL, if necessary
         if ($this->shortUrlService->isShortURL($url)) {
             $url = $this->shortUrlService->expandURL($url);
         }
 
         // Check if URL is already in the database
-        $existingUrl = $this->urlController->findUrlByString($url);
+        $existingUrl = URL::where('url', $url)->first();
 
         if ($existingUrl) {
             // Check if the trust score needs to be updated
             if ($this->isTrustScoreOutdated($existingUrl)) {
-                $trustScore = $this->evaluateTrustService->evaluateTrust($url);
-                $this->urlController->updateTrustScore($existingUrl, $trustScore);
-
+                $existingUrl->update([
+                    'trust_score' => $this->evaluateTrustService->evaluateTrust($url)
+                ]);
             } else {
                 $trustScore = $existingUrl->trust_score;
             }
         } else {
             // URL not in DB, evaluate and add
             $trustScore = $this->evaluateTrustService->evaluateTrust($url);
-
-
-            $urlData = ['URL' => $url, 'trust_score' => $trustScore];
-            $existingUrl = $this->urlController->store(new Request($urlData));
-
+            $existingUrl = URL::create(['url' => $url, 'trust_score' => $trustScore]);
         }
 
-
-        return [
-            'url_id' => $existingUrl->id,
-            'trust_score' => $trustScore,
-        ];
+        return $existingUrl;
     }
 
     private function isTrustScoreOutdated($urlRecord)
