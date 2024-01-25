@@ -30,7 +30,6 @@ class ScanProcessingService_processRequestTest extends TestCase
     
         $url = "https://laravel.com/docs/10.x/ergageraergrg";
         $result = $scanProcessingService->processRequest($url);
-    
         $this->assertNotNull($result);
     }
 
