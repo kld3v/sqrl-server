@@ -20,7 +20,7 @@ class RiskEvaluationController extends Controller
     public function checkWebRisk(Request $request)
     {
         //check the url here
-        $uri = 'http://115.58.34.81:44337/Mozi.m';
+        $uri = 'http://125.44.173.50:53386/i';
         $googleWebRiskResult = $this->webRiskService->checkForThreats($uri);
         if ($googleWebRiskResult['threat_detected']) {
             return response()->json([
