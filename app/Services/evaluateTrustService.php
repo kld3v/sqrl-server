@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\App;
 
 class evaluateTrustService {
     public function evaluateTrust($url) {
-        $trustScore = 50;
+        $trustScore = 80;
         return($trustScore);
     }
 }

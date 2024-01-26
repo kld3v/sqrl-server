@@ -32,18 +32,26 @@ class ScanController extends Controller
         ]);
     
         $url = $request->input('url');
-        $coordinates = ['latitude' => $request->input('latitude'), 'longitude' => $request->input('longitude')];
     
         $scanData = $this->ScanProcessingService->processRequest($url);
     
         // Add user_id to the scan data
         $scanData['user_id'] = $request->input('user_id'); 
     
+        // Format data for the 'scans' table
+        $formattedScanData = [
+            'url_id' => $scanData['id'],
+            'trust_score' => $scanData['trust_score'],
+            'user_id' => $scanData['user_id'],
+            'latitude' => $request->input('latitude'),
+            'longitude' => $request->input('longitude')];
+
         // Create scan record using the store method
-        $scanRequest = new Request(array_merge($scanData, $coordinates));
+        $scanRequest = new Request($formattedScanData);
         $this->store($scanRequest);
-    
+        
         return response()->json(['trust_score' => $scanData['trust_score']]);
+
     }
 
     private function validateData(Request $request)

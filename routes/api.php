@@ -15,8 +15,12 @@ use App\Http\Controllers\ScanController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
 
-Route::post('/scan', [ScanController::class, 'processScan']);
+Route::post('scan', [ScanController::class, 'processScan']);
+
+// Route::get('/scan', function(){
+//     echo "hello";
+// });
