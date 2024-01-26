@@ -26,6 +26,7 @@ class ScanProcessingService
     }
     public function processRequest($url)
     {   
+
         // Expanding shortened URL, if necessary
         if ($this->shortUrlService->isShortURL($url)) {
             $url = $this->shortUrlService->expandURL($url);

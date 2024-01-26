@@ -22,7 +22,7 @@ class ScanController_processScan_test extends TestCase
     {
         // Arrange: Create a Request object with the necessary data
         $data = [
-            'url' => 'https://find-and-update.company-information.service.gov.uk/company/14516665/officers',
+            'url' => 'https://https://www.google.com/maps',
             'user_id' => 1,
             'latitude' => '51.5074',
             'longitude' => '0.1278'

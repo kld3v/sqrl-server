@@ -22,8 +22,8 @@ class ScanController extends Controller
 
     public function processScan(Request $request)
     {
-        echo "URL 25:" . $request . "\n";
-        Log::info('processScan called with request: ', $request->all());
+        // echo "URL 25:" . $request . "\n";
+        // Log::info('processScan called with request: ', $request->all());
         $request->validate([
             'url' => 'required|url',
             'user_id' => 'required|exists:users,id',
