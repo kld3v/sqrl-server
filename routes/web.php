@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\SslTlsCertificate;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,4 +16,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('/ssltlscheck/{url}', [SslTlsCertificate::class, 'analyzeSSL'])->where('url', '.*');
+Route::get('/check-ssl/{url}', function ($url) {
+    $scriptPath = base_path('/app/Scripts/Sslkey.sh');
+    $command = "$scriptPath $url";
+    $output = shell_exec($command);
+    return response()->json(['result' => $output]);
+});
