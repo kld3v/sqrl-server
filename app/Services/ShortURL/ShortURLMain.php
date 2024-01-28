@@ -1,13 +1,13 @@
 <?php
 
 
-namespace App\Services;
+namespace App\Services\ShortURL;
 
 use App\Http\Controllers\URLController;
 use App\Http\Controllers\ScanController;
 use Illuminate\Support\Facades\App;
 
-class shortURLService {
+class ShortURLMain {
     public function isShortURL($url) {
         return(false);
     }

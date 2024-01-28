@@ -7,7 +7,7 @@ use App\Http\Controllers\URLController;
 use App\Http\Controllers\ScanController;
 use Illuminate\Support\Facades\App;
 
-class evaluateTrustService {
+class EvaluateTrustService {
     public function evaluateTrust($url) {
         $trustScore = 80;
         return($trustScore);

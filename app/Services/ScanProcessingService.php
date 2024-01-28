@@ -6,8 +6,8 @@ namespace App\Services;
 use App\Http\Controllers\URLController;
 use App\Http\Controllers\ScanController;
 use Illuminate\Support\Facades\App;
-use App\Services\evaluateTrustService;
-use App\Services\shortURLService;
+use App\Services\EvaluateTrustService;
+use App\Services\ShortURL\ShortURLMain;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\URL;
@@ -16,20 +16,20 @@ use Illuminate\Support\Facades\Log;
 
 class ScanProcessingService
 {
-    protected $shortUrlService;
+    protected $shortURLMain;
     protected $evaluateTrustService;
 
-    public function __construct(shortURLService $shortUrlService, evaluateTrustService $evaluateTrustService)
+    public function __construct(ShortURLMain $shortURLMain, EvaluateTrustService $evaluateTrustService)
     {
-        $this->shortUrlService = $shortUrlService;
+        $this->shortURLMain = $shortURLMain;
         $this->evaluateTrustService = $evaluateTrustService;
     }
     public function processRequest($url)
     {   
 
         // Expanding shortened URL, if necessary
-        if ($this->shortUrlService->isShortURL($url)) {
-            $url = $this->shortUrlService->expandURL($url);
+        if ($this->shortURLMain->isShortURL($url)) {
+            $url = $this->shortURLMain->expandURL($url);
         }
 
         // Check if URL is already in the database

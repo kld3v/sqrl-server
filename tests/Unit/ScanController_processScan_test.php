@@ -9,8 +9,8 @@ use App\Models\User;
 use App\Models\URL;
 use App\Http\Controllers\ScanController;
 use Illuminate\Http\Request; 
-use App\Services\shortURLService;
-use App\Services\evaluateTrustService;
+use App\Services\ShortURL\ShortURLMain;
+use App\Services\EvaluateTrustService;
 use App\Services\ScanProcessingService;
 
 class ScanController_processScan_test extends TestCase

@@ -3,11 +3,11 @@
 namespace Tests\Feature;
 
 use App\Http\Controllers\URLController;
-use App\Services\evaluateTrustService;
+use App\Services\EvaluateTrustService;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Services\ScanProcessingService;
-use App\Services\shortURLService;
+use App\Services\ShortURL\ShortURLMain;
 use App\Http\Controllers\ScanController;
 use App\Models\URL;
 
@@ -24,9 +24,9 @@ class ScanProcessingService_processRequestTest extends TestCase
     // processRequest with valid URL returns url_id and trust_score
     public function test_process_request_with_valid_url()
     {
-        $shortUrlService = new shortURLService();
-        $evaluateTrustService = new evaluateTrustService();
-        $scanProcessingService = new ScanProcessingService($shortUrlService, $evaluateTrustService);
+        $shortURLMain = new ShortURLMain();
+        $evaluateTrustService = new EvaluateTrustService();
+        $scanProcessingService = new ScanProcessingService($shortURLMain, $evaluateTrustService);
     
         $url = "https://laravel.com/docs/10.x/ergageraergrg";
         $result = $scanProcessingService->processRequest($url);
@@ -37,9 +37,9 @@ class ScanProcessingService_processRequestTest extends TestCase
         // processRequest with existing URL updates trust_score and returns url_id and trust_score
     // public function test_process_request_with_existing_url()
     // {
-    //     $shortUrlService = new shortURLService();
+    //     $shortURLMain = new ShortURLMain();
     //     $evaluateTrustService = new evaluateTrustService();
-    //     $scanProcessingService = new ScanProcessingService($shortUrlService, $evaluateTrustService);
+    //     $scanProcessingService = new ScanProcessingService($shortURLMain, $evaluateTrustService);
 
     //     // Create a mock URL record
     //     $existingUrl = new URL();

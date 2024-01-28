@@ -22,15 +22,18 @@ class URLControllerTest extends TestCase
     {
         $request = new Request();
         $request->replace([
-            'URL' => 'https://example.com',
+            'url' => 'https://example.com',
             'trust_score' => 500
         ]);
-    
+
+        // echo var_export($request, true);
+
         $controller = new URLController();
         $response = $controller->store($request);
-    
+        
+        
         $this->assertEquals(201, $response->getStatusCode());
-        $this->assertEquals('https://example.com', $response->getData()->URL);
+        $this->assertEquals('https://example.com', $response->getData()->url);
         $this->assertEquals(500, $response->getData()->trust_score);
     }
     
@@ -39,7 +42,7 @@ class URLControllerTest extends TestCase
     public function test_existing_url_instance_id()
     {
         $url = URL::create([
-            'URL' => 'https://example.com',
+            'url' => 'https://example.com',
             'trust_score' => 500,
         ]);
     
@@ -75,7 +78,7 @@ class URLControllerTest extends TestCase
     {
         $request = new Request();
         $request->replace([
-            'URL' => 'invalid_url',
+            'url' => 'invalid_url',
             'trust_score' => 500
         ]);
     
@@ -90,7 +93,7 @@ class URLControllerTest extends TestCase
     {
         $request = new Request();
         $request->replace([
-            'URL' => 'https://example.com',
+            'url' => 'https://example.com',
             'trust_score' => 'invalid_trust_score'
         ]);
     
@@ -105,7 +108,7 @@ class URLControllerTest extends TestCase
     {
         $request = new Request();
         $request->replace([
-            'URL' => 'https://example.com/' . str_repeat('a', 2049),
+            'url' => 'https://example.com/' . str_repeat('a', 2049),
             'trust_score' => 500
         ]);
     
@@ -119,7 +122,7 @@ class URLControllerTest extends TestCase
     {
         $request = new Request();
         $request->replace([
-            'URL' => 'https://example.com',
+            'url' => 'https://example.com',
             'trust_score' => -1
         ]);
     
@@ -133,7 +136,7 @@ class URLControllerTest extends TestCase
     {
         $request = new Request();
         $request->replace([
-            'URL' => 'https://example.com',
+            'url' => 'https://example.com',
             'trust_score' => 1500
         ]);
     
@@ -148,13 +151,13 @@ class URLControllerTest extends TestCase
         // Create multiple URL instances with different data
         $request1 = new Request();
         $request1->replace([
-            'URL' => 'https://example1.com',
+            'url' => 'https://example1.com',
             'trust_score' => 500
         ]);
     
         $request2 = new Request();
         $request2->replace([
-            'URL' => 'https://example2.com',
+            'url' => 'https://example2.com',
             'trust_score' => 700
         ]);
     
@@ -167,10 +170,10 @@ class URLControllerTest extends TestCase
         $url2 = $controller->show($response2->getData()->id);
     
         // Assert the retrieved URL instances match the created data
-        $this->assertEquals('https://example1.com', $url1->getData()->URL);
+        $this->assertEquals('https://example1.com', $url1->getData()->url);
         $this->assertEquals(500, $url1->getData()->trust_score);
     
-        $this->assertEquals('https://example2.com', $url2->getData()->URL);
+        $this->assertEquals('https://example2.com', $url2->getData()->url);
         $this->assertEquals(700, $url2->getData()->trust_score);
     }
     
@@ -179,7 +182,7 @@ class URLControllerTest extends TestCase
     {
         $request = new Request();
         $request->replace([
-            'URL' => 'https://example.com',
+            'url' => 'https://example.com',
             'trust_score' => 1000
         ]);
     
@@ -187,14 +190,14 @@ class URLControllerTest extends TestCase
         $response = $controller->store($request);
     
         $this->assertEquals(201, $response->getStatusCode());
-        $this->assertEquals('https://example.com', $response->getData()->URL);
+        $this->assertEquals('https://example.com', $response->getData()->url);
         $this->assertEquals(1000, $response->getData()->trust_score);
     
         $urlId = $response->getData()->id;
         $showResponse = $controller->show($urlId);
     
         $this->assertEquals(200, $showResponse->getStatusCode());
-        $this->assertEquals('https://example.com', $showResponse->getData()->URL);
+        $this->assertEquals('https://example.com', $showResponse->getData()->url);
         $this->assertEquals(1000, $showResponse->getData()->trust_score);
     }
     
@@ -203,7 +206,7 @@ class URLControllerTest extends TestCase
     {
         $request = new Request();
         $request->replace([
-            'URL' => 'https://example.com',
+            'url' => 'https://example.com',
             'trust_score' => 0
         ]);
     
@@ -211,14 +214,14 @@ class URLControllerTest extends TestCase
         $response = $controller->store($request);
     
         $this->assertEquals(201, $response->getStatusCode());
-        $this->assertEquals('https://example.com', $response->getData()->URL);
+        $this->assertEquals('https://example.com', $response->getData()->url);
         $this->assertEquals(0, $response->getData()->trust_score);
     
         $urlId = $response->getData()->id;
         $showResponse = $controller->show($urlId);
     
         $this->assertEquals(200, $showResponse->getStatusCode());
-        $this->assertEquals('https://example.com', $showResponse->getData()->URL);
+        $this->assertEquals('https://example.com', $showResponse->getData()->url);
         $this->assertEquals(0, $showResponse->getData()->trust_score);
     }
     
@@ -227,7 +230,7 @@ class URLControllerTest extends TestCase
     {
         $request = new Request();
         $request->replace([
-            'URL' => 'https://example.com',
+            'url' => 'https://example.com',
             'trust_score' => 0
         ]);
     
@@ -235,14 +238,14 @@ class URLControllerTest extends TestCase
         $response = $controller->store($request);
     
         $this->assertEquals(201, $response->getStatusCode());
-        $this->assertEquals('https://example.com', $response->getData()->URL);
+        $this->assertEquals('https://example.com', $response->getData()->url);
         $this->assertEquals(0, $response->getData()->trust_score);
     
         $urlId = $response->getData()->id;
         $showResponse = $controller->show($urlId);
     
         $this->assertEquals(200, $showResponse->getStatusCode());
-        $this->assertEquals('https://example.com', $showResponse->getData()->URL);
+        $this->assertEquals('https://example.com', $showResponse->getData()->url);
         $this->assertEquals(0, $showResponse->getData()->trust_score);
     }
     
