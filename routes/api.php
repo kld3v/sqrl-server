@@ -3,7 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ScanController;
-
+use App\Http\Controllers\VenueController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -21,6 +21,5 @@ use App\Http\Controllers\ScanController;
 
 Route::post('scan', [ScanController::class, 'processScan']);
 
-// Route::get('/scan', function(){
-//     echo "hello";
-// });
+
+Route::get('/venues/location', [VenueController::class, 'getVenuesByLocation']);
