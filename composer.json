@@ -10,7 +10,7 @@
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
-        "io-developer/php-whois": "^4.1"
+		"io-developer/php-whois": "^4.1"
 
     },
     "require-dev": {

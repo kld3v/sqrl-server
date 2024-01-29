@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\RiskEvaluationController;
+use App\Services\EvaluateTrustService;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,4 +18,4 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
    return view('welcome');
 });
-Route::get('/check-web-risk', [RiskEvaluationController::class, 'checkWebRisk']);
+Route::get('/check-web-risk', [EvaluateTrustService::class, 'evaluateTrust']);
