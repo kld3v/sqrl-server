@@ -3,8 +3,8 @@
 
 namespace App\Services;
 
-use App\Services\GoogleWebRisk;
-use App\Services\VirusTotalService;
+use App\Services\ScanLayers\GoogleWebRisk;
+use App\Services\ScanLayers\VirusTotalService;
 use Illuminate\Support\Facades\App;
 use App\Http\Controllers\URLController;
 use App\Http\Controllers\ScanController;
@@ -20,7 +20,7 @@ class EvaluateTrustService {
     }
     public function evaluateTrust($url) {
         
-        $command = base_path('app/Scripts/Sslkey.sh') . ' ' . escapeshellarg($url);
+        $command = base_path('Scripts/Sslkey.sh') . ' ' . escapeshellarg($url);
         $output = shell_exec($command);
         dd($output);
         $sslCheckResult = json_decode($output, true);

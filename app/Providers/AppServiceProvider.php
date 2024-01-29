@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use App\Services\GoogleWebRisk;
-use App\Services\VirusTotalService;
+use App\Services\ScanLayers\GoogleWebRisk;
+use App\Services\ScanLayers\VirusTotalService;
 use App\Services\EvaluateTrustService;
 use App\Services\ScanProcessingService;
 use App\Services\ShortURL\ShortURLMain;

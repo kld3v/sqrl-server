@@ -1,7 +1,7 @@
 <?php
 // app/Providers/Services/VirusTotalService.php
 
-namespace App\Services;
+namespace App\Services\ScanLayers;
 
 use GuzzleHttp\Client;
 
