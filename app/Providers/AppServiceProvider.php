@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use App\Services\ScanProcessingService;
 use App\Services\ShortURL\ShortURLMain;
 use App\Services\EvaluateTrustService;
+use App\Services\ShortUrl\ShortURLServices;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -16,7 +17,9 @@ class AppServiceProvider extends ServiceProvider
     {
 
         $this->app->singleton(ShortURLMain::class, function ($app) {
-            return new ShortURLMain();
+            return new ShortURLMain(
+                $app->make(ShortURLServices::class)
+            );
         });
         $this->app->singleton(EvaluateTrustService::class, function ($app) {
             return new EvaluateTrustService();
