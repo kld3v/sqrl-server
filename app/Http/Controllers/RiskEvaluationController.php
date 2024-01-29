@@ -18,7 +18,7 @@ class RiskEvaluationController extends Controller
 
     public function checkWebRisk(Request $request)
     {
-        $uri = 'tbp-mirror.com';
+        $uri = 'google.com';
         $command = base_path('app/Scripts/Sslkey.sh') . ' ' . escapeshellarg($uri);
         $output = shell_exec($command);
         //dd($output);
