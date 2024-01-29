@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Services\ScanProcessingService;
 use App\Services\EvaluateTrustService;
 use App\Services\ShortURL\ShortURLMain;
+use App\Services\ShortUrl\ShortURLServices;
 
 class ScanControllerTest extends TestCase
 {
@@ -31,7 +32,8 @@ class ScanControllerTest extends TestCase
             'longitude' => -122.4194,
         ]);
 
-        $shortURLMain = new ShortURLMain();
+        $shortURLService = new ShortURLServices();
+        $shortURLMain = new ShortURLMain($shortURLService);
         $evaluateTrustService = new EvaluateTrustService();
         $scanProcessingService = new scanProcessingService($shortURLMain, $evaluateTrustService);
 
@@ -47,7 +49,8 @@ class ScanControllerTest extends TestCase
         // Retrieving a specific Scan instance with a valid ID should return a JSON response with the Scan data.
     public function test_retrieve_specific_scan_instance_with_valid_id()
     {
-        $shortURLMain = new ShortURLMain();
+        $shortURLService = new ShortURLServices();
+        $shortURLMain = new ShortURLMain($shortURLService);
         $evaluateTrustService = new EvaluateTrustService();
         $scanProcessingService = new scanProcessingService($shortURLMain, $evaluateTrustService);
 
@@ -72,7 +75,8 @@ class ScanControllerTest extends TestCase
             'longitude' => -122.4194,
         ]);
     
-        $shortURLMain = new ShortURLMain();
+        $shortURLService = new ShortURLServices();
+        $shortURLMain = new ShortURLMain($shortURLService);
         $evaluateTrustService = new EvaluateTrustService();
         $scanProcessingService = new scanProcessingService($shortURLMain, $evaluateTrustService);
 
@@ -87,7 +91,8 @@ class ScanControllerTest extends TestCase
         // Retrieving a specific Scan instance with an invalid ID should return a JSON response with a "Scan not found" message and status code 404.
     public function test_retrieve_specific_scan_instance_with_invalid_id()
     {
-        $shortURLMain = new ShortURLMain();
+        $shortURLService = new ShortURLServices();
+        $shortURLMain = new ShortURLMain($shortURLService);
         $evaluateTrustService = new EvaluateTrustService();
         $scanProcessingService = new scanProcessingService($shortURLMain, $evaluateTrustService);
 
@@ -103,7 +108,8 @@ class ScanControllerTest extends TestCase
         // Retrieving all Scan instances should return a JSON response with an array of all Scan data.
     public function test_retrieve_all_scan_instances()
     {
-        $shortURLMain = new ShortURLMain();
+        $shortURLService = new ShortURLServices();
+        $shortURLMain = new ShortURLMain($shortURLService);
         $evaluateTrustService = new EvaluateTrustService();
         $scanProcessingService = new scanProcessingService($shortURLMain, $evaluateTrustService);
 
@@ -121,7 +127,8 @@ class ScanControllerTest extends TestCase
     public function test_delete_scan_instance_with_valid_id()
     {
 
-        $shortURLMain = new ShortURLMain();
+        $shortURLService = new ShortURLServices();
+        $shortURLMain = new ShortURLMain($shortURLService);
         $evaluateTrustService = new EvaluateTrustService();
         $scanProcessingService = new scanProcessingService($shortURLMain, $evaluateTrustService);
 
@@ -153,7 +160,8 @@ class ScanControllerTest extends TestCase
         ]);
 
 
-        $shortURLMain = new ShortURLMain();
+        $shortURLService = new ShortURLServices();
+        $shortURLMain = new ShortURLMain($shortURLService);
         $evaluateTrustService = new EvaluateTrustService();
         $scanProcessingService = new scanProcessingService($shortURLMain, $evaluateTrustService);
 
@@ -180,7 +188,8 @@ class ScanControllerTest extends TestCase
             'longitude' => -122.4194,
         ]);
     
-        $shortURLMain = new ShortURLMain();
+        $shortURLService = new ShortURLServices();
+        $shortURLMain = new ShortURLMain($shortURLService);
         $evaluateTrustService = new evaluateTrustService();
         $scanProcessingService = new scanProcessingService($shortURLMain, $evaluateTrustService);
 

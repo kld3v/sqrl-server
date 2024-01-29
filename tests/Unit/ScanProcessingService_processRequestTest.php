@@ -10,6 +10,7 @@ use App\Services\ScanProcessingService;
 use App\Services\ShortURL\ShortURLMain;
 use App\Http\Controllers\ScanController;
 use App\Models\URL;
+use App\Services\ShortUrl\ShortURLServices;
 
 
 
@@ -23,8 +24,9 @@ class ScanProcessingService_processRequestTest extends TestCase
     // Adding a new URL to the database returns the URL ID and trust score
     // processRequest with valid URL returns url_id and trust_score
     public function test_process_request_with_valid_url()
-    {
-        $shortURLMain = new ShortURLMain();
+    {   
+        $shortURLService = new ShortURLServices();
+        $shortURLMain = new ShortURLMain($shortURLService);
         $evaluateTrustService = new EvaluateTrustService();
         $scanProcessingService = new ScanProcessingService($shortURLMain, $evaluateTrustService);
     
