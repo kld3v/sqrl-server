@@ -21,7 +21,8 @@ class VenueController extends Controller
         $longitude = $request->input('longitude');
 
         // Query to find venues where the lat and long fall into their area
-        $venues = Venue::whereRaw("ST_Contains(area, ST_GeomFromText(CONCAT('POINT(', ?, ' ', ?, ')')))", [$latitude, $longitude])
+        $venues = Venue::select('id', 'company', 'chain', 'url_id', 'tel', 'address', 'postcode', 'google_maps') // list all fields except 'area'
+        ->whereRaw("ST_Contains(area, ST_GeomFromText(CONCAT('POINT(', ?, ' ', ?, ')')))", [$latitude, $longitude])
         ->get();
 
         // Return the results as JSON
