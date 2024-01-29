@@ -1,7 +1,7 @@
 <?php
 
-namespace App\Services\ShortUrl;
 
+namespace App\Services\ShortURL;
 use App\Services\ShortUrl\ShortURLServices;
 use App\Services\ShortUrl\resolvers\Generic;
 
