@@ -2,9 +2,9 @@
 
 namespace App\Providers;
 
+use App\Services\GoogleWebRisk;
 use App\Services\VirusTotalService;
 use Illuminate\Support\ServiceProvider;
-use App\Providers\Services\GoogleWebRisk;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +19,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(VirusTotalService::class, function ($app) {
             return new VirusTotalService();
         });
+        
     }
 
     /**
