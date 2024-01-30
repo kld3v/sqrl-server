@@ -9,7 +9,7 @@ class ScanDataFormatService {
 
     public function formatScansForUrlId($urlId) {
         $scans = $this->getScansForUrlId($urlId);
-        return $this->formatScans($scans);
+        return $this->formatScans($scans)->toArray();
     }
 
     public function formatScans(Collection $scans) {
