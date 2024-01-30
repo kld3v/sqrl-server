@@ -25,32 +25,33 @@ class ScanController extends Controller
         // echo "URL 25:" . $request . "\n";
         // Log::info('processScan called with request: ', $request->all());
         $request->validate([
-            'url' => 'required|url',
+            'url' => 'required',
             'user_id' => 'required|exists:users,id',
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric'
         ]);
     
-        $url = $request->input('url');
-    
-        $scanData = $this->ScanProcessingService->processRequest($url);
-        
+        $url = $request->input('url');       
+
+        $scanData= $this->ScanProcessingService->processRequest($url);
+        // return $request->input('user_id');
         // Add user_id to the scan data
-        $scanData['user_id'] = $request->input('user_id'); 
+        // $scanData['user_id'] = $request->input('user_id'); 
     
         // Format data for the 'scans' table
         $formattedScanData = [
-            'url_id' => $scanData['id'],
-            'trust_score' => $scanData['trust_score'],
-            'user_id' => $scanData['user_id'],
+            // 'url_id' => $scanData['id'],
+            'trust_score' =>  $scanData,
+            'user_id' => $request->input('user_id'),
             'latitude' => $request->input('latitude'),
             'longitude' => $request->input('longitude')];
 
+            // dd($formattedScanData);
         // Create scan record using the store method
         $scanRequest = new Request($formattedScanData);
         $this->store($scanRequest);
         
-        return response()->json(['trust_score' => $scanData['trust_score']]);
+        return response()->json(['trust_score' => $scanData]);
 
     }
 
