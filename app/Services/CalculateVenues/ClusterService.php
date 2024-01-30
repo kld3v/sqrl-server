@@ -7,9 +7,21 @@ use Illuminate\Support\Facades\App;
 use Phpml\Clustering\DBSCAN;
 
 class ClusterService {
-    public function cluster($) {
-        $samples = [[1, 1], [8, 7], [1, 2], [7, 8], [2, 1], [8, 9]];
+
+    public function formatScans($scans) {
+        //format the scan data from the database layout, to one that DBSCAN can accept
+    }
+    public function cluster($scans) {
         $dbscan = new DBSCAN($epsilon = 2, $minSamples = 3);
-        $dbscan->cluster($samples);
+        $clusters = $dbscan->cluster($scans);
+    }
+    public function calculateBorder($cluster) {
+
+    }
+    public function reduceBorderPoints($border) {
+        //something like Ramer–Douglas–Peucker algorithm
+    }
+    public function saveBorder($border) {
+
     }
 }
