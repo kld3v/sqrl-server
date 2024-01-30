@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\ShortUrl\resolvers;
+namespace App\Services\ShortURL\resolvers;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;

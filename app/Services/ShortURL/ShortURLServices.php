@@ -1,7 +1,5 @@
 <?php
-
-namespace App\Services\ShortUrl;
-
+namespace App\Services\ShortURL;
 use Illuminate\Support\Facades\Log;
 
 class ShortURLServices

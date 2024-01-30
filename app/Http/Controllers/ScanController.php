@@ -34,7 +34,7 @@ class ScanController extends Controller
         $url = $request->input('url');
     
         $scanData = $this->ScanProcessingService->processRequest($url);
-    
+        
         // Add user_id to the scan data
         $scanData['user_id'] = $request->input('user_id'); 
     

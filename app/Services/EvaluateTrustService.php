@@ -20,7 +20,8 @@ class EvaluateTrustService {
     }
     public function evaluateTrust($url) {
         
-        $command = base_path('Scripts/Sslkey.sh') . ' ' . escapeshellarg($url);
+        $command = base_path('app/Scripts/Sslkey.sh') . ' ' . escapeshellarg($url);
+        
         $output = shell_exec($command);
         dd($output);
         $sslCheckResult = json_decode($output, true);

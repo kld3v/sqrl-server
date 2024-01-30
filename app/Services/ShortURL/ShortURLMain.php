@@ -2,8 +2,8 @@
 
 
 namespace App\Services\ShortURL;
-use App\Services\ShortUrl\ShortURLServices;
-use App\Services\ShortUrl\resolvers\Generic;
+
+use App\Services\ShortURL\resolvers\Generic;
 
 class ShortURLMain
 {
@@ -55,6 +55,7 @@ class ShortURLMain
             default:
                 // return $this->resolvers->generic->unshort($url, $timeout);
                 return $this->genericResolver->unshort($url, $timeout);
+                
         }
     }
 }

@@ -2,13 +2,13 @@
 
 namespace App\Providers;
 
-use App\Services\ScanLayers\GoogleWebRisk;
-use App\Services\ScanLayers\VirusTotalService;
 use App\Services\EvaluateTrustService;
 use App\Services\ScanProcessingService;
 use App\Services\ShortURL\ShortURLMain;
 use Illuminate\Support\ServiceProvider;
-use App\Services\ShortUrl\ShortURLServices;
+use App\Services\ScanLayers\GoogleWebRisk;
+use App\Services\ShortURL\ShortURLServices;
+use App\Services\ScanLayers\VirusTotalService;
 
 class AppServiceProvider extends ServiceProvider
 {

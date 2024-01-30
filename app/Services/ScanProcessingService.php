@@ -40,7 +40,11 @@ class ScanProcessingService
             if ($this->isTrustScoreOutdated($existingUrl)) {
                 $existingUrl->update([
                     'trust_score' => $this->evaluateTrustService->evaluateTrust($url)
-                ]);
+                    
+                ]
+                    
+            );
+            dd($existingUrl);
             } else {
                 $trustScore = $existingUrl->trust_score;
             }
