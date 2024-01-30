@@ -2,7 +2,8 @@
 
 namespace App\Services\CalculateVenues;
 
-use Illuminate\Support\Facades\DB;
+use App\Models\Scan;
+use Illuminate\Database\Eloquent\Collection;
 
 class ScanDataFormatService {
 
@@ -11,19 +12,13 @@ class ScanDataFormatService {
         return $this->formatScans($scans);
     }
 
-    public function formatScans($scans) {
-        $formattedScans = [];
-        foreach ($scans as $scan) {
-            $formattedScans[] = [$scan->latitude, $scan->longitude];
-        }
-
-        return $formattedScans;
+    public function formatScans(Collection $scans) {
+        return $scans->map(function ($scan) {
+            return [$scan->latitude, $scan->longitude];
+        });
     }
 
     private function getScansForUrlId($urlId) {
-        // Logic to fetch scans data for a specific URL ID
-        return DB::table('scans')
-                 ->where('url_id', $urlId)
-                 ->get();
+        return Scan::where('url_id', $urlId)->get();
     }
 }
