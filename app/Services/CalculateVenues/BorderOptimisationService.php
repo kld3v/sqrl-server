@@ -5,7 +5,6 @@ namespace App\Services\CalculateVenues;
 
 use Illuminate\Support\Facades\App;
 
-class ClusteringService {
-
-
+class BorderOptimisationService {
+    // Methods to optimise border points
 }
