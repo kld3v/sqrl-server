@@ -18,7 +18,7 @@ class UrlTestController extends Controller
         $altitude = isset($location['altitude']) ? $location['altitude'] : null;
 
         return response()->json([
-            'trust_score' => 100
+            'trust_score' => 1000
         ], 200);
     }
 }
