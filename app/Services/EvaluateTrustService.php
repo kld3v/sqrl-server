@@ -23,9 +23,11 @@ class EvaluateTrustService {
         $command = base_path('app/Scripts/Sslkey.sh') . ' ' . escapeshellarg($url);
         
         $output = shell_exec($command);
-        //dd($output);
-        $sslCheckResult = json_decode($output, true);
-        //dd($sslCheckResult);
+        $cleanedOutput = preg_replace('/[[:cntrl:]]/', '', $output);
+        //return $cleanedOutput;
+        $sslCheckResult = json_decode($cleanedOutput, true);
+        //return $sslCheckResult['trust_status'] ;
+        //$sslCheckResult = json_decode($output, true);
         if (isset($sslCheckResult['error']) || $sslCheckResult['trust_status'] !== "URL is considered trustworthy based on the public key.") {
             return [
                 'trust_score' => 0,
@@ -51,7 +53,6 @@ class EvaluateTrustService {
                 'virus_total_malicious_count'=>$maliciousCount
             ];
         }
-        // If the URL is not detected as a threat by either Google Web Risk or VirusTotal, return a security score of 1000
         return [
             'trust_score' => 1000,
         ];

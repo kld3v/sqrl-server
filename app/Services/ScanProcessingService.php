@@ -31,18 +31,18 @@ class ScanProcessingService
         if ($this->shortURLMain->isShortURL($url)) {
             $url = $this->shortURLMain->unshorten($url);
         }
+
         // Check if URL is already in the database
         $existingUrl = URL::where('url', $url)->first();
+        
 
         if ($existingUrl) {
             // Check if the trust score needs to be updated
-
             if ($this->isTrustScoreOutdated($existingUrl)) {
                 $existingUrl->update([
                     'trust_score' => $this->evaluateTrustService->evaluateTrust($url)
                     
                 ]
-                    
             );
         
             } else {
@@ -52,7 +52,6 @@ class ScanProcessingService
         } else {
             // URL not in DB, evaluate and add
             $trustScore = $this->evaluateTrustService->evaluateTrust($url);
-
             $score = $trustScore['trust_score'];         
 
             $existingUrl = URL::create(['url' => $url, 'trust_score' => $score]);

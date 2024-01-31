@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Services\EvaluateTrustService;
 use App\Http\Controllers\URLmainController;
 use App\Http\Controllers\RiskEvaluationController;
+use App\Http\Controllers\TestEvaluateTrustController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,3 +21,9 @@ Route::get('/', function () {
    return view('welcome');
 });
 Route::get('/check-web-risk', [EvaluateTrustService::class, 'evaluateTrust']);
+Route::get('/test-evaluate-trust', function () {
+   $url = 'https://www.unblocktheship.org/';
+   $evaluateTrustService = app(EvaluateTrustService::class);
+   $result = $evaluateTrustService->evaluateTrust($url);
+   return response()->json($result);
+});
