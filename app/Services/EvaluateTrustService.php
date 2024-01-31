@@ -21,12 +21,17 @@ class EvaluateTrustService {
     public function evaluateTrust($url) {
         
         $command = base_path('app/Scripts/Sslkey.sh') . ' ' . escapeshellarg($url);
-        
+        if (parse_url($url, PHP_URL_SCHEME) === 'http') {
+            return [
+                'trust_score' => 0,
+                'reason' => 'This uri is a http protocol (not secured)',
+            ];
+        }
         $output = shell_exec($command);
         $cleanedOutput = preg_replace('/[[:cntrl:]]/', '', $output);
         //return $cleanedOutput;
         $sslCheckResult = json_decode($cleanedOutput, true);
-        //return $sslCheckResult['trust_status'] ;
+        //return $sslCheckResult ;
         //$sslCheckResult = json_decode($output, true);
         if (isset($sslCheckResult['error']) || $sslCheckResult['trust_status'] !== "URL is considered trustworthy based on the public key.") {
             return [
