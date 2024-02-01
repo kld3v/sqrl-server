@@ -10,7 +10,8 @@ use App\Http\Controllers\URLController;
 use App\Http\Controllers\ScanController;
 
 
-class EvaluateTrustService {
+class EvaluateTrustService
+{
     protected $webRiskService;
     protected $virusTotalService;
     public function __construct(GoogleWebRisk $webRiskService, VirusTotalService $virusTotalService)
@@ -18,8 +19,9 @@ class EvaluateTrustService {
         $this->webRiskService = $webRiskService;
         $this->virusTotalService = $virusTotalService;
     }
-    public function evaluateTrust($url) {
-        
+    public function evaluateTrust($url)
+    {
+
         $command = base_path('app/Scripts/Sslkey.sh') . ' ' . escapeshellarg($url);
         if (parse_url($url, PHP_URL_SCHEME) === 'http') {
             return [
@@ -28,15 +30,27 @@ class EvaluateTrustService {
             ];
         }
         $output = shell_exec($command);
+
         $cleanedOutput = preg_replace('/[[:cntrl:]]/', '', $output);
-        //return $cleanedOutput;
+        //return gettype($cleanedOutput);
         $sslCheckResult = json_decode($cleanedOutput, true);
-        //return $sslCheckResult ;
-        //$sslCheckResult = json_decode($output, true);
-        if (isset($sslCheckResult['error']) || $sslCheckResult['trust_status'] !== "URL is considered trustworthy based on the public key.") {
+        //return $sslCheckResult;
+        if (isset($sslCheckResult['error'])) {
             return [
                 'trust_score' => 0,
-                'reason'=> $sslCheckResult,
+                'reason' => $sslCheckResult,
+            ];
+        }
+        if ($sslCheckResult['trust_status'] !== 'URL is considered trustworthy based on the public key.') {
+            return ['trust_score' => 0];
+        }
+
+        // Continue logic for Google Web Risk
+        $googleWebRiskResult = $this->webRiskService->checkForThreats($url);
+
+        if ($googleWebRiskResult['threat_detected']) {
+            return [
+                'trust_score' => 0,
             ];
         }
         //google
@@ -55,12 +69,12 @@ class EvaluateTrustService {
             $maliciousCount = $virusTotalResult['virus_total_malicious_count'];
             return [
                 'trust_score' => 0,
-                'virus_total_malicious_count'=>$maliciousCount
+                'virus_total_malicious_count' => $maliciousCount
             ];
         }
         return [
             'trust_score' => 1000,
         ];
     }
-    
+
 }

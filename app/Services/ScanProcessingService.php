@@ -26,7 +26,7 @@ class ScanProcessingService
     }
     public function processRequest($url)
     {   
-
+        
         // Expanding shortened URL, if necessary
         if ($this->shortURLMain->isShortURL($url)) {
             $url = $this->shortURLMain->unshorten($url);
@@ -50,10 +50,11 @@ class ScanProcessingService
                 $trustScore = $existingUrl->trust_score;
             }
         } else {
+            
             // URL not in DB, evaluate and add
             $trustScore = $this->evaluateTrustService->evaluateTrust($url);
             $score = $trustScore['trust_score'];         
-
+            
             $existingUrl = URL::create(['url' => $url, 'trust_score' => $score]);
         }
 

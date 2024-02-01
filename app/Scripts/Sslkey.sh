@@ -51,4 +51,4 @@ else
 fi
 
 # Print additional information as JSON
-echo "{\"trust_status\": \"$trust_status\", \"validity_status\": \"$validity_status\", \"issuer_info\": \"$certificate_info\", \"public_key\": \"$actual_hash\", \"expected_hash\": \"$expected_hash\", \"actual_hash\": \"$actual_hash\"}"
+echo '{ "trust_status": "'"$trust_status"'", "validity_status": "'"$validity_status"'", "issuer_info": "'"$certificate_info"'", "public_key": "'"$actual_hash"'", "expected_hash": "'"$expected_hash"'", "actual_hash": "'"$actual_hash"'" }'
