@@ -6,6 +6,7 @@ use App\Models\Scan;
 use App\Services\CalculateVenues\ScanDataFormatService;
 use App\Services\CalculateVenues\ClusteringService;
 use App\Services\CalculateVenues\BorderCalculationService;
+use App\Services\CalculateVenues\BorderOptimisationService;
 use Illuminate\Database\Eloquent\Collection;
 
 class CalculateTriggerService {
@@ -16,10 +17,13 @@ class CalculateTriggerService {
 
     protected $borderCalculationService;
 
-    public function __construct(ScanDataFormatService $scanDataFormatService, ClusteringService $clusteringService, BorderCalculationService $borderCalculationService) {
+    protected $borderOptimisationService;
+
+    public function __construct(ScanDataFormatService $scanDataFormatService, ClusteringService $clusteringService, BorderCalculationService $borderCalculationService, BorderOptimisationService $borderOptimisationService) {
         $this->scanDataFormatService = $scanDataFormatService;
         $this->clusteringService = $clusteringService;
         $this->borderCalculationService = $borderCalculationService;
+        $this->borderOptimisationService = $borderOptimisationService;
     }
 
     public function checkAndTriggerClustering() {
@@ -28,12 +32,14 @@ class CalculateTriggerService {
         if ($urlId !== null) {
             $formattedScans = $this->scanDataFormatService->formatScansForUrlId($urlId);
             $clusters = $this->clusteringService->clusterScans($formattedScans);
-            foreach ($clusters as $cluster) {
-                // Calculate the border for each cluster
-                $border = $this->borderCalculationService->calculateConcaveHull($cluster, 0.00010);
 
+            foreach ($clusters as $cluster) {
+                $border = $this->borderCalculationService->calculateBorders($cluster, 0.85);
                 echo "border; ";
                 var_dump($border);
+                $optimisedBorder = $this->borderOptimisationService->RamerDouglasPeucker2d($border, 0.00007);
+                echo "optimisedBorder; ";
+                var_dump($optimisedBorder);
             }
         }
     }

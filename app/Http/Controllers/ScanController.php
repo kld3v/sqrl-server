@@ -136,4 +136,16 @@ class ScanController extends Controller
         }
     }
 
+    public function getScans(Request $request)
+    {
+        $urlId = $request->input('url_id');
+
+        if ($urlId) {
+            $scans = Scan::where('url_id', $urlId)->get();
+        } else {
+            $scans = Scan::all();
+        }
+
+        return response()->json($scans);
+    }
 }

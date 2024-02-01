@@ -10,6 +10,7 @@ use App\Services\CalculateVenues\CalculateTriggerService;
 use App\Services\CalculateVenues\ClusteringService;
 use App\Services\CalculateVenues\ScanDataFormatService;
 use App\Services\CalculateVenues\BorderCalculationService;
+use App\Services\CalculateVenues\BorderOptimisationService;
 
 class CalculateTriggerService_Test extends TestCase
 {
@@ -21,8 +22,9 @@ class CalculateTriggerService_Test extends TestCase
         $scanDataFormatService = new ScanDataFormatService;
         $clusteringService = new ClusteringService;
         $borderCalculationService = new BorderCalculationService;
+        $borderOptimisationService = new BorderOptimisationService;
 
-        $calculateTriggerService = new CalculateTriggerService($scanDataFormatService, $clusteringService, $borderCalculationService);
+        $calculateTriggerService = new CalculateTriggerService($scanDataFormatService, $clusteringService, $borderCalculationService, $borderOptimisationService);
         
         // Act
         $result = $calculateTriggerService->checkAndTriggerClustering();
