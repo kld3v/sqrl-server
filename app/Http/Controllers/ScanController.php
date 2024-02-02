@@ -148,4 +148,5 @@ class ScanController extends Controller
 
         return response()->json($scans);
     }
+
 }

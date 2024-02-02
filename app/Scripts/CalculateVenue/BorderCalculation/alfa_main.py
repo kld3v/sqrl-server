@@ -8,7 +8,7 @@ def main():
     alfa = float(sys.argv[2])
 
     alfa = [alfa]
-
+    
     pts_tuples = [tuple(point) for point in pts]
 
     lines = getAlfaShapes(pts_tuples, alfas=alfa)

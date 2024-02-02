@@ -3,7 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ScanController;
-
+use App\Http\Controllers\VenueController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -15,9 +15,18 @@ use App\Http\Controllers\ScanController;
 |
 */
 
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
 
 Route::post('scan', [ScanController::class, 'processScan']);
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+
+// Route::get('/venues/location', [VenueController::class, 'getVenuesByLocation']);
+
+// Route::get('/venues/nearby', [VenueController::class, 'getNearbyVenues']);
+
+
+
+//DO NOT GO PUBLIC WITH THIS ROUTE
+Route::get('/getscans', [ScanController::class, 'getScans']);

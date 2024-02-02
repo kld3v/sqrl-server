@@ -29,7 +29,7 @@ class ScanProcessingService
 
         // Expanding shortened URL, if necessary
         if ($this->shortURLMain->isShortURL($url)) {
-            $url = $this->shortURLMain->expandURL($url);
+            $url = $this->shortURLMain->unshorten($url);
         }
 
         // Check if URL is already in the database

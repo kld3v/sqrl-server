@@ -12,7 +12,7 @@ class BorderCalculationService {
         $scriptPath = base_path('app/Scripts/CalculateVenue/BorderCalculation/alfa_main.py');
 
         $transformedPts = array_map(function($point) {
-            return [(float)$point[1], (float)$point[0]]; // Flip coordinates and convert to float
+            return [(float)$point[0], (float)$point[1]]; // Flip coordinates and convert to float
         }, $pts);
 
         $args = escapeshellarg(json_encode($transformedPts)) . ' ' . escapeshellarg($alfa);
