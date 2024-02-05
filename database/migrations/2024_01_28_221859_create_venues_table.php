@@ -13,16 +13,17 @@ return new class extends Migration
     {
         Schema::create('venues', function (Blueprint $table) {
             $table->id();
-            $table->string('company');
+            $table->string('company')->nullable();
             $table->string('chain')->nullable();
-            $table->unsignedBigInteger('url_id');
+            $table->unsignedBigInteger('url_id')->nullable();
             $table->foreign('url_id')->references('id')->on('URLs');
             $table->string('tel')->nullable();
             $table->text('address')->nullable();
             $table->string('postcode')->nullable();
             $table->string('google_maps')->nullable();
-            $table->polygon('area'); // a 'POLYGON' type column
+            $table->polygon('area')->nullable();
             $table->spatialIndex('area'); // adding spatial index
+            $table->boolean('complete')->default(false);
             $table->timestamps();
         });
     }
