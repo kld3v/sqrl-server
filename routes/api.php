@@ -15,16 +15,22 @@ use App\Http\Controllers\VenueController;
 |
 */
 
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
 
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    return $request->user();
+});
+
+//SCAN
 Route::post('scan', [ScanController::class, 'processScan']);
 
 
-// Route::get('/venues/location', [VenueController::class, 'getVenuesByLocation']);
+//GEO
+Route::get('/venues/location', [VenueController::class, 'getVenuesByLocation']);
 
-// Route::get('/venues/nearby', [VenueController::class, 'getNearbyVenues']);
+Route::get('/venues/nearby', [VenueController::class, 'getNearbyVenues']);
+
+
+Route::post('scan', [ScanController::class, 'processScan']);
 
 
 

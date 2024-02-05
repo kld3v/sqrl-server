@@ -136,6 +136,7 @@ class ScanController extends Controller
         }
     }
 
+
     public function getScans(Request $request)
     {
         $urlId = $request->input('url_id');
