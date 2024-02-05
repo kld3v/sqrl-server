@@ -18,4 +18,9 @@ class URL extends Model
     {
         return $this->hasMany(Scan::class, 'url_id');
     }
+
+    public function venues()
+    {
+        return $this->hasMany(Venue::class, 'url_id');
+    }
 }
