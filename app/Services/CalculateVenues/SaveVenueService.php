@@ -5,6 +5,6 @@ namespace App\Services\CalculateVenues;
 
 use Illuminate\Support\Facades\App;
 
-class VenueStorageService {
+class SaveVenueService {
     // Methods to save borders as MySQL polygons in the venues database
 }

@@ -4,6 +4,7 @@
 namespace App\Services\CalculateVenues;
 
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\File;
 
 class BorderCalculationService {
 
@@ -12,7 +13,7 @@ class BorderCalculationService {
         $scriptPath = base_path('app/Scripts/CalculateVenue/BorderCalculation/alfa_main.py');
 
         $transformedPts = array_map(function($point) {
-            return [(float)$point[0], (float)$point[1]]; // Flip coordinates and convert to float
+            return [(float)$point[0], (float)$point[1]]; // convert to float
         }, $pts);
 
         $args = escapeshellarg(json_encode($transformedPts)) . ' ' . escapeshellarg($alfa);
@@ -20,7 +21,10 @@ class BorderCalculationService {
         exec("py " . escapeshellarg($scriptPath) . " " . $args, $output, $return_var);
 
         if ($return_var !== 0) {
-            throw new \Exception("Python script execution failed");
+            // Instead of throwing an exception, log the error and continue
+            $logPath = storage_path('logs/GeoLog.txt'); // Adjust path as needed
+            File::append($logPath, "[" . now() . "] Python script execution failed for cluster: " . json_encode($transformedPts) . "\n");
+            return []; // Return an empty array or another appropriate default value
         }
 
         $result = json_decode(implode("\n", $output), true);
