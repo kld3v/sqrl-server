@@ -15,6 +15,7 @@ use App\Http\Controllers\VenueController;
 |
 */
 
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
@@ -27,3 +28,11 @@ Route::post('scan', [ScanController::class, 'processScan']);
 Route::get('/venues/location', [VenueController::class, 'getVenuesByLocation']);
 
 Route::get('/venues/nearby', [VenueController::class, 'getNearbyVenues']);
+
+
+Route::post('scan', [ScanController::class, 'processScan']);
+
+
+
+//DO NOT GO PUBLIC WITH THIS ROUTE
+Route::get('/getscans', [ScanController::class, 'getScans']);
