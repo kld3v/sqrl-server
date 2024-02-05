@@ -54,7 +54,7 @@ class ScanController_processScan_test extends TestCase
         ]);
         
         // Act
-        $response = $this->post('/process-scan', $request->all());
+        $response = $this->post('/api/scan', $request->all());
         
         // Assert
         $response->assertStatus(200);
