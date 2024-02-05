@@ -21,7 +21,7 @@ return new class extends Migration
             $table->text('address')->nullable();
             $table->string('postcode')->nullable();
             $table->string('google_maps')->nullable();
-            $table->polygon('area')->nullable();
+            $table->polygon('area');
             $table->spatialIndex('area'); // adding spatial index
             $table->boolean('complete')->default(false);
             $table->timestamps();
