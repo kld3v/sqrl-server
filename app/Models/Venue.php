@@ -18,7 +18,7 @@ class Venue extends Model
         'postcode',
         'google_maps',
         'area',
-        'complete'
+        'status'
     ];
 
     public $timestamps = true;
