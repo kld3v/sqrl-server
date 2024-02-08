@@ -53,6 +53,7 @@ class ScanProcessingService
             
             // URL not in DB, evaluate and add
             $trustScore = $this->evaluateTrustService->evaluateTrust($url);
+           
             $score = $trustScore['trust_score'];         
             
             $existingUrl = URL::create(['url' => $url, 'trust_score' => $score]);

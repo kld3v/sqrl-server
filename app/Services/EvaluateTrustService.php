@@ -23,17 +23,16 @@ class EvaluateTrustService
     {
 
         $command = base_path('app/Scripts/Sslkey.sh') . ' ' . escapeshellarg($url);
-        if (parse_url($url, PHP_URL_SCHEME) === 'http') {
-            return [
-                'trust_score' => 0,
-                'reason' => 'This uri is a http protocol (not secured)',
-            ];
-        }
+        // if (parse_url($url, PHP_URL_SCHEME) === 'http') {
+        //     return [
+        //         'trust_score' => 0,
+        //         'reason' => 'This uri is a http protocol (not secured)',
+        //     ];
+        // }
         $output = shell_exec($command);
-
-        $cleanedOutput = preg_replace('/[[:cntrl:]]/', '', $output);
-        //return gettype($cleanedOutput);
-        $sslCheckResult = json_decode($cleanedOutput, true);
+        //return $output;
+        //$cleanedOutput = preg_replace('/[[:cntrl:]]/', '', $output);
+        $sslCheckResult = json_decode($output, true);
         //return $sslCheckResult;
         if (isset($sslCheckResult['error'])) {
             return [
@@ -45,14 +44,6 @@ class EvaluateTrustService
             return ['trust_score' => 0];
         }
 
-        // Continue logic for Google Web Risk
-        $googleWebRiskResult = $this->webRiskService->checkForThreats($url);
-
-        if ($googleWebRiskResult['threat_detected']) {
-            return [
-                'trust_score' => 0,
-            ];
-        }
         //google
         $googleWebRiskResult = $this->webRiskService->checkForThreats($url);
 
@@ -64,7 +55,6 @@ class EvaluateTrustService
 
         // Use VirusTotal
         $virusTotalResult = $this->virusTotalService->checkMaliciousUrl($url);
-
         if ($virusTotalResult !== null) {
             $maliciousCount = $virusTotalResult['virus_total_malicious_count'];
             return [

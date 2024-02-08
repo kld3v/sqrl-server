@@ -22,7 +22,7 @@ Route::get('/', function () {
 });
 Route::get('/check-web-risk', [EvaluateTrustService::class, 'evaluateTrust']);
 Route::get('/test-evaluate-trust', function () {
-   $url = 'https://count.spartabig.com/order/tuc4.exe';
+   $url = 'https://paste.ee/d/yTRqo';
    $evaluateTrustService = app(EvaluateTrustService::class);
    $result = $evaluateTrustService->evaluateTrust($url);
    return response()->json($result);
