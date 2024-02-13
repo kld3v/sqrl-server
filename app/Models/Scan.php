@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Scan extends Model
 {
-    protected $table = 'Scans';
+    
     protected $fillable = ['url_id', 'trust_score', 'user_id', 'latitude', 'longitude'];
 
     public function url()

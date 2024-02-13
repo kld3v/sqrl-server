@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::disableForeignKeyConstraints();
 
-        Schema::create('URL_checks_log', function (Blueprint $table) {
+        Schema::create('url_checks_log', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('url_id');
             $table->foreign('url_id')->references('id')->on('URLs');
@@ -31,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('URL_checks_log');
+        Schema::dropIfExists('url_checks_log');
     }
 };

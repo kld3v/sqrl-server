@@ -4,9 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+// TODO consider naming to UrlCheck
 class URLCheckLog extends Model
 {
-    protected $table = 'URL_checks_log';
+    protected $table = 'url_checks_log';
     protected $fillable = ['url_id', 'test_result', 'trust_score'];
 
     public function url()

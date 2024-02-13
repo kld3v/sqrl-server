@@ -53,7 +53,6 @@ class ScanSeeder extends Seeder
                 }
             
             }
-
                 
             Scan::create([
                 'url_id' => $urlId,
