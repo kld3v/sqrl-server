@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('URLs', function (Blueprint $table) {
+        Schema::create('urls', function (Blueprint $table) {
             $table->id();
             $table->string('url', 2048); //UNIQUE ISSUE
             $table->smallInteger('trust_score');
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('URLs');
+        Schema::dropIfExists('urls');
     }
 };
