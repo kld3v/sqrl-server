@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('company')->nullable();
             $table->string('chain')->nullable();
             $table->unsignedBigInteger('url_id')->nullable();
-            $table->foreign('url_id')->references('id')->on('URLs');
+            $table->foreign('url_id')->references('id')->on('urls');
             $table->string('tel')->nullable();
             $table->text('address')->nullable();
             $table->string('postcode')->nullable();

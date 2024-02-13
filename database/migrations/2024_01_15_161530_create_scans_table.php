@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('scans', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('url_id');
-            $table->foreign('url_id')->references('id')->on('URLs');
+            $table->foreign('url_id')->references('id')->on('urls');
             $table->smallInteger('trust_score');
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
