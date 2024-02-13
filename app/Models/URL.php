@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class URL extends Model
 {
+
+    public $table = 'urls';
     
     protected $fillable = ['url', 'trust_score'];
 
