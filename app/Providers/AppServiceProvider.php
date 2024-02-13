@@ -6,7 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use App\Services\ScanProcessingService;
 use App\Services\ShortURL\ShortURLMain;
 use App\Services\EvaluateTrustService;
-use App\Services\ShortUrl\ShortURLServices;
+use App\Services\ShortURL\ShortURLServices;
 
 class AppServiceProvider extends ServiceProvider
 {
