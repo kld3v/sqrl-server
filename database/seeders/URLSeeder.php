@@ -16,15 +16,19 @@ class URLSeeder extends Seeder
     public function run()
     {
         $faker = Faker::create();
+        $insertData = [];
 
         foreach (range(1,1000) as $index) {
             $trustScore = (substr($index, -1) > 6) ? 1000 : $faker->numberBetween($min = 1, $max = 1000);
 
-            URL::create([
+            $insertData[] = [
                 'url' => $faker->url,
-                'trust_score' => $trustScore
-            ]);
+                'trust_score' => $trustScore,
+                'updated_at' => now(),
+                'created_at' => now(),
+            ];
         }
+        URL::insert($insertData);
 
         URL::create([
             'url' => "https://alacrityfoundation.co.uk/",

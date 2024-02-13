@@ -15,8 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('url', 2048); //UNIQUE ISSUE
             $table->smallInteger('trust_score');
-            $table->timestamp('created_at');
-            $table->timestamp('updated_at');
+            $table->timestamps();
         });
     }
 
