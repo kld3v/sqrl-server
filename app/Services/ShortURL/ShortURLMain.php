@@ -2,7 +2,7 @@
 
 
 namespace App\Services\ShortURL;
-use App\Services\ShortURL\resolvers\Generic;
+use App\Services\ShortURL\Resolvers\Generic;
 
 class ShortURLMain
 {
