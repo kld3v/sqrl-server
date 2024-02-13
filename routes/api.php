@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PingController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ScanController;
@@ -36,3 +37,5 @@ Route::post('scan', [ScanController::class, 'processScan']);
 
 //DO NOT GO PUBLIC WITH THIS ROUTE
 Route::get('/getscans', [ScanController::class, 'getScans']);
+
+Route::get('/ping', [PingController::class, 'ping']);
