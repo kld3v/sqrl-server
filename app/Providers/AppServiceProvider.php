@@ -5,7 +5,6 @@ namespace App\Providers;
 use App\Services\EvaluateTrustService;
 use App\Services\ScanProcessingService;
 use App\Services\ShortURL\ShortURLMain;
-use App\Services\EvaluateTrustService;
 use Illuminate\Support\ServiceProvider;
 use App\Services\ScanLayers\GoogleWebRisk;
 use App\Services\ShortURL\ShortURLServices;

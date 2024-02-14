@@ -59,7 +59,7 @@ class ScanProcessingService
             $existingUrl = URL::create(['url' => $url, 'trust_score' => $score]);
         }
 
-        return $trustScore;
+        return $existingUrl;
     }
 
     private function isTrustScoreOutdated($urlRecord)
