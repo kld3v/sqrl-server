@@ -52,7 +52,7 @@ class ScanController extends Controller
         $scanRequest = new Request($formattedScanData);
         $this->store($scanRequest);
         
-        return response()->json(['trust_score' => $scanData]);
+        return response()->json(['trust_score' => $scanData['trust_score']]);
 
     }
 
