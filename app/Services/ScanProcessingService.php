@@ -26,7 +26,7 @@ class ScanProcessingService
     }
     public function processScan($url)
     {   
-
+        
         // Expanding shortened URL, if necessary
         if ($this->shortURLMain->isShortURL($url)) {
             $url = $this->shortURLMain->unshorten($url);
@@ -34,23 +34,32 @@ class ScanProcessingService
 
         // Check if URL is already in the database
         $existingUrl = URL::where('url', $url)->first();
+        
 
         if ($existingUrl) {
             // Check if the trust score needs to be updated
             if ($this->isTrustScoreOutdated($existingUrl)) {
                 $existingUrl->update([
                     'trust_score' => $this->evaluateTrustService->evaluateTrust($url)
-                ]);
+                    
+                ]
+            );
+        
             } else {
+
                 $trustScore = $existingUrl->trust_score;
             }
         } else {
+            
             // URL not in DB, evaluate and add
             $trustScore = $this->evaluateTrustService->evaluateTrust($url);
-            $existingUrl = URL::create(['url' => $url, 'trust_score' => $trustScore]);
+           
+            $score = $trustScore['trust_score'];         
+            
+            $existingUrl = URL::create(['url' => $url, 'trust_score' => $score]);
         }
 
-        return $existingUrl;
+        return $trustScore;
     }
 
     private function isTrustScoreOutdated($urlRecord)
