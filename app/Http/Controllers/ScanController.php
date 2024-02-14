@@ -20,7 +20,7 @@ class ScanController extends Controller
         $this->ScanProcessingService = $ScanProcessingService;
     }
 
-    public function processScan(Request $request)
+    public function processRequest(Request $request)
     {
         // echo "URL 25:" . $request . "\n";
         // Log::info('processScan called with request: ', $request->all());
@@ -33,7 +33,7 @@ class ScanController extends Controller
     
         $url = $request->input('url');
     
-        $scanData = $this->ScanProcessingService->processRequest($url);
+        $scanData = $this->ScanProcessingService->processScan($url);
     
         // Add user_id to the scan data
         $scanData['user_id'] = $request->input('user_id'); 

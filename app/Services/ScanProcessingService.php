@@ -24,7 +24,7 @@ class ScanProcessingService
         $this->shortURLMain = $shortURLMain;
         $this->evaluateTrustService = $evaluateTrustService;
     }
-    public function processRequest($url)
+    public function processScan($url)
     {   
 
         // Expanding shortened URL, if necessary
