@@ -21,7 +21,8 @@ class ScanController extends Controller
     }
 
     public function processRequest(Request $request)
-    {
+    {   
+        //cunt
         // echo "URL 25:" . $request . "\n";
         // Log::info('processScan called with request: ', $request->all());
         $request->validate([
