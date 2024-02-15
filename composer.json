@@ -13,7 +13,7 @@
 		"laravel/framework": "^10.10",
 		"laravel/sanctum": "^3.3",
 		"laravel/tinker": "^2.8",
-		"php-ai/php-ml": "^0.10.0"
+		"php-ai/php-ml": "^0.10.0",
 		"io-developer/php-whois": "^4.1"
 	},
 	"require-dev": {
