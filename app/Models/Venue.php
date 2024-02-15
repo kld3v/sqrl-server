@@ -17,6 +17,7 @@ class Venue extends Model
         'postcode',
         'google_maps',
         'area',
+        'midpoint',
         'complete'
     ];
 

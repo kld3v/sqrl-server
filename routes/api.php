@@ -35,9 +35,8 @@ Route::get('/venues/nearby', [VenueController::class, 'getNearbyVenues']);
 
 Route::post('scan', [ScanController::class, 'processRequest']);
 
+Route::get('/ping', [PingController::class, 'ping']);
 
 
 //DO NOT GO PUBLIC WITH THIS ROUTE
 Route::get('/getscans', [ScanController::class, 'getScans']);
-
-Route::get('/ping', [PingController::class, 'ping']);
