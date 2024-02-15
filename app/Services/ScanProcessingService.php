@@ -56,6 +56,7 @@ class ScanProcessingService
            
             $score = $trustScore['trust_score'];         
             
+
             $existingUrl = URL::create(['url' => $url, 'trust_score' => $score]);
         }
 

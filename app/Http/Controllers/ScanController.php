@@ -22,9 +22,7 @@ class ScanController extends Controller
 
     public function processRequest(Request $request)
     {   
-        //cunt
-        // echo "URL 25:" . $request . "\n";
-        // Log::info('processScan called with request: ', $request->all());
+
         $request->validate([
             'url' => 'required',
             'user_id' => 'required|exists:users,id',
@@ -36,13 +34,11 @@ class ScanController extends Controller
     
         $scanData = $this->ScanProcessingService->processScan($url);
     
-        // Add user_id to the scan data
-        // $scanData['user_id'] = $request->input('user_id'); 
     
         // Format data for the 'scans' table
         $formattedScanData = [
-            // 'url_id' => $scanData['id'],
-            'trust_score' =>  $scanData,
+            'url_id' => $scanData['id'],
+            'trust_score' =>  $scanData['trust_score'],
             'user_id' => $request->input('user_id'),
             'latitude' => $request->input('latitude'),
             'longitude' => $request->input('longitude')];
