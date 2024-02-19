@@ -20,32 +20,30 @@ class ScanController extends Controller
         $this->ScanProcessingService = $ScanProcessingService;
     }
 
-    public function processScan(Request $request)
-    {
-        // echo "URL 25:" . $request . "\n";
-        // Log::info('processScan called with request: ', $request->all());
+    public function processRequest(Request $request)
+    {   
+
         $request->validate([
-            'url' => 'required|url',
-            'user_id' => 'required|exists:users,id',
+            'url' => 'required',
+            'device_uuid' => 'required',
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric'
         ]);
     
         $url = $request->input('url');
     
-        $scanData = $this->ScanProcessingService->processRequest($url);
+        $scanData = $this->ScanProcessingService->processScan($url);
     
-        // Add user_id to the scan data
-        $scanData['user_id'] = $request->input('user_id'); 
     
         // Format data for the 'scans' table
         $formattedScanData = [
             'url_id' => $scanData['id'],
-            'trust_score' => $scanData['trust_score'],
-            'user_id' => $scanData['user_id'],
+            'trust_score' =>  $scanData['trust_score'],
+            'device_uuid' => $request->input('device_uuid'),
             'latitude' => $request->input('latitude'),
             'longitude' => $request->input('longitude')];
 
+            // dd($formattedScanData);
         // Create scan record using the store method
         $scanRequest = new Request($formattedScanData);
         $this->store($scanRequest);
@@ -59,7 +57,7 @@ class ScanController extends Controller
         $rules = [
             'url_id' => 'required|exists:urls,id',
             'trust_score' => 'required|numeric|min:0|max:1000',
-            'user_id' => 'required|exists:users,id',
+            'device_uuid' => 'required',
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
         ];

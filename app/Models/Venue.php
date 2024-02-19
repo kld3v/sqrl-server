@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Venue extends Model
 {
-    protected $table = 'venues';
 
     protected $fillable = [
         'company',
@@ -18,7 +17,9 @@ class Venue extends Model
         'postcode',
         'google_maps',
         'area',
-        'status'
+        'midpoint',
+        'status',
+        'complete'
     ];
 
     public $timestamps = true;

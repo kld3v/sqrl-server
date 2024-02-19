@@ -7,7 +7,7 @@ use App\Models\Scan;
 use App\Models\URL;
 use Faker\Factory as Faker;
 
-class ScanSeeder extends Seeder
+class ScanTestSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -26,9 +26,13 @@ class ScanSeeder extends Seeder
 
         $assignedLocations = []; // Array to track the assigned locations of URL IDs
 
+        $insertData = [];
+
+        $urls = URL::all();
+
         for ($i = 1; $i <= 20000; $i++) {
-            $urlId = $faker->numberBetween(1, 1000);
-            $url = URL::find($urlId);
+            $url = $urls->random();
+            $urlId = $url->id;
             $trustScore = $url ? $url->trust_score : 0;
             $urlLastDigit = substr($urlId, -1);
             $urlFirstDigit = substr($urlId, 0, 1);
@@ -54,14 +58,22 @@ class ScanSeeder extends Seeder
             
             }
 
-                
-            Scan::create([
+            $insertData[] = [
                 'url_id' => $urlId,
                 'latitude' => $latitude,
                 'longitude' => $longitude,
-                'user_id' => $faker->numberBetween(1, 1500),
-                'trust_score' => $trustScore
-            ]);
+                'device_uuid' => $faker->numberBetween(1, 1500),
+                'trust_score' => $trustScore,
+                'updated_at' => now(),
+                'created_at' => now(),
+            ];
+
+            if (count($insertData) > 1000) {
+                Scan::insert($insertData);
+                $insertData = [];
+            }
         }
+
+        Scan::insert($insertData);
     }
 }               

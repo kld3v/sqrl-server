@@ -16,14 +16,12 @@ return new class extends Migration
         Schema::create('scans', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('url_id');
-            $table->foreign('url_id')->references('id')->on('URLs');
+            $table->foreign('url_id')->references('id')->on('urls');
             $table->smallInteger('trust_score');
-            $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->char('device_uuid', 36);
             $table->decimal('latitude', 9, 6)->nullable();
             $table->decimal('longitude', 9, 6)->nullable();
-            $table->timestamp('created_at');
-            $table->timestamp('updated_at');
+            $table->timestamps();
         });
 
         Schema::enableForeignKeyConstraints();
