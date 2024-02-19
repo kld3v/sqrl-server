@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('urls', function (Blueprint $table) {
             $table->id();
-            $table->string('url', 2048); //UNIQUE ISSUE
+            $table->string('url', 2048)->unique();
             $table->smallInteger('trust_score');
             $table->timestamps();
         });
