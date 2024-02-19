@@ -7,7 +7,7 @@ use App\Models\Scan;
 use App\Models\URL;
 use Faker\Factory as Faker;
 
-class ScanSeeder extends Seeder
+class ScanTestSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -62,7 +62,7 @@ class ScanSeeder extends Seeder
                 'url_id' => $urlId,
                 'latitude' => $latitude,
                 'longitude' => $longitude,
-                'user_id' => $faker->numberBetween(1, 1500),
+                'device_uuid' => $faker->numberBetween(1, 1500),
                 'trust_score' => $trustScore,
                 'updated_at' => now(),
                 'created_at' => now(),

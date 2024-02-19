@@ -6,7 +6,7 @@ use Illuminate\Database\Seeder;
 use App\Models\URL;
 use Faker\Factory as Faker;
 
-class URLSeeder extends Seeder
+class URLTestSeeder extends Seeder
 {
     /**
      * Run the database seeds.

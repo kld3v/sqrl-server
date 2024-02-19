@@ -25,7 +25,7 @@ class ScanController extends Controller
 
         $request->validate([
             'url' => 'required',
-            'user_id' => 'required|exists:users,id',
+            'device_uuid' => 'required',
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric'
         ]);
@@ -39,7 +39,7 @@ class ScanController extends Controller
         $formattedScanData = [
             'url_id' => $scanData['id'],
             'trust_score' =>  $scanData['trust_score'],
-            'user_id' => $request->input('user_id'),
+            'device_uuid' => $request->input('device_uuid'),
             'latitude' => $request->input('latitude'),
             'longitude' => $request->input('longitude')];
 
@@ -57,7 +57,7 @@ class ScanController extends Controller
         $rules = [
             'url_id' => 'required|exists:urls,id',
             'trust_score' => 'required|numeric|min:0|max:1000',
-            'user_id' => 'required|exists:users,id',
+            'device_uuid' => 'required',
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
         ];
