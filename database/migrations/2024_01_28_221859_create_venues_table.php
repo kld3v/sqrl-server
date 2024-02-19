@@ -23,7 +23,10 @@ return new class extends Migration
             $table->string('google_maps')->nullable();
             $table->polygon('area');
             $table->spatialIndex('area'); // adding spatial index
-            $table->string('status')->default('none');
+            $table->point('midpoint'); 
+            $table->spatialIndex('midpoint');
+            $table->string('status', 40)->default("inactive");
+            $table->boolean('complete')->default(false);
             $table->timestamps();
         });
     }
