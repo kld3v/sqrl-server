@@ -18,6 +18,7 @@ class Venue extends Model
         'google_maps',
         'area',
         'midpoint',
+        'status',
         'complete'
     ];
 

@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Services\CalculateVenues\TestAllGeoShit;
+use App\Services\CalculateVenues\CalculateVenueService;
 
 class TestVenueCalculations extends Command
 {
@@ -15,10 +15,10 @@ class TestVenueCalculations extends Command
         parent::__construct();
     }
 
-    public function handle(TestAllGeoShit $testAllGeoShit)
+    public function handle(CalculateVenueService $calculateVenueService)
     {
         $this->info('Starting venue calculations...');
-        $testAllGeoShit->processAllUrlIds();
-        $this->info('Venue calculations completed and GeoJSON files generated.');
+        $calculateVenueService->processAllUrlIds();
+        $this->info('Venue calculations completed.');
     }
 }

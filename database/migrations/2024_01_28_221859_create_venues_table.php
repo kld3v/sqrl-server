@@ -22,9 +22,10 @@ return new class extends Migration
             $table->string('postcode')->nullable();
             $table->string('google_maps')->nullable();
             $table->polygon('area');
-            $table->spatialIndex('area'); // existing spatial index on area
+            $table->spatialIndex('area'); // adding spatial index
             $table->point('midpoint'); 
             $table->spatialIndex('midpoint');
+            $table->string('status', 40)->default("inactive");
             $table->boolean('complete')->default(false);
             $table->timestamps();
         });
