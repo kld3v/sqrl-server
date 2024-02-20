@@ -1,0 +1,36 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreateBugResponsesTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('bug_responses', function (Blueprint $table) {
+            $table->id();
+            $table->char('device_uuid', 36);
+            $table->text('bug_description');
+            $table->enum('status', ['Open', 'In Review', 'Resolved']);
+            $table->dateTime('report_date');
+            $table->dateTime('resolution_date')->nullable();
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('bug_responses');
+    }
+}

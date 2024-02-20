@@ -23,5 +23,6 @@ class DatabaseSeeder extends Seeder
         // $this->call(URLSeeder::class);
         // $this->call(ScanSeeder::class);
         $this->call(VenueSeeder::class);
+        $this->call(QuestionsSeeder::class);
     }
 }
