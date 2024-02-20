@@ -37,7 +37,7 @@ class ScanController extends Controller
     
         // Format data for the 'scans' table
         $formattedScanData = [
-            //'url_id' => $scanData['id'],
+            'url_id' => $scanData['id'],
             'trust_score' =>  $scanData['trust_score'],
             'device_uuid' => $request->input('device_uuid'),
             'latitude' => $request->input('latitude'),
