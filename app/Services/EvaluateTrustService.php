@@ -3,6 +3,7 @@
 
 namespace App\Services;
 
+use App\Services\UrlResolver\UrlRedirectionChecker;
 use App\Services\UrlResolver\UrlResolver;
 use App\Services\UrlResolver\BadDomainChecker;
 use Illuminate\Support\Facades\App;
@@ -30,9 +31,25 @@ class EvaluateTrustService
     {
         $urlCleaner = new UrlCleaner();
         $modifiedUrl = $urlCleaner->removeWWW($url);
+        //redirections tracking:
+        $redirectionChecker = new UrlRedirectionChecker($modifiedUrl);
+        $hasRedirection = $redirectionChecker->checkRedirection();
+        if ($hasRedirection) {
+            $command = base_path('app/Scripts/RedirectTracker.sh') . ' ' . escapeshellarg($url);
+            $output = shell_exec($command);
+            $parsed=parse_url($output,PHP_URL_SCHEME);
+            if ($parsed === 'http'){
+                return [
+                    'trust_score'=>0,
+                    'reason'=>'http in the last redirection'
+                ];
+            }
+        }
+
 
         $urlResolver = new UrlResolver();
         $resolvedUrl = $urlResolver->resolveUrl($modifiedUrl);
+        
         //only works when there are no subdomains
         if ($this->isIpAddress($resolvedUrl['domain'])) {
             return [
@@ -40,7 +57,7 @@ class EvaluateTrustService
                 'reason' => 'url is in an IP form'
             ];
         }
-
+        return 's';
         $badDomainChecker = new BadDomainChecker();
         if ($badDomainChecker->checkDomain($modifiedUrl)) {
             return [
@@ -48,8 +65,6 @@ class EvaluateTrustService
                 'reason' => 'URL is in the bad domains list',
             ];
         } 
-
-
 
         return 1;
 

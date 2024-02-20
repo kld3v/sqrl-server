@@ -23,6 +23,12 @@ class UrlResolver
     }
     private function extractDomain($host)
     {
+        // Check if the host is an IP address
+        if (filter_var($host, FILTER_VALIDATE_IP)) {
+            return $host; // Return the IP address as the domain
+        }
+
+        // Use the existing regular expression for extracting domains
         if (preg_match("/(?P<domain>[a-z0-9][a-z0-9\-]{1,63}\.[a-z\.]{2,6})$/i", $host, $matches)) {
             return $matches['domain'];
         } else {
