@@ -14,3 +14,4 @@ while redirect_url=$(
   url=$redirect_url
   [[ -z "$url" ]] && break
 done
+echo "Final URL: $url"
