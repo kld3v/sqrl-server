@@ -4,6 +4,7 @@ namespace App\Services\CalculateVenues;
 
 use App\Models\Scan;
 use App\Models\Url; // Assuming you have a Url model
+use App\Services\CalculateVenices\SaveVenueService;
 use Illuminate\Support\Facades\File; // For file operations
 
 class CalculateVenueService {
@@ -12,17 +13,20 @@ class CalculateVenueService {
     protected $clusteringService;
     protected $borderCalculationService;
     protected $borderOptimisationService;
+    protected $saveVenueService;
 
     public function __construct(
         ScanDataFormatService $scanDataFormatService,
         ClusteringService $clusteringService,
         BorderCalculationService $borderCalculationService,
-        BorderOptimisationService $borderOptimisationService
+        BorderOptimisationService $borderOptimisationService,
+        SaveVenueService $saveVenueService
     ) {
         $this->scanDataFormatService = $scanDataFormatService;
         $this->clusteringService = $clusteringService;
         $this->borderCalculationService = $borderCalculationService;
         $this->borderOptimisationService = $borderOptimisationService;
+        $this->saveVenueService = $saveVenueService;
     }
 
     public function VenueCalculationMain($urlId) {
@@ -49,6 +53,7 @@ class CalculateVenueService {
                     File::append($logPath, "[" . now() . "] Calling RamerDouglasPeucker2d with border\n");
                     $optimisedBorder = $this->borderOptimisationService->RamerDouglasPeucker2d($border, 0.00003);
                     File::append($logPath, "[" . now() . "] RamerDouglasPeucker2d output: " . json_encode($optimisedBorder) . "\n");
+                    
                     
                     $borders[] = $border;
                     $optimisedBorders[] = $optimisedBorder;
@@ -148,7 +153,7 @@ class CalculateVenueService {
         $optimisedBordersFeatures = [];
 
         //JUST FOR TESTING
-        // $urlIds = array_slice($urlIds->toArray(), 0, 20);
+        $urlIds = array_slice($urlIds->toArray(), 0, 20);
 
         foreach ($urlIds as $urlId) {
             $data = $this->VenueCalculationMain($urlId);
@@ -170,9 +175,9 @@ class CalculateVenueService {
             }
         }
 
-        // File::put(public_path('formattedScans.geojson'), json_encode($this->wrapFeaturesIntoGeoJSON($formattedScansFeatures)));
-        // File::put(public_path('clusters.geojson'), json_encode($this->wrapFeaturesIntoGeoJSON($clustersFeatures)));
-        // File::put(public_path('borders.geojson'), json_encode($this->wrapFeaturesIntoGeoJSON($bordersFeatures)));
-        // File::put(public_path('optimisedBorders.geojson'), json_encode($this->wrapFeaturesIntoGeoJSON($optimisedBordersFeatures)));
+        File::put(public_path('formattedScans.geojson'), json_encode($this->wrapFeaturesIntoGeoJSON($formattedScansFeatures)));
+        File::put(public_path('clusters.geojson'), json_encode($this->wrapFeaturesIntoGeoJSON($clustersFeatures)));
+        File::put(public_path('borders.geojson'), json_encode($this->wrapFeaturesIntoGeoJSON($bordersFeatures)));
+        File::put(public_path('optimisedBorders.geojson'), json_encode($this->wrapFeaturesIntoGeoJSON($optimisedBordersFeatures)));
     }
 }
