@@ -4,7 +4,6 @@ namespace App\Services\CalculateVenues;
 
 use App\Models\Scan;
 use App\Models\Url; // Assuming you have a Url model
-use App\Services\CalculateVenices\SaveVenueService;
 use Illuminate\Support\Facades\File; // For file operations
 
 class CalculateVenueService {
@@ -45,6 +44,7 @@ class CalculateVenueService {
     
                 $borders = [];
                 $optimisedBorders = [];
+                $savedVenue = [];
                 foreach ($clusters as $cluster) {
                     File::append($logPath, "[" . now() . "] cluster working on: " . json_encode($cluster) . "\n");
                     File::append($logPath, "[" . now() . "] Calling calculateBorders with cluster\n");
@@ -53,12 +53,15 @@ class CalculateVenueService {
                     File::append($logPath, "[" . now() . "] Calling RamerDouglasPeucker2d with border\n");
                     $optimisedBorder = $this->borderOptimisationService->RamerDouglasPeucker2d($border, 0.00003);
                     File::append($logPath, "[" . now() . "] RamerDouglasPeucker2d output: " . json_encode($optimisedBorder) . "\n");
-                    
-                    
+
+                    File::append($logPath, "[" . now() . "] Calling Venue Saver\n");
+                    $savedVenue = $this->saveVenueService->save($urlId, $optimisedBorder);
+                    File::append($logPath, "[" . now() . "] Venue Saver output: " . json_encode($savedVenue) . "\n");
+
                     $borders[] = $border;
                     $optimisedBorders[] = $optimisedBorder;
+                    $savedVenue[] = $savedVenue;
 
-                    
                 }
     
                 // Log method completion

@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 class SaveVenueService
 {
 
-    public static function save(int $urlId, array $coordinates)
+    public static function save($urlId, $coordinates)
     {
         $midpoint = self::calculateMidpoint($coordinates);
         $polygon = "POLYGON((" . implode(", ", array_map(fn($coordinate) => implode(" ", $coordinate), $coordinates)) . "))";
@@ -24,6 +24,9 @@ class SaveVenueService
                     $venue->area = DB::raw("ST_GeomFromText('$polygon')");
                     $venue->midpoint = DB::raw("ST_GeomFromText('POINT($midpoint[0] $midpoint[1])')");
                     $venue->save();
+
+                    echo "old";
+                    // return $venue;
                 }
             }
         } else {
@@ -35,6 +38,9 @@ class SaveVenueService
             $newVenue->status = 'pending';
             $newVenue->complete = false;
             $newVenue->save();
+
+            echo "new";
+            // return $newVenue;
         }
     }
 
