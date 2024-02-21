@@ -55,8 +55,13 @@ class CalculateVenueService {
                     File::append($logPath, "[" . now() . "] RamerDouglasPeucker2d output: " . json_encode($optimisedBorder) . "\n");
 
                     File::append($logPath, "[" . now() . "] Calling Venue Saver\n");
-                    $savedVenue = $this->saveVenueService->save($urlId, $optimisedBorder);
-                    File::append($logPath, "[" . now() . "] Venue Saver output: " . json_encode($savedVenue) . "\n");
+                    
+                    if (isset($optimisedBorders) && count($optimisedBorders) > 2) { 
+                        $savedVenue = $this->saveVenueService->save($urlId, $optimisedBorder);
+                        File::append($logPath, "[" . now() . "] Venue Saver output: " . json_encode($savedVenue) . "\n");
+                    } else {
+                        File::append($logPath, "[" . now() . "] Skipped Venue Saver due to optimisedBorders length <= 2\n");
+                    }
 
                     $borders[] = $border;
                     $optimisedBorders[] = $optimisedBorder;

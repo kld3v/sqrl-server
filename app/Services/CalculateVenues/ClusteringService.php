@@ -9,7 +9,7 @@ use Phpml\Clustering\DBSCAN;
 class ClusteringService {
     public function clusterScans(array $scans) {
         //Definitely will need adjusting
-        $metres = 10;
+        $metres = 12;
 
         //this is really simplistic and doesnt account for the fact that
         //the earth is not a perfect sphere but maybe fuck it, I think it works
