@@ -25,7 +25,7 @@ class SaveVenueService
                     $venue->midpoint = DB::raw("ST_GeomFromText('POINT($midpoint[0] $midpoint[1])')");
                     $venue->save();
 
-                    echo "old";
+                    // echo "old";
                     // return $venue;
                 }
             }
@@ -39,7 +39,7 @@ class SaveVenueService
             $newVenue->complete = false;
             $newVenue->save();
 
-            echo "new";
+            // echo "new";
             // return $newVenue;
         }
     }
