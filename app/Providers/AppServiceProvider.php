@@ -8,7 +8,10 @@ use App\Services\ShortURL\ShortURLMain;
 use Illuminate\Support\ServiceProvider;
 use App\Services\ScanLayers\GoogleWebRisk;
 use App\Services\ShortURL\ShortURLServices;
+use App\Services\UrlManipulations\IpChecker;
+use App\Services\UrlManipulations\RemoveWww;
 use App\Services\ScanLayers\VirusTotalService;
+use App\Services\UrlManipulations\RedirectionValue;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -27,7 +30,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(EvaluateTrustService::class, function ($app) {
             return new EvaluateTrustService(
                 $app->make(GoogleWebRisk::class),
-                $app->make(VirusTotalService::class)
+                $app->make(VirusTotalService::class),
+                $app->make(IpChecker::class),
+                $app->make(RemoveWww::class),
+                $app->make(RedirectionValue::class)
             );
         });
         $this->app->singleton(ScanProcessingService::class, function ($app) {
