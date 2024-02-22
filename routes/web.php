@@ -5,6 +5,8 @@ use App\Services\EvaluateTrustService;
 use App\Http\Controllers\URLmainController;
 use App\Http\Controllers\RiskEvaluationController;
 use App\Http\Controllers\TestEvaluateTrustController;
+use Inertia\Inertia;
+use App\Models\Venue;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,10 +22,16 @@ use App\Http\Controllers\TestEvaluateTrustController;
 Route::get('/', function () {
    return view('welcome');
 });
+
 Route::get('/check-web-risk', [EvaluateTrustService::class, 'evaluateTrust']);
 Route::get('/test-evaluate-trust', function () {
    $url = 'https://transfer.sh/get/ITCnLojVnm/derrick.txt';
    $evaluateTrustService = app(EvaluateTrustService::class);
    $result = $evaluateTrustService->evaluateTrust($url);
    return response()->json($result);
+});
+
+Route::get('/venues', function () {
+   $venues = Venue::all(); // Replace with your actual query logic
+   return Inertia::render('VenuePage', ['venues' => $venues]);
 });

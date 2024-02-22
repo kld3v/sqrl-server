@@ -6,6 +6,7 @@ use App\Models\Venue;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
+
 class VenueController extends Controller
 {
     public function getVenuesByLocation(Request $request)
@@ -52,6 +53,8 @@ class VenueController extends Controller
 
         return response()->json($venues);
     }
+
+
 
 
 }
