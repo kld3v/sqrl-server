@@ -53,7 +53,7 @@ class ScanProcessingService
 
             // URL not in DB, evaluate and add
             $trustScore = $this->evaluateTrustService->evaluateTrust($url);
-          
+            
             $score = $trustScore['trust_score'];    
                  
             
