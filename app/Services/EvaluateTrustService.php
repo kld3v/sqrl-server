@@ -82,12 +82,11 @@ class EvaluateTrustService
                         'reason' => 'url Schme in redirection is not https'
                     ];
                 }
-            } elseif (
-                parse_url($modifiedUrl, PHP_URL_SCHEME) == 'http'
-            ) {
+            } 
+            if(parse_url($modifiedUrl, PHP_URL_SCHEME) == 'http'){
                 return [
                     'trust_score' => 0,
-                    'reason' => 'url Schme has no redirection and is http'
+                    'reason' => 'url Schme is http'
                 ];
             }
             //handeling similarities to famouse domain names:
