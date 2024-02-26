@@ -21,5 +21,4 @@ done
 # Prepare the JSON output with the final URL
 json=$(jq -n --arg fd "$url" '{"fd": $fd}')
 
-# Output the final JSON
 echo "$json"

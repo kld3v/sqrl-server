@@ -3,6 +3,8 @@
 
 namespace App\Services;
 
+use App\Services\ScanLayers\SubdomainEnum;
+use App\Services\UrlManipulations\HasSubdomain;
 use DateTime;
 use App\Services\ScanLayers\Whois;
 use Illuminate\Support\Facades\App;
@@ -22,9 +24,7 @@ class EvaluateTrustService
 {
     protected $webRiskService;
     protected $virusTotalService;
-
     protected $ipChecker;
-
     protected $redirectionValue;
     public function __construct(
         GoogleWebRisk $webRiskService,
@@ -35,7 +35,10 @@ class EvaluateTrustService
         LevenshteinAlgorithm $levenshteinAlgorithm,
         SubdomainExtract $subdomainExtract,
         BadDomainCheck $badDomainlist,
-        WhoIs $whois
+        WhoIs $whois,
+        HasSubdomain $hasSub,
+        SubdomainEnum $subEnum
+
     ) {
         $this->webRiskService = $webRiskService;
         $this->virusTotalService = $virusTotalService;
@@ -46,96 +49,133 @@ class EvaluateTrustService
         $this->subdomainExtract = $subdomainExtract;
         $this->badDomainlist = $badDomainlist;
         $this->whois = $whois;
+        $this->hasSub = $hasSub;
+        $this->subEnum = $subEnum;
     }
     public function evaluateTrust($url)
     {
-        //removing www from all ulrs
-        $modifiedUrl = $this->removeWWW->removeWWW($url);
+        try {
+            //removing www from all ulrs
+            $modifiedUrl = $this->removeWWW->removeWWW($url);
+            //handeling urls with IP address
+            if ($this->ipChecker->isIpAddress($modifiedUrl)) {
+                return [
+                    'trust_score' => 0,
+                    'reason' => 'IP address detected. Only domain names are allowed.'
+                ];
+            }
+            //looking in to the bad domain list:
+            if ($this->badDomainlist->isDomainInJson($modifiedUrl)) {
+                return [
+                    'trust_score' => 0,
+                    'reason' => 'in the bad domain list (malwares from urlH)'
+                ];
+            }
+            //return $this->redirectionValue->redirectionValue($modifiedUrl);
+            if ($this->redirectionValue->redirectionValue($modifiedUrl)) {
+                $redirectionChecker = base_path('app/Scripts/RedirectionCheck.sh') . ' ' . escapeshellarg($modifiedUrl);
+                $redirectionTracker = shell_exec($redirectionChecker);
+                $rediItem = json_decode($redirectionTracker)->fd;
+                if (parse_url($rediItem, PHP_URL_SCHEME) !== 'https') {
+                    return [
+                        'trust_score' => 0,
+                        'reason' => 'url Schme in redirection is not https'
+                    ];
+                }
+            } elseif (
+                parse_url($modifiedUrl, PHP_URL_SCHEME) == 'http'
+            ) {
+                return [
+                    'trust_score' => 0,
+                    'reason' => 'url Schme has no redirection and is http'
+                ];
+            }
+            //handeling similarities to famouse domain names:
+            //return $similarDomain = $this->levenshteinAlgorithm->compareDomains($modifiedUrl);
+            if ($similarDomain = $this->levenshteinAlgorithm->compareDomains($modifiedUrl)) {
+                return [
+                    'trust_score' => 800,
+                    'reason' => "similar domain found"
+                ];
+            }
+            //checking for ssl/tls props:
+            $ssl_whois_Entery = parse_url($modifiedUrl, PHP_URL_HOST);
+            $command = base_path('app/Scripts/Sslkey.sh') . ' ' . escapeshellarg($ssl_whois_Entery);
+            $output = shell_exec($command);
+            $sslCheckResult = json_decode($output, true);
+            if ($sslCheckResult['resolved'] == false) {
+                return [
+                    'trust_score' => 0,
+                    'reason' => "ssl certification didnt resolve"
+                ];
+            } elseif ($sslCheckResult['resolved'] == true && $sslCheckResult['days_left'] < 1) {
+                return [
+                    'trust_score' => 0,
+                    'reason' => "ssl certification expired"
+                ];
+            }
+            //if there is a subdomain:
+            if ($this->hasSub->hasSubdomain($modifiedUrl)) {
+                $whoisCheck = $this->subdomainExtract->extractSubdomainsFromUrl($modifiedUrl)['domain'];
+                $subExtract = $this->subdomainExtract->extractSubdomainsFromUrl($modifiedUrl)['subdomains'];
+                $subDomainlist = $this->subEnum->subdomainEnum($subExtract);
+                $whoisCountry = base_path('app/Scripts/Whois.sh') . ' ' . escapeshellarg($whoisCheck);
+                $command = shell_exec($whoisCountry);
+                $output = json_decode($command);
+                //return $output->register_country;
+                $creationDate = $this->whois->getDomainInfo($whoisCheck)['Domain created'];
+                //var_dump($this->whois->getDomainInfo(['data']));
+                $creationDateTime = new DateTime($creationDate);
+                $currentDateTime = new DateTime();
+                $interval = $currentDateTime->diff($creationDateTime);
+                if ($subDomainlist === false || $interval->d < 7 || ($output->register_country !== 'GB' && $output->register_country !== 'US')) {
+                    return [
+                        'trust_score' => 0,
+                        'reason' => "domain was created less than a week ago or not in UK/US or not in the validated subdomains list"
+                    ];
+                }
+                //in case of no subdomain for whois:
+                $whoisCountry = base_path('app/Scripts/Whois.sh') . ' ' . escapeshellarg($ssl_whois_Entery);
+                $command = shell_exec($whoisCountry);
+                $output = json_decode($command);
+                $creationDate = $this->whois->getDomainInfo($modifiedUrl)['Domain created'];
+                // var_dump($this->whois->getDomainInfo(['data']));
+                $creationDateTime = new DateTime($creationDate);
+                $currentDateTime = new DateTime();
+                $interval = $currentDateTime->diff($creationDateTime);
+                if ($interval->d < 7 || ($output->register_country !== 'GB' && $output->register_country !== 'US')) {
+                    return [
+                        'trust_score' => 0,
+                        'reason' => "domain was created less than a week ago or not in UK/US"
+                    ];
+                }
 
-        // if ($this->whois->isDomainLessThanAWeekOld($modifiedUrl)) {
-        //     return 'less than';
-        // }
-        //handeling urls with IP address
-        if ($this->ipChecker->isIpAddress($modifiedUrl)) {
+            }
+            //google
+            $googleWebRiskResult = $this->webRiskService->checkForThreats($modifiedUrl);
+            //var_dump($googleWebRiskResult);
+            foreach (['UNWANTED_SOFTWARE', 'MALWARE', 'SOCIAL_ENGINEERING'] as $threatType) {
+                if (isset($googleWebRiskResult[$threatType]['threat']) && $googleWebRiskResult[$threatType]['threat'] !== null) {
+                    return [
+                        'trust_score' => 0,
+                        'reason' => 'Google Web Risk detected a ' . $threatType . ' threat'
+                    ];
+                }
+            }
             return [
-                'trust_score' => 0,
-                'reason' => 'IP address detected. Only domain names are allowed.'
+                'trust_score' => 1000,
             ];
-        }
-        //looking in to the bad domain list:
-        if ($this->badDomainlist->isDomainInJson($modifiedUrl)) {
-            return [
-                'trust_score' => 0,
-                'reason' => 'in the bad domain list (malwares from urlH)'
-            ];
-        }
-        //if($this->badDomainlist->isDomainInJson($modifiedUrl))
-        //redirection and http cases:
-        if ($this->redirectionValue->redirectionValue($modifiedUrl)) {
-            $redirectionChecker = base_path('app/Scripts/RedirectionCheck.sh') . ' ' . escapeshellarg($modifiedUrl);
-            $redirectionTracker = shell_exec($redirectionChecker);
-            $rediItem = json_decode($redirectionTracker)->fd;
-            if (parse_url($rediItem, PHP_URL_SCHEME) !== 'https') {
+        } catch (\Exception $e) {
+            if ($e instanceof SomeKnownException) {
                 return [
-                    'trust_score' => 0,
-                    'reason' => 'url Schme in redirection is not https'
+                    'trust_score' => 500,
+                    'reason' => $e->getMessage(),
                 ];
             }
-        } elseif (
-            parse_url($modifiedUrl, PHP_URL_SCHEME) == 'http'
-        ) {
             return [
-                'trust_score' => 0,
-                'reason' => 'url Schme has no redirection and is http'
+                'trust_score' => 500,
+                'reason' => 'unknown',
             ];
         }
-        //handeling similarities to famouse domain names:
-        if ($similarDomain = $this->levenshteinAlgorithm->compareDomains($modifiedUrl)) {
-            return [
-                'trust_score' => 800,
-                'reason' => "similar domain found"
-            ];
-        }
-        $sslEntery = parse_url($modifiedUrl, PHP_URL_HOST);
-        $command = base_path('app/Scripts/Sslkey.sh') . ' ' . escapeshellarg($sslEntery);
-        $output = shell_exec($command);
-        $sslCheckResult = json_decode($output, true);
-        if ($sslCheckResult['resolved'] == false) {
-            return [
-                'trust_score' => 0,
-                'reason' => "ssl certification didnt resolve"
-            ];
-        } elseif ($sslCheckResult['resolved'] == true && $sslCheckResult['days_left'] < 1) {
-            return [
-                'trust_score' => 0,
-                'reason' => "ssl certification expired"
-            ];
-        }
-        //performing a whois:
-        $creationDate = $this->whois->getDomainInfo($modifiedUrl)['Domain created'];
-        $creationDateTime = new DateTime($creationDate);
-        $currentDateTime = new DateTime();
-        $interval = $currentDateTime->diff($creationDateTime);
-        if ($interval->d < 7) {
-            return [
-                'trust_score' => 0,
-                'reason' => "domain was created less than a week ago"
-            ];
-        }
-        //google
-        $googleWebRiskResult = $this->webRiskService->checkForThreats($modifiedUrl);
-        //var_dump($googleWebRiskResult);
-        foreach (['UNWANTED_SOFTWARE', 'MALWARE', 'SOCIAL_ENGINEERING'] as $threatType) {
-            if (isset($googleWebRiskResult[$threatType]['threat']) && $googleWebRiskResult[$threatType]['threat'] !== null) {
-                return [
-                    'trust_score' => 0,
-                    'reason' => 'Google Web Risk detected a ' . $threatType . ' threat'
-                ];
-            }
-        }
-        return [
-            'trust_score' => 1000,
-        ];
     }
-
 }

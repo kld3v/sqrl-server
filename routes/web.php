@@ -22,8 +22,9 @@ Route::get('/', function () {
 });
 Route::get('/check-web-risk', [EvaluateTrustService::class, 'evaluateTrust']);
 Route::get('/test-evaluate-trust', function () {
-   $url = 'https://wvvw-app-bitbnk.com/btbnk2/off.php';
+   $url = 'https://secure-ads-manage.miracle-chain.com/bussines-service/...';
    $evaluateTrustService = app(EvaluateTrustService::class);
    $result = $evaluateTrustService->evaluateTrust($url);
    return response()->json($result);
 });
+

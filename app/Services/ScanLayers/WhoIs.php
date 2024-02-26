@@ -45,18 +45,13 @@ class WhoIs
         $info = $this->whois->loadDomainInfo($cleanedDomain);
 
        
-        //var_dump($info);
-        $hostingProvider = $this->extractHostingProvider($info);
+        
         return [
             'Domain created' => date("Y-m-d", $info->creationDate),
             'Domain expires' => date("Y-m-d", $info->expirationDate),
             'Domain owner' => $info->owner,
-            'Hosting Provider' => $hostingProvider,
+            'data'=>$cleanedDomain
         ];
     }
 
-    private function extractHostingProvider($info)
-    {
-        return isset($info->registrarName) ? $info->registrarName : 'Unknown';
-    }
 }

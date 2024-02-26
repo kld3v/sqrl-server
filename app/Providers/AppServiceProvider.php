@@ -4,9 +4,11 @@ namespace App\Providers;
 
 use App\Services\EvaluateTrustService;
 use App\Services\ScanLayers\BadDomainCheck;
+use App\Services\ScanLayers\SubdomainEnum;
 use App\Services\ScanLayers\WhoIs;
 use App\Services\ScanProcessingService;
 use App\Services\ShortURL\ShortURLMain;
+use App\Services\UrlManipulations\HasSubdomain;
 use App\Services\UrlManipulations\SubdomainExtract;
 use Illuminate\Support\ServiceProvider;
 use App\Services\ScanLayers\GoogleWebRisk;
@@ -41,7 +43,10 @@ class AppServiceProvider extends ServiceProvider
                 $app->make(LevenshteinAlgorithm::class),
                 $app->make(SubdomainExtract::class),
                 $app->make(BadDomainCheck::class),
-                $app->make(WhoIs::class)
+                $app->make(WhoIs::class),
+                $app->make(HasSubdomain::class),
+                $app->make(SubdomainEnum::class)
+
             );
         });
         $this->app->singleton(ScanProcessingService::class, function ($app) {

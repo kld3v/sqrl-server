@@ -13,9 +13,7 @@ class BadDomainCheck
 
     public function isDomainInJson($domain)
     {
-        $urlParts = parse_url($domain);
-        $schemeRemoved = substr($domain, strlen($urlParts['scheme']) + 3);
-        
-        return in_array($schemeRemoved, $this->jsonData['domains']);
+        $maliciousDomain = parse_url($domain, PHP_URL_HOST);
+        return in_array($maliciousDomain, $this->jsonData['domains']);
     }
 }
