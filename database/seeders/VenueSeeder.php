@@ -31,7 +31,8 @@ class VenueSeeder extends Seeder
             'chain' => 'Newport',
             'url_id' => $alacrityUrl->id,
             'area' => DB::raw("ST_PolygonFromText('POLYGON((51.5877159 -2.9931069, 51.5878166 -2.9928685, 51.5876624 -2.9926144, 51.5875762 -2.9928780, 51.5877159 -2.9931069))')"),
-            'midpoint' => DB::raw("ST_PointFromText('POINT($alacrityMidpoint[0] $alacrityMidpoint[1])')")
+            'midpoint' => DB::raw("ST_PointFromText('POINT($alacrityMidpoint[0] $alacrityMidpoint[1])')"),
+            'status' => 'active'
         ]);
     
         // Repeat the process for each venue
@@ -53,7 +54,8 @@ class VenueSeeder extends Seeder
             'address' => '73 Usk Plaza Unit R4, Friars Walk Shopping Centre NP20 1DS',
             'postcode' => 'NP20 1DS',
             'area' => DB::raw("ST_PolygonFromText('POLYGON((51.586312850599846 -2.9922399197930285, 51.58607526800188 -2.9920521795881667, 51.58596769316683 -2.99259691005394, 51.58616280037874 -2.9927551818310656, 51.586312850599846 -2.9922399197930285))')"),
-            'midpoint' => DB::raw("ST_PointFromText('POINT($nandosMidpoint[0] $nandosMidpoint[1])')")
+            'midpoint' => DB::raw("ST_PointFromText('POINT($nandosMidpoint[0] $nandosMidpoint[1])')"),
+            'status' => 'active'
         ]);
 
         // $sheppardURL = URL::firstOrCreate(['url' => 'https://assets-global.website-files.com/5ec5008dfeab8a08b7ae667a/5fad187b318b332d6b6a25d1_dave.jpg', 'trust_score' => 0]);
