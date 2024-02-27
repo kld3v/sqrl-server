@@ -2,22 +2,23 @@
 
 namespace App\Providers;
 
-use App\Services\EvaluateTrustService;
-use App\Services\ScanLayers\BadDomainCheck;
-use App\Services\ScanLayers\SubdomainEnum;
 use App\Services\ScanLayers\WhoIs;
+use App\Services\ScanLayers\UrlHaus;
+use App\Services\EvaluateTrustService;
 use App\Services\ScanProcessingService;
 use App\Services\ShortURL\ShortURLMain;
-use App\Services\UrlManipulations\HasSubdomain;
-use App\Services\UrlManipulations\SubdomainExtract;
 use Illuminate\Support\ServiceProvider;
 use App\Services\ScanLayers\GoogleWebRisk;
+use App\Services\ScanLayers\SubdomainEnum;
+use App\Services\ScanLayers\BadDomainCheck;
 use App\Services\ShortURL\ShortURLServices;
 use App\Services\UrlManipulations\IpChecker;
 use App\Services\UrlManipulations\RemoveWww;
 use App\Services\ScanLayers\VirusTotalService;
+use App\Services\UrlManipulations\HasSubdomain;
 use App\Services\ScanLayers\LevenshteinAlgorithm;
 use App\Services\UrlManipulations\RedirectionValue;
+use App\Services\UrlManipulations\SubdomainExtract;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -45,8 +46,8 @@ class AppServiceProvider extends ServiceProvider
                 $app->make(BadDomainCheck::class),
                 $app->make(WhoIs::class),
                 $app->make(HasSubdomain::class),
-                $app->make(SubdomainEnum::class)
-
+                $app->make(SubdomainEnum::class),
+                $app->make(UrlHaus::class)
             );
         });
         $this->app->singleton(ScanProcessingService::class, function ($app) {

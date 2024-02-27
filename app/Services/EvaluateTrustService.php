@@ -3,21 +3,23 @@
 
 namespace App\Services;
 
-use App\Services\ScanLayers\SubdomainEnum;
-use App\Services\UrlManipulations\HasSubdomain;
 use DateTime;
 use App\Services\ScanLayers\Whois;
 use Illuminate\Support\Facades\App;
+use App\Services\ScanLayers\UrlHaus;
 use App\Http\Controllers\URLController;
 use App\Http\Controllers\ScanController;
 use App\Services\ScanLayers\GoogleWebRisk;
+use App\Services\ScanLayers\SubdomainEnum;
 use App\Services\ScanLayers\BadDomainCheck;
 use App\Services\UrlManipulations\IpChecker;
 use App\Services\UrlManipulations\RemoveWww;
 use App\Services\ScanLayers\VirusTotalService;
+use App\Services\UrlManipulations\HasSubdomain;
 use App\Services\ScanLayers\LevenshteinAlgorithm;
 use App\Services\UrlManipulations\RedirectionValue;
 use App\Services\UrlManipulations\SubdomainExtract;
+
 
 
 class EvaluateTrustService
@@ -37,8 +39,8 @@ class EvaluateTrustService
         BadDomainCheck $badDomainlist,
         WhoIs $whois,
         HasSubdomain $hasSub,
-        SubdomainEnum $subEnum
-
+        SubdomainEnum $subEnum,
+        UrlHaus $urlHaus
     ) {
         $this->webRiskService = $webRiskService;
         $this->virusTotalService = $virusTotalService;
@@ -51,6 +53,7 @@ class EvaluateTrustService
         $this->whois = $whois;
         $this->hasSub = $hasSub;
         $this->subEnum = $subEnum;
+        $this->urlHaus =  $urlHaus;
     }
     public function evaluateTrust($url)
     {
@@ -160,6 +163,12 @@ class EvaluateTrustService
                         'reason' => 'Google Web Risk detected a ' . $threatType . ' threat'
                     ];
                 }
+            }
+            if($this->urlHaus->queryUrl($url)){
+                return [
+                    'trust_score' => 0,
+                    'reason' => 'urlHaus detected an online and active Malware'
+                ];
             }
             return [
                 'trust_score' => 1000,

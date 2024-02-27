@@ -64,7 +64,7 @@ class LevenshteinAlgorithm
             }
         }
 
-        return $exactMatch ? false : ($minDistance <= 3);
+        return $exactMatch ? false : ($minDistance < 3);
     }
 
 }
