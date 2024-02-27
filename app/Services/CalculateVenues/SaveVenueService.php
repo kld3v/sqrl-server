@@ -19,14 +19,12 @@ class SaveVenueService
 
         if ($venues->isNotEmpty()) {
             foreach ($venues as $venue) {
-                if ($venue->url_id === $urlId) {
+                if ($venue->url_id === $urlId && $venue->complete === true) {
                     // Match found, update the geofence data for each relevant venue
                     $venue->area = DB::raw("ST_GeomFromText('$polygon')");
                     $venue->midpoint = DB::raw("ST_GeomFromText('POINT($midpoint[0] $midpoint[1])')");
                     $venue->save();
 
-                    // echo "old";
-                    // return $venue;
                 }
             }
         } else {
@@ -38,9 +36,6 @@ class SaveVenueService
             $newVenue->status = 'pending';
             $newVenue->complete = false;
             $newVenue->save();
-
-            // echo "new";
-            // return $newVenue;
         }
     }
 

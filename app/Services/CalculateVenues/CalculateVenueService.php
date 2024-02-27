@@ -54,15 +54,17 @@ class CalculateVenueService {
                     $optimisedBorder = $this->borderOptimisationService->RamerDouglasPeucker2d($border, 0.00003);
                     File::append($logPath, "[" . now() . "] RamerDouglasPeucker2d output: " . json_encode($optimisedBorder) . "\n");
 
-                    File::append($logPath, "[" . now() . "] Calling Venue Saver\n");
-                    $savedVenue = $this->saveVenueService->save($urlId, $optimisedBorder);
-                    File::append($logPath, "[" . now() . "] Venue Saver output: " . json_encode($savedVenue) . "\n");
-                    // if (isset($optimisedBorders) && count($optimisedBorders) > 2) { 
-                        
-                        
-                    // } else {
-                    //     File::append($logPath, "[" . now() . "] Skipped Venue Saver due to optimisedBorders length <= 2\n");
-                    // }
+                    File::append($logPath, "[" . now() . "] Preparing to call Venue Saver\n");
+
+                    // Check if there are more than 3 points in optimisedBorder to potentially form a valid polygon
+                    if (count($optimisedBorder) > 3) {
+                        File::append($logPath, "[" . now() . "] Calling Venue Saver\n");
+                        $savedVenue = $this->saveVenueService->save($urlId, $optimisedBorder);
+                        File::append($logPath, "[" . now() . "] Venue Saver output: " . json_encode($savedVenue) . "\n");
+                    } else {
+                        // Log skipping saving due to insufficient points
+                        File::append($logPath, "[" . now() . "] Skipped Venue Saver due to insufficient points for a valid geometry\n");
+                    }
 
                     $borders[] = $border;
                     $optimisedBorders[] = $optimisedBorder;
@@ -184,9 +186,11 @@ class CalculateVenueService {
             }
         }
 
-        File::put(public_path('formattedScans.geojson'), json_encode($this->wrapFeaturesIntoGeoJSON($formattedScansFeatures)));
-        File::put(public_path('clusters.geojson'), json_encode($this->wrapFeaturesIntoGeoJSON($clustersFeatures)));
-        File::put(public_path('borders.geojson'), json_encode($this->wrapFeaturesIntoGeoJSON($bordersFeatures)));
-        File::put(public_path('optimisedBorders.geojson'), json_encode($this->wrapFeaturesIntoGeoJSON($optimisedBordersFeatures)));
+        $logPath = storage_path('logs/geojson');
+        File::put($logPath . '/formattedScans.geojson', json_encode($this->wrapFeaturesIntoGeoJSON($formattedScansFeatures)));
+        File::put($logPath . '/clusters.geojson', json_encode($this->wrapFeaturesIntoGeoJSON($clustersFeatures)));
+        File::put($logPath . '/borders.geojson', json_encode($this->wrapFeaturesIntoGeoJSON($bordersFeatures)));
+        File::put($logPath . '/optimisedBorders.geojson', json_encode($this->wrapFeaturesIntoGeoJSON($optimisedBordersFeatures)));
+        
     }
 }
