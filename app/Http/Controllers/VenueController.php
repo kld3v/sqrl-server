@@ -22,6 +22,7 @@ class VenueController extends Controller
         $venues = Venue::with('url') // Eager load the related URL data
         ->select('id', 'company', 'chain', 'url_id', 'tel', 'address', 'postcode', 'google_maps')
         ->whereRaw("ST_Contains(area, ST_GeomFromText(CONCAT('POINT(', ?, ' ', ?, ')')))", [$latitude, $longitude])
+        ->where('status', '=', 'active')
         ->get();
 
         return response()->json($venues);
@@ -47,6 +48,7 @@ class VenueController extends Controller
                     ST_GeomFromText('POINT($latitude $longitude)')
                 ) as distance"))
             ->havingRaw("distance <= ?", [$radius])
+            ->where('status', '=', 'active')
             ->orderBy('distance', 'asc')
             ->get();
 
