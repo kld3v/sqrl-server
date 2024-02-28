@@ -9,13 +9,18 @@ class GoogleWebRisk
 
     public function __construct()
     {
-        $this->apiKey = env("WEB_RISK_API_KEY");
+        $this->apiKey = config('services.google.web_risk_api_key');
     }
 
     public function checkForThreats($uri)
     {
         $apiUrl = 'https://webrisk.googleapis.com/v1/uris:search';
-        $threatTypes = ['UNWANTED_SOFTWARE', 'MALWARE', 'SOCIAL_ENGINEERING','SOCIAL_ENGINEERING_EXTENDED_COVERAGE'];
+        $threatTypes = [
+            'UNWANTED_SOFTWARE',
+            'MALWARE', 
+            'SOCIAL_ENGINEERING',
+            'SOCIAL_ENGINEERING_EXTENDED_COVERAGE'
+        ];
         $responses = [];
     
         $ch = curl_init();

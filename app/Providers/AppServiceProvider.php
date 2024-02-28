@@ -7,6 +7,7 @@ use App\Services\ScanLayers\UrlHaus;
 use App\Services\EvaluateTrustService;
 use App\Services\ScanProcessingService;
 use App\Services\ShortURL\ShortURLMain;
+use App\Services\UrlManipulations\StringEntropy;
 use Illuminate\Support\ServiceProvider;
 use App\Services\ScanLayers\GoogleWebRisk;
 use App\Services\ScanLayers\SubdomainEnum;
@@ -37,7 +38,6 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(EvaluateTrustService::class, function ($app) {
             return new EvaluateTrustService(
                 $app->make(GoogleWebRisk::class),
-                $app->make(VirusTotalService::class),
                 $app->make(IpChecker::class),
                 $app->make(RemoveWww::class),
                 $app->make(RedirectionValue::class),
@@ -47,7 +47,7 @@ class AppServiceProvider extends ServiceProvider
                 $app->make(WhoIs::class),
                 $app->make(HasSubdomain::class),
                 $app->make(SubdomainEnum::class),
-                $app->make(UrlHaus::class)
+                $app->make(UrlHaus::class),
             );
         });
         $this->app->singleton(ScanProcessingService::class, function ($app) {
