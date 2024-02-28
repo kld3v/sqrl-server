@@ -61,6 +61,12 @@ class EvaluateTrustService
             //removing www from all ulrs
             $modifiedUrl = $this->removeWWW->removeWWW($url);
             //handeling urls with IP address
+            //testing
+
+            //return $this->redirectionValue->redirectionValue($modifiedUrl);
+
+
+            ///
             if ($this->ipChecker->isIpAddress($modifiedUrl)) {
                 return [
                     'trust_score' => 0,
@@ -75,8 +81,8 @@ class EvaluateTrustService
                 ];
             }
             //return $this->redirectionValue->redirectionValue($modifiedUrl);
-            if ($this->redirectionValue->redirectionValue($modifiedUrl)) {
-                $redirectionChecker = base_path('app/Scripts/RedirectionCheck.sh') . ' ' . escapeshellarg($modifiedUrl);
+            if ($this->redirectionValue->redirectionValue($url)) {
+                $redirectionChecker = base_path('app/Scripts/RedirectionCheck.sh') . ' ' . escapeshellarg($url);
                 $redirectionTracker = shell_exec($redirectionChecker);
                 $rediItem = json_decode($redirectionTracker)->fd;
                 if (parse_url($rediItem, PHP_URL_SCHEME) !== 'https') {
@@ -94,7 +100,7 @@ class EvaluateTrustService
             }
             //handeling similarities to famouse domain names:
             //return $similarDomain = $this->levenshteinAlgorithm->compareDomains($modifiedUrl);
-            if ($similarDomain = $this->levenshteinAlgorithm->compareDomains($modifiedUrl)) {
+            if ($this->levenshteinAlgorithm->compareDomains($modifiedUrl)) {
                 return [
                     'trust_score' => 800,
                     'reason' => "similar domain found"
