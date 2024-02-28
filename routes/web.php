@@ -22,7 +22,7 @@ Route::get('/', function () {
 });
 Route::get('/check-web-risk', [EvaluateTrustService::class, 'evaluateTrust']);
 Route::get('/test-evaluate-trust', function () {
-   $url = 'https://www.starbucks.co.uk/';
+   $url = 'https://www.cardiff.ac.uk/news/view/2797730-cardiff-university-strengthens-international-collaboration-on-cybersecurity-research-and-knowledge-exchange';
    $evaluateTrustService = app(EvaluateTrustService::class);
    $result = $evaluateTrustService->evaluateTrust($url);
    return response()->json($result);
