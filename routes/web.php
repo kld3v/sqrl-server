@@ -22,7 +22,7 @@ Route::get('/', function () {
 });
 Route::get('/check-web-risk', [EvaluateTrustService::class, 'evaluateTrust']);
 Route::get('/test-evaluate-trust', function () {
-   $url = 'http://182.127.71.143:33800/Mozi.m';
+   $url = 'https://spk-digital-center.info';
    $evaluateTrustService = app(EvaluateTrustService::class);
    $result = $evaluateTrustService->evaluateTrust($url);
    return response()->json($result);

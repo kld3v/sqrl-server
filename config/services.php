@@ -31,4 +31,8 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'google' => [
+        'web_risk_api_key' => env('WEB_RISK_API_KEY')
+    ]
+
 ];
