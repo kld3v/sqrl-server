@@ -46,7 +46,7 @@ class EvaluateTrustService
         $modifiedUrl = $this->removeWWW->removeWWW($url);
 
         //test
-        
+
         //
         // $checks = [
         //     'checkIpOk',
@@ -151,13 +151,13 @@ class EvaluateTrustService
                 $output = json_decode($command);
                 //return $output->register_country;
                 $stringEntropy = new StringEntropy();
-                $entropyResult=$stringEntropy->calculateEntropy($subExtract);
+                $entropyResult = $stringEntropy->calculateEntropy($subExtract);
                 $creationDate = $this->whois->getDomainInfo($whoisCheck)['Domain created'];
                 //var_dump($this->whois->getDomainInfo(['data']));
                 $creationDateTime = new DateTime($creationDate);
                 $currentDateTime = new DateTime();
                 $interval = $currentDateTime->diff($creationDateTime);
-                if ($entropyResult > 2.8 || $interval->d < 7 || ($output->register_country !== 'GB' && $output->register_country !== 'US')) {
+                if ($entropyResult > 2.8 || $interval->days < 7 || ($output->register_country !== 'GB' && $output->register_country !== 'US')) {
                     return [
                         'trust_score' => 0,
                         'reason' => "domain was created less than a week ago or not in UK/US or has high entropy"
