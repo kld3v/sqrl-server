@@ -21,7 +21,7 @@ return new class extends Migration
             $table->char('device_uuid', 36);
             $table->decimal('latitude', 9, 6)->nullable();
             $table->decimal('longitude', 9, 6)->nullable();
-            $table->string('test_version', 16);
+            $table->string('test_version', 16)->default("1.0.0");
             $table->timestamps();
         });
 
