@@ -24,6 +24,7 @@ use App\Services\UrlManipulations\RedirectionValue;
 use App\Services\UrlManipulations\SubdomainExtract;
 
 
+
 class EvaluateTrustService
 {
     public function __construct(
@@ -226,6 +227,12 @@ class EvaluateTrustService
             return [
                 'trust_score' => 500,
                 'reason' => 'unknown'
+            ];
+        } catch (\Throwable $throwable) {
+            // Catch any other throwable that might not be Exception -> this catches everything.
+            return [
+                'trust_score' => 500,
+                'reason' => 'unknown - Big error'
             ];
         }
     }
