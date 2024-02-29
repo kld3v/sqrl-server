@@ -13,12 +13,20 @@ class ScanDataFormatService {
     }
 
     public function formatScans(Collection $scans) {
-        return $scans->map(function ($scan) {
+        $coordinates = $scans->map(function ($scan) {
             return [$scan->latitude, $scan->longitude];
         });
+
+        return $this->removeDuplicates($coordinates);
     }
 
     private function getScansForUrlId($urlId) {
         return Scan::where('url_id', $urlId)->get();
+    }
+
+    private function removeDuplicates(\Illuminate\Support\Collection $coordinates) {
+        return $coordinates->unique(function ($item) {
+            return json_encode($item);
+        })->values();
     }
 }

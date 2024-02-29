@@ -26,8 +26,8 @@ class ScanController extends Controller
         $request->validate([
             'url' => 'required',
             'device_uuid' => 'required',
-            'latitude' => 'required|numeric',
-            'longitude' => 'required|numeric'
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric'            
         ]);
     
         $url = $request->input('url');
@@ -40,10 +40,15 @@ class ScanController extends Controller
             'url_id' => $scanData['id'],
             'trust_score' =>  $scanData['trust_score'],
             'device_uuid' => $request->input('device_uuid'),
-            'latitude' => $request->input('latitude'),
-            'longitude' => $request->input('longitude')];
+        ];
 
-            //dd($formattedScanData);
+        if ($request->has('latitude')) {
+            $formattedScanData['latitude'] = $request->input('latitude');
+        }
+            
+        if ($request->has('longitude')) {
+                $formattedScanData['longitude'] = $request->input('longitude');
+        }
         // Create scan record using the store method
         $scanRequest = new Request($formattedScanData);
         $this->store($scanRequest);

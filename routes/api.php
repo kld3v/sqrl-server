@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ScanController;
 use App\Http\Controllers\VenueController;
+use App\Http\Controllers\UserAgreementController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,6 +37,13 @@ Route::get('/venues/nearby', [VenueController::class, 'getNearbyVenues']);
 Route::post('scan', [ScanController::class, 'processRequest']);
 
 Route::get('/ping', [PingController::class, 'ping']);
+
+//AGREEMENTS
+// Check if user has agreed to active documents
+Route::get('/agreements/check', [UserAgreementController::class, 'checkAgreements']);
+
+// Record a user's agreement
+Route::post('/agreements/sign', [UserAgreementController::class, 'signDocument']);
 
 
 //DO NOT GO PUBLIC WITH THIS ROUTE
