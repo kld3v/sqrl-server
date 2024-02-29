@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Scan extends Model
 {
     
-    protected $fillable = ['url_id', 'trust_score', 'device_uuid', 'latitude', 'longitude'];
+    protected $fillable = ['url_id', 'trust_score', 'device_uuid', 'latitude', 'longitude', 'test_version'];
 
     public function url()
     {

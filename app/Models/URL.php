@@ -9,7 +9,7 @@ class URL extends Model
 
     public $table = 'urls';
     
-    protected $fillable = ['url', 'trust_score'];
+    protected $fillable = ['url', 'trust_score', 'test_version'];
 
     public function urlCheckLogs()
     {

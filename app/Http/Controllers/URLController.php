@@ -17,6 +17,7 @@ class URLController extends Controller
         $validatedData = $request->validate([
             'url' => 'required|url|max:2048',
             'trust_score' => 'required|integer|min:0|max:1000',
+            'test_version' => 'required|string|regex:/^[0-9]+\.[0-9]+\.[0-9]+$/',
         ]);
 
         return $validatedData;

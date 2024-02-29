@@ -16,6 +16,7 @@ return new class extends Migration
             $table->id();
             $table->string('url', 2048);
             $table->smallInteger('trust_score');
+            $table->string('test_version', 16);
             $table->timestamps();
 
             $table->unique([DB::raw('url(50)')], 'urls_index');
