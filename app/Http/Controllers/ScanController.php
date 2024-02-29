@@ -26,8 +26,8 @@ class ScanController extends Controller
         $request->validate([
             'url' => 'required',
             'device_uuid' => 'required',
-            'latitude' => 'required|numeric',
-            'longitude' => 'required|numeric'
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric'            
         ]);
     
         $url = $request->input('url');
