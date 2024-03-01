@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Models\Venue;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,6 +43,12 @@ Route::get('/test-evaluate-trust', function () {
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::get('/venues', function () {
+    $venues = Venue::all(); // Replace with your actual query logic
+    return Inertia::render('VenuePage', ['venues' => $venues]);
+ });
+ 
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
