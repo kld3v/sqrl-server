@@ -25,11 +25,11 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/joel', function () {
-    return Inertia::render('Joel', [
-        'message' => "message",
-    ]);
-})->name('joel-route-name');
+// Route::get('/joel', function () {
+//     return Inertia::render('Joel', [
+//         'message' => "message",
+//     ]);
+// })->name('joel-route-name');
 
 Route::get('/check-web-risk', [EvaluateTrustService::class, 'evaluateTrust']);
 Route::get('/test-evaluate-trust', function () {
