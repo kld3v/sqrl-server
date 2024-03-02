@@ -92,12 +92,14 @@ class EvaluateTrustService
                         'reason' => 'url Schme in redirection is not https'
                     ];
                 }
-            }
-            if (parse_url($modifiedUrl, PHP_URL_SCHEME) == 'http') {
-                return [
-                    'trust_score' => 0,
-                    'reason' => 'url Schme is http'
-                ];
+
+            } else {
+                if (parse_url($modifiedUrl, PHP_URL_SCHEME) == 'http') {
+                    return [
+                        'trust_score' => 0,
+                        'reason' => 'url Schme is http'
+                    ];
+                }
             }
             //handeling similarities to famouse domain names:
             if ($this->levenshteinAlgorithm->compareDomains($modifiedUrl)) {
@@ -122,7 +124,6 @@ class EvaluateTrustService
                     'reason' => "ssl certification expired"
                 ];
             }
-
             //if there is a subdomain:
             if ($this->hasSub->hasSubdomain($modifiedUrl)) {
                 //.uk cases:
@@ -156,7 +157,7 @@ class EvaluateTrustService
                     $creationDateTime = new DateTime($creationDate);
                     $currentDateTime = new DateTime();
                     $interval = $currentDateTime->diff($creationDateTime);
-                    if ($entropyResult > 2.8 || $interval->days < 7 || ($output->register_country !== 'GB' && $output->register_country !== 'US')) {
+                    if ($entropyResult > 3 || $interval->days < 7 || ($output->register_country !== 'GB' && $output->register_country !== 'US')) {
                         return [
                             'trust_score' => 0,
                             'reason' => "domain was created less than a week ago or not in UK/US or has high entropy"
@@ -216,7 +217,6 @@ class EvaluateTrustService
             return [
                 'trust_score' => 1000,
             ];
-
         } catch (\Exception $exception) {
             if ($exception instanceof someKnownExention) {
                 return [
@@ -236,6 +236,8 @@ class EvaluateTrustService
             ];
         }
     }
+
+
     // See above - consider refactoring checks into separate functions
     //Nathan wrote these
     private function checkIpOk($url): TrustScoreResult

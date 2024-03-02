@@ -20,7 +20,7 @@ class ScanProcessingService
     protected $evaluateTrustService;
 
     //MAJEED REMEMBER TO ALWAYS UPDATE THIS CHEERS LOVE JOEL
-    protected $currentTestVersion = '1.0.0';
+    protected $currentTestVersion = '1.0.1';
 
 
     public function __construct(ShortURLMain $shortURLMain, EvaluateTrustService $evaluateTrustService)
@@ -29,8 +29,8 @@ class ScanProcessingService
         $this->evaluateTrustService = $evaluateTrustService;
     }
     public function processScan($url)
-    {   
-        
+    {
+
         // Expanding shortened URL, if necessary
         if ($this->shortURLMain->isShortURL($url)) {
             $url = $this->shortURLMain->unshorten($url);
@@ -38,21 +38,22 @@ class ScanProcessingService
 
         // Check if URL is already in the database
         $existingUrl = URL::where('url', $url)->first();
-        
+
 
         if ($existingUrl) {
             // Check if the trust score needs to be updated
             if ($this->isTrustScoreOutdated($existingUrl)) {
 
-                $trustScore = $this->evaluateTrustService->evaluateTrust($url);         
-                $score = $trustScore['trust_score']; 
+                $trustScore = $this->evaluateTrustService->evaluateTrust($url);
+                $score = $trustScore['trust_score'];
 
-                $existingUrl->update([
-                    'trust_score' => $score,
-                    'test_version' => $this->currentTestVersion,
-                ]
-            );
-        
+                $existingUrl->update(
+                    [
+                        'trust_score' => $score,
+                        'test_version' => $this->currentTestVersion,
+                    ]
+                );
+
             } else {
 
                 $trustScore = $existingUrl->trust_score;
@@ -61,10 +62,10 @@ class ScanProcessingService
 
             // URL not in DB, evaluate and add
             $trustScore = $this->evaluateTrustService->evaluateTrust($url);
-            
-            $score = $trustScore['trust_score'];    
-                 
-            
+
+            $score = $trustScore['trust_score'];
+
+
             $existingUrl = URL::create([
                 'url' => $url,
                 'trust_score' => $score,
@@ -86,12 +87,7 @@ class ScanProcessingService
 
     private function isVersionChangeSignificant($storedVersion, $currentVersion)
     {
-        // Split the versions into arrays [major, minor, patch]
-        $storedParts = explode('.', $storedVersion);
-        $currentParts = explode('.', $currentVersion);
 
-        // Check for major or minor version changes
-        return $storedParts[0] !== $currentParts[0] || $storedParts[1] !== $currentParts[1];
+        return $storedVersion !== $currentVersion;
     }
-
 }

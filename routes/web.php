@@ -22,7 +22,7 @@ Route::get('/', function () {
 });
 Route::get('/check-web-risk', [EvaluateTrustService::class, 'evaluateTrust']);
 Route::get('/test-evaluate-trust', function () {
-   $url = 'https://google.com/';
+   $url = 'https://pub-84d68e935fc443b89ff06377ee519a2e.r2.dev/loading.html';
    $evaluateTrustService = app(EvaluateTrustService::class);
    $result = $evaluateTrustService->evaluateTrust($url);
    return response()->json($result);
