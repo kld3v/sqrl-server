@@ -25,7 +25,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 //SCAN
-Route::post('scan', [ScanController::class, 'processScan']);
+Route::post('/scan', [ScanController::class, 'processRequest']);
 
 
 //GEO
@@ -33,8 +33,6 @@ Route::get('/venues/location', [VenueController::class, 'getVenuesByLocation']);
 
 Route::get('/venues/nearby', [VenueController::class, 'getNearbyVenues']);
 
-
-Route::post('scan', [ScanController::class, 'processRequest']);
 
 Route::get('/ping', [PingController::class, 'ping']);
 
