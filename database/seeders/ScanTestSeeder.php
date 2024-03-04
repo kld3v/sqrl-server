@@ -64,6 +64,7 @@ class ScanTestSeeder extends Seeder
                 'longitude' => $longitude,
                 'device_uuid' => $faker->numberBetween(1, 1500),
                 'trust_score' => $trustScore,
+                'test_version' => "1.0.0",
                 'updated_at' => now(),
                 'created_at' => now(),
             ];

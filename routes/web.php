@@ -5,6 +5,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Models\Venue;
+use App\Http\Controllers\VenueController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,21 +35,21 @@ Route::get('/', function () {
 
 Route::get('/check-web-risk', [EvaluateTrustService::class, 'evaluateTrust']);
 Route::get('/test-evaluate-trust', function () {
-   $url = 'http://182.127.71.143:33800/Mozi.m';
-   $evaluateTrustService = app(EvaluateTrustService::class);
-   $result = $evaluateTrustService->evaluateTrust($url);
-   return response()->json($result);
-});
+    $url = 'http://182.127.71.143:33800/Mozi.m';
+    $evaluateTrustService = app(EvaluateTrustService::class);
+    $result = $evaluateTrustService->evaluateTrust($url);
+    return response()->json($result);
+ });
+
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/venues', function () {
-    $venues = Venue::all(); // Replace with your actual query logic
+Route::get('/venues', function (VenueController $venueController) {
+    $venues = $venueController->fetchVenues();
     return Inertia::render('VenuePage', ['venues' => $venues]);
- });
- 
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

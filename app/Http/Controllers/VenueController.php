@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Venue;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 class VenueController extends Controller
 {
@@ -55,5 +56,50 @@ class VenueController extends Controller
         return response()->json($venues);
     }
 
+
+    public function fetchVenues()
+    {
+        $venues = Venue::with('url')->get();
+
+        // Convert each venue's area from a polygon to an array of [lat, long] pairs
+        // and convert midpoint from a point to [lat, long]
+        $venues->each(function ($venue) {
+            // Convert area (polygon)
+            $geoJsonArea = DB::table('venues') // Make sure 'venues' matches your table name
+                        ->select(DB::raw('ST_AsGeoJSON(area) as geojson')) // 'area' is the polygon column
+                        ->where('id', $venue->id)
+                        ->first()->geojson;
+
+            $polygonArray = json_decode($geoJsonArea, true);
+
+            $latLongPairs = [];
+            if (isset($polygonArray['coordinates'][0])) {
+                foreach ($polygonArray['coordinates'][0] as $coordinate) {
+                    $latLongPairs[] = [$coordinate[1], $coordinate[0]]; // [latitude, longitude]
+                }
+            }
+            $venue->area = $latLongPairs;
+
+            // Convert midpoint (point)
+            $geoJsonMidpoint = DB::table('venues')
+                                ->select(DB::raw('ST_AsGeoJSON(midpoint) as geojson'))
+                                ->where('id', $venue->id)
+                                ->first()->geojson;
+
+            $pointArray = json_decode($geoJsonMidpoint, true);
+
+            if (isset($pointArray['coordinates'])) {
+                // GeoJSON coordinates are in [longitude, latitude] order
+                $midpoint = [$pointArray['coordinates'][1], $pointArray['coordinates'][0]]; // [latitude, longitude]
+            } else {
+                $midpoint = [null, null]; // Default or error handling
+            }
+            $venue->midpoint = $midpoint;
+
+        });
+    
+        return $venues;
+
+    }
 
 }

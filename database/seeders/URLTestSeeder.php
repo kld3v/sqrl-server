@@ -22,17 +22,14 @@ class URLTestSeeder extends Seeder
             $trustScore = (substr($index, -1) > 6) ? 1000 : $faker->numberBetween($min = 1, $max = 1000);
 
             $insertData[] = [
-                'url' => $faker->url,
+                'url' => $faker->unique()->url,
                 'trust_score' => $trustScore,
+                'test_version' => "1.0.0",
                 'updated_at' => now(),
                 'created_at' => now(),
             ];
         }
         URL::insert($insertData);
 
-        URL::create([
-            'url' => "https://alacrityfoundation.co.uk/",
-            'trust_score' => 0
-        ]);
     }
 }

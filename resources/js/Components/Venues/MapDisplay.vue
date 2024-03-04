@@ -1,5 +1,6 @@
 <template>
   <div class="map-display">
+    <h2 class="text-2xl font-bold my-4">Map</h2>
     <!-- Here you would integrate a map display, such as Google Maps or Leaflet -->
   </div>
 </template>

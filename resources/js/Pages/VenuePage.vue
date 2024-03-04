@@ -1,8 +1,14 @@
 <template>
-  <div class="venue-page">
-    <VenueList :venues="venues" @venue-selected="handleVenueSelected" />
-    <VenueDetails :venue="selectedVenue" />
-    <MapDisplay :venue="selectedVenue" />
+  <div class="venue-page flex">
+    <div class="w-1/4">
+      <VenueList :venues="venues" @venue-selected="handleVenueSelected" />
+    </div>
+    <div class="w-1/4" v-if="selectedVenue">
+      <VenueDetails :venue="selectedVenue" />
+    </div>
+    <div class="w-1/2">
+      <MapDisplay :venue="selectedVenue" />
+    </div>
   </div>
 </template>
 
@@ -13,7 +19,7 @@ import MapDisplay from "/resources/js/Components/Venues/MapDisplay.vue";
 
 export default {
   props: {
-    venues: Array // Expecting this to be passed from the server
+    venues: Array
   },
   components: {
     VenueList,
@@ -24,6 +30,11 @@ export default {
     return {
       selectedVenue: null
     };
+  },
+  mounted() {
+    if (this.venues && this.venues.length > 0) {
+      this.selectedVenue = this.venues[0];
+    }
   },
   methods: {
     handleVenueSelected(venue) {

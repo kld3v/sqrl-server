@@ -33,6 +33,8 @@ Route::get('/venues/location', [VenueController::class, 'getVenuesByLocation']);
 
 Route::get('/venues/nearby', [VenueController::class, 'getNearbyVenues']);
 
+Route::get('/venues/getvenues', [VenueController::class, 'fetchVenues']);
+
 
 Route::post('scan', [ScanController::class, 'processRequest']);
 

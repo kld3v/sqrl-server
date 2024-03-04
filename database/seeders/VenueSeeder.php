@@ -17,7 +17,11 @@ class VenueSeeder extends Seeder
      */
     public function run()
     {
-        $alacrityUrl = URL::firstOrCreate(['url' => 'https://alacrityfoundation.co.uk/', 'trust_score' => 0]);
+        $alacrityUrl = URL::firstOrCreate([
+            'url' => 'https://alacrityfoundation.co.uk/',
+            'trust_score' => 0,
+            'test_version' => "1.0.0"
+        ]);
     
         $alacrityMidpoint = $this->calculateMidpoint([
             [51.5877159, -2.9931069],
@@ -37,7 +41,11 @@ class VenueSeeder extends Seeder
     
         // Repeat the process for each venue
         // Example for Nando's venue
-        $nandosUrl = URL::firstOrCreate(['url' => 'https://www.nandos.co.uk/', 'trust_score' => 100]);
+        $nandosUrl = URL::firstOrCreate([
+            'url' => 'https://www.nandos.co.uk/',
+            'trust_score' => 100,
+            'test_version' => "1.0.0"
+        ]);
     
         $nandosMidpoint = $this->calculateMidpoint([
             [51.586312850599846, -2.9922399197930285],
@@ -58,22 +66,26 @@ class VenueSeeder extends Seeder
             'status' => 'active'
         ]);
 
-        // $sheppardURL = URL::firstOrCreate(['url' => 'https://assets-global.website-files.com/5ec5008dfeab8a08b7ae667a/5fad187b318b332d6b6a25d1_dave.jpg', 'trust_score' => 0]);
+        $sheppardURL = URL::firstOrCreate([
+            'url' => 'https://assets-global.website-files.com/5ec5008dfeab8a08b7ae667a/5fad187b318b332d6b6a25d1_dave.jpg',
+            'trust_score' => 0,
+            'test_version' => "1.0.0"
+        ]);
 
-        // $sheppardMidpoint = $this->calculateMidpoint([
-        //     [51.81418716758371, -2.623143288559274],
-        //     [51.81419111083795, -2.6228913008135004],
-        //     [51.813802641100565, -2.62287216635659],
-        //     [51.813798697995935, -2.6231369106944515],
-        // ]);
+        $sheppardMidpoint = $this->calculateMidpoint([
+            [51.81418716758371, -2.623143288559274],
+            [51.81419111083795, -2.6228913008135004],
+            [51.813802641100565, -2.62287216635659],
+            [51.813798697995935, -2.6231369106944515],
+        ]);
 
-        // Venue::create([
-        //     'company' => 'the sheppard',
-        //     'chain' => 'the farm',
-        //     'url_id' => $sheppardURL->id,
-        //     'area' => DB::raw("ST_PolygonFromText('POLYGON((51.81418716758371 -2.623143288559274, 51.81419111083795 -2.6228913008135004, 51.813802641100565 -2.62287216635659, 51.813798697995935 -2.6231369106944515, 51.81418716758371 -2.623143288559274))')"),
-        //     'midpoint' => DB::raw("ST_PointFromText('POINT($sheppardMidpoint[0] $sheppardMidpoint[1])')")
-        // ]);
+        Venue::create([
+            'company' => 'the sheppard',
+            'chain' => 'the farm',
+            'url_id' => $sheppardURL->id,
+            'area' => DB::raw("ST_PolygonFromText('POLYGON((51.81418716758371 -2.623143288559274, 51.81419111083795 -2.6228913008135004, 51.813802641100565 -2.62287216635659, 51.813798697995935 -2.6231369106944515, 51.81418716758371 -2.623143288559274))')"),
+            'midpoint' => DB::raw("ST_PointFromText('POINT($sheppardMidpoint[0] $sheppardMidpoint[1])')")
+        ]);
     
     }
     
