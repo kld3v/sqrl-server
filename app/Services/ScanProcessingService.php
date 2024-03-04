@@ -19,7 +19,7 @@ class ScanProcessingService
     protected $shortURLMain;
     protected $evaluateTrustService;
 
-    //MAJEED REMEMBER TO ALWAYS UPDATE THIS CHEERS LOVE JOEL
+    //MAJID REMEMBER TO ALWAYS UPDATE THIS CHEERS LOVE JOEL
     protected $currentTestVersion = '1.0.1';
 
 

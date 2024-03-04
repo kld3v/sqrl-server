@@ -46,26 +46,6 @@ class EvaluateTrustService
         try {
             //removing www from all ulrs
             $modifiedUrl = $this->removeWWW->removeWWW($url);
-
-            /*
-            Nathan wrote these
-            $checks = [
-                'checkIpOk',
-                'checkBadDomain'
-            ];
-
-            A collection of the different results from the given checks
-            $checkResults = [];
-            foreach($checks as $check)
-            {
-                $checkResult = $this->{ $check }($modifiedUrl);
-                $checkResults[] = $checkResult;
-                if ($checkResult->fails())
-                    break;
-            }
-            return $this->resolveFinalResult($checkResults);
-            */
-
             //handeling urls with IP address
             if ($this->ipChecker->isIpAddress($modifiedUrl)) {
                 return [
