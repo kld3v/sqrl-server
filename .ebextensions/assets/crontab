@@ -1,1 +1,2 @@
 * * * * * php /var/app/current/artisan schedule:run >> /var/log/qrla-schedule.log
+5 4 * * * certbot renew
