@@ -35,7 +35,7 @@ export default {
   },
   data() {
     return {
-      orderedFields: ['id', 'company', 'chain', 'url_id', 'tel', 'address', 'postcode', 'google_maps', 'area', 'status', 'complete'],
+      orderedFields: ['id', 'company', 'chain', 'url_id', 'tel', 'address', 'postcode', 'google_maps', 'area','midpoint', 'status', 'complete'],
     };
   },
   methods: {
