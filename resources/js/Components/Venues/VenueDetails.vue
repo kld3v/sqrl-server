@@ -41,11 +41,9 @@ export default {
   methods: {
     addArea() {
       this.venue.area.push('');
-      this.$emit('add-area');
     },
     removeArea(index) {
       this.venue.area.splice(index, 1);
-      this.$emit('remove-area', index);
     },
     makeEditable(event) {
       event.target.contentEditable = true;

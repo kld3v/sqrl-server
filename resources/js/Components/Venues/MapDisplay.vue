@@ -12,19 +12,8 @@ export default {
   },
   data() {
     return {
-      map: null, // Store the map object
-      areaPolygon: null, // Polygon representation of the venue area
-      markers: [], // Markers for each point in the area
+      areaPolygon: null, // Define the polygon here
     };
-  },
-  watch: {
-    'venue.area': {
-      handler(newValue) {
-        this.updatePolygonPath();
-        this.refreshMarkers();
-      },
-      deep: true,
-    },
   },
   mounted() {
     this.loadGoogleMapsScript().then(() => {
@@ -88,20 +77,6 @@ export default {
           });
         });
       });
-
-      this.map.addListener('click', (mapsMouseEvent) => {
-        // Get lat and lng from the click event
-        const clickedLat = mapsMouseEvent.latLng.lat();
-        const clickedLng = mapsMouseEvent.latLng.lng();
-
-        // Add the new point to the venue area and emit an update event
-        this.venue.area.push([clickedLng, clickedLat]);
-        this.$emit('update:venue', this.venue);
-
-        // Update the polygon and markers
-        this.updatePolygonPath();
-        this.refreshMarkers();
-      });
     },
 
     // Method to update area point in parent component
@@ -119,29 +94,6 @@ export default {
       this.areaPolygon.setPaths(newPath); // Directly update the polygon paths
     },
 
-    refreshMarkers() {
-      // Remove existing markers
-      this.markers.forEach(marker => marker.setMap(null));
-      this.markers = [];
-
-      // Add new markers based on the updated venue.area
-      this.venue.area.forEach((coord, index) => {
-        const position = { lat: coord[1], lng: coord[0] };
-        const marker = new google.maps.Marker({
-          position,
-          map: this.map,
-          draggable: true,
-        });
-
-        marker.addListener('dragend', () => {
-          const pos = marker.getPosition();
-          this.updateAreaPoint(0, index, { lat: pos.lat(), lng: pos.lng() });
-        });
-
-        this.markers.push(marker);
-      });
-    },
-
   }
 };
 </script>
@@ -149,6 +101,6 @@ export default {
 <style>
 /* Add styles for map display component */
 .map-display {
-  height: 400px; /* Example height, adjust as needed */
+  height: 500px; /* Example height, adjust as needed */
 }
 </style>
