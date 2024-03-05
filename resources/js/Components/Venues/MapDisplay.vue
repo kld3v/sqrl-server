@@ -10,6 +10,22 @@ export default {
   props: {
     venue: Object
   },
+  data() {
+    return {
+      map: null, // Store the map object
+      areaPolygon: null, // Polygon representation of the venue area
+      markers: [], // Markers for each point in the area
+    };
+  },
+  watch: {
+    'venue.area': {
+      handler(newValue) {
+        this.updatePolygonPath();
+        this.refreshMarkers();
+      },
+      deep: true,
+    },
+  },
   mounted() {
     this.loadGoogleMapsScript().then(() => {
       this.initMap();
@@ -39,26 +55,25 @@ export default {
     },
     initMap() {
       const mapCenter = { lat: this.venue.midpoint[1], lng: this.venue.midpoint[0] };
-
       const map = new google.maps.Map(this.$refs.mapDisplay, {
-        zoom: 15,
+        zoom: 19,
         center: mapCenter,
       });
 
-      const areaPolygon = new google.maps.Polygon({
+      // Attach the polygon object to this
+      this.areaPolygon = new google.maps.Polygon({
         paths: this.venue.area.map(coord => ({ lat: coord[1], lng: coord[0] })),
         strokeColor: "#FF0000",
         strokeOpacity: 0.8,
         strokeWeight: 2,
         fillColor: "#FF0000",
         fillOpacity: 0.35,
-        editable: true, // Make polygon edges draggable
       });
 
-      areaPolygon.setMap(map);
+      this.areaPolygon.setMap(map);
 
-      // For each vertex, create a draggable marker and update area coordinates on drag
-      areaPolygon.getPaths().forEach((path, pIndex) => {
+      // Marker creation code
+      this.areaPolygon.getPaths().forEach((path, pIndex) => {
         path.forEach((latLng, index) => {
           const marker = new google.maps.Marker({
             position: latLng,
@@ -69,15 +84,62 @@ export default {
           marker.addListener('dragend', () => {
             const pos = marker.getPosition();
             this.updateAreaPoint(pIndex, index, { lat: pos.lat(), lng: pos.lng() });
+            this.updatePolygonPath(); // Ensure this is called here to immediately reflect changes
           });
         });
+      });
+
+      this.map.addListener('click', (mapsMouseEvent) => {
+        // Get lat and lng from the click event
+        const clickedLat = mapsMouseEvent.latLng.lat();
+        const clickedLng = mapsMouseEvent.latLng.lng();
+
+        // Add the new point to the venue area and emit an update event
+        this.venue.area.push([clickedLng, clickedLat]);
+        this.$emit('update:venue', this.venue);
+
+        // Update the polygon and markers
+        this.updatePolygonPath();
+        this.refreshMarkers();
       });
     },
 
     // Method to update area point in parent component
     updateAreaPoint(pathIndex, pointIndex, newPosition) {
+      // Update the venue area with the new position
       this.venue.area[pointIndex] = [newPosition.lng, newPosition.lat];
-      this.$emit('update:venue', this.venue); // Use this if venue is a prop passed down from parent
+      this.$emit('update:venue', this.venue); // Notify parent component about the update
+
+      // After updating the area, also update the polygon's path
+      this.updatePolygonPath();
+    },
+
+    updatePolygonPath() {
+      const newPath = this.venue.area.map(coord => ({ lat: coord[1], lng: coord[0] }));
+      this.areaPolygon.setPaths(newPath); // Directly update the polygon paths
+    },
+
+    refreshMarkers() {
+      // Remove existing markers
+      this.markers.forEach(marker => marker.setMap(null));
+      this.markers = [];
+
+      // Add new markers based on the updated venue.area
+      this.venue.area.forEach((coord, index) => {
+        const position = { lat: coord[1], lng: coord[0] };
+        const marker = new google.maps.Marker({
+          position,
+          map: this.map,
+          draggable: true,
+        });
+
+        marker.addListener('dragend', () => {
+          const pos = marker.getPosition();
+          this.updateAreaPoint(0, index, { lat: pos.lat(), lng: pos.lng() });
+        });
+
+        this.markers.push(marker);
+      });
     },
 
   }

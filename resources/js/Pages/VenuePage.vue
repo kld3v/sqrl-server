@@ -4,7 +4,7 @@
       <VenueList :venues="venues" @venue-selected="handleVenueSelected" />
     </div>
     <div class="w-1/4" v-if="selectedVenue">
-      <VenueDetails :venue="selectedVenue" />
+      <VenueDetails :venue="selectedVenue" @add-area="addAreaToVenue" @remove-area="removeAreaFromVenue" />
     </div>
     <div class="w-1/2">
       <MapDisplay :venue="selectedVenue" />
@@ -39,6 +39,15 @@ export default {
   methods: {
     handleVenueSelected(venue) {
       this.selectedVenue = venue;
+    },
+    addAreaToVenue() {
+      // Assuming the areas are lat/lng pairs, add a default or clicked map position
+      this.selectedVenue.area.push([defaultLat, defaultLng]);
+      this.selectedVenue = { ...this.selectedVenue }; // Trigger reactivity
+    },
+    removeAreaFromVenue(index) {
+      this.selectedVenue.area.splice(index, 1);
+      this.selectedVenue = { ...this.selectedVenue }; // Trigger reactivity
     }
   }
 };

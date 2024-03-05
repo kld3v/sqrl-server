@@ -78,6 +78,12 @@ class VenueController extends Controller
                     $latLongPairs[] = [$coordinate[1], $coordinate[0]]; // [latitude, longitude]
                 }
             }
+
+            // Check if the last lat-long pair is the same as the first one, and drop it if true
+            if (!empty($latLongPairs) && $latLongPairs[0] == end($latLongPairs)) {
+                array_pop($latLongPairs); // Remove the last element
+            }
+
             $venue->area = $latLongPairs;
 
             // Convert midpoint (point)
