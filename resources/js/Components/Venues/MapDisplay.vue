@@ -1,14 +1,18 @@
 <template>
-  <div class="map-display" ref="mapDisplay">
-    <h2 class="text-2xl font-bold my-4">Map</h2>
-    <!-- Here you would integrate a map display, such as Google Maps or Leaflet -->
+  <div class="map-wrapper">
+    <div class="overlay-content">
+      <h2 class="text-2xl font-bold my-4">Map</h2>
+    </div>
+    <div class="map-display" ref="mapDisplay">
+      <!-- Google Maps or Leaflet map will be injected here -->
+    </div>
   </div>
 </template>
 
 <script>
 export default {
   props: {
-    venue: Object
+    venue: Object,
   },
   data() {
     return {
@@ -16,24 +20,26 @@ export default {
     };
   },
   mounted() {
-    this.loadGoogleMapsScript().then(() => {
-      this.initMap();
-    }).catch((error) => {
-      console.error('Error loading Google Maps:', error);
-    });
+    this.loadGoogleMapsScript()
+      .then(() => {
+        this.initMap();
+      })
+      .catch((error) => {
+        console.error("Error loading Google Maps:", error);
+      });
   },
   methods: {
     loadGoogleMapsScript() {
       return new Promise((resolve, reject) => {
         // Check if the Google Maps API script is already loaded
-        if (typeof google !== 'undefined' && google.maps) {
+        if (typeof google !== "undefined" && google.maps) {
           resolve();
           return;
         }
 
         // Create script element to include Google Maps API
-        const script = document.createElement('script');
-        script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyDBpdy_2P5bjZiE1rXmbFf1qeUs5tMLA-c`;
+        const script = document.createElement("script");
+        script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyDBpdy_2P5bjZiE1rXmbFf1qeUs5tMLA-c`; // Replace YOUR_API_KEY with your actual API key
         script.async = true;
         script.defer = true;
         document.head.appendChild(script);
@@ -43,64 +49,66 @@ export default {
       });
     },
     initMap() {
-      const mapCenter = { lat: this.venue.midpoint[1], lng: this.venue.midpoint[0] };
+      const mapCenter = {
+        lat: this.venue.midpoint[0],
+        lng: this.venue.midpoint[1],
+      };
       const map = new google.maps.Map(this.$refs.mapDisplay, {
         zoom: 19,
         center: mapCenter,
       });
 
-      // Attach the polygon object to this
       this.areaPolygon = new google.maps.Polygon({
-        paths: this.venue.area.map(coord => ({ lat: coord[1], lng: coord[0] })),
+        paths: this.venue.area.map((coord) => ({
+          lat: coord[0],
+          lng: coord[1],
+        })),
         strokeColor: "#FF0000",
         strokeOpacity: 0.8,
-        strokeWeight: 2,
         fillColor: "#FF0000",
         fillOpacity: 0.35,
+        editable: true, // This allows the polygon to be directly edited
+        draggable: true, // This allows the polygon to be moved
       });
 
       this.areaPolygon.setMap(map);
 
-      // Marker creation code
-      this.areaPolygon.getPaths().forEach((path, pIndex) => {
-        path.forEach((latLng, index) => {
-          const marker = new google.maps.Marker({
-            position: latLng,
-            map: map,
-            draggable: true,
-          });
-
-          marker.addListener('dragend', () => {
-            const pos = marker.getPosition();
-            this.updateAreaPoint(pIndex, index, { lat: pos.lat(), lng: pos.lng() });
-            this.updatePolygonPath(); // Ensure this is called here to immediately reflect changes
-          });
-        });
+      // Update venue area when polygon is edited
+      google.maps.event.addListener(this.areaPolygon.getPath(), 'set_at', this.updateVenueArea);
+      google.maps.event.addListener(this.areaPolygon.getPath(), 'insert_at', this.updateVenueArea);
+    },
+    updateVenueArea() {
+      const path = this.areaPolygon.getPath();
+      const newArea = [];
+      path.forEach((latLng) => {
+        const lat = latLng.lat();
+        const lng = latLng.lng();
+        newArea.push([lat, lng]);
       });
+      this.venue.area = newArea;
+      this.$emit("update:venue", this.venue);
     },
-
-    // Method to update area point in parent component
-    updateAreaPoint(pathIndex, pointIndex, newPosition) {
-      // Update the venue area with the new position
-      this.venue.area[pointIndex] = [newPosition.lng, newPosition.lat];
-      this.$emit('update:venue', this.venue); // Notify parent component about the update
-
-      // After updating the area, also update the polygon's path
-      this.updatePolygonPath();
-    },
-
-    updatePolygonPath() {
-      const newPath = this.venue.area.map(coord => ({ lat: coord[1], lng: coord[0] }));
-      this.areaPolygon.setPaths(newPath); // Directly update the polygon paths
-    },
-
-  }
+  },
 };
 </script>
 
 <style>
-/* Add styles for map display component */
+.map-wrapper {
+  position: relative;
+  height: 500px;
+}
+
 .map-display {
-  height: 500px; /* Example height, adjust as needed */
+  height: 100%;
+}
+
+.overlay-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  width: 100%;
+  text-align: center;
+  padding-top: 10px;
 }
 </style>

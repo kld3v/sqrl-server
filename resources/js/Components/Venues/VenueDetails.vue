@@ -20,9 +20,9 @@
             Delete
           </button>
         </div>
-        <button @click="addArea" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        <!-- <button @click="addArea" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
           Add Area
-        </button>
+        </button> -->
       </div>
     </div>
   </div>
@@ -39,9 +39,9 @@ export default {
     };
   },
   methods: {
-    addArea() {
-      this.venue.area.push('');
-    },
+    // addArea() {
+    //   this.venue.area.push('');
+    // },
     removeArea(index) {
       this.venue.area.splice(index, 1);
     },

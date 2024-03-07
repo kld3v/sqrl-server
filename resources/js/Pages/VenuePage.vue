@@ -7,7 +7,7 @@
       <VenueDetails :venue="selectedVenue" />
     </div>
     <div class="w-1/2">
-      <MapDisplay :venue="selectedVenue" />
+      <MapDisplay :venue="selectedVenue" @update:venue="handleVenueUpdate" />
     </div>
   </div>
 </template>
@@ -39,7 +39,10 @@ export default {
   methods: {
     handleVenueSelected(venue) {
       this.selectedVenue = venue;
-    }
+    },
+    handleVenueUpdate(updatedVenue) {
+      this.selectedVenue = { ...updatedVenue };
+    },
   }
 };
 </script>
