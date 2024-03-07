@@ -44,7 +44,7 @@ class EvaluateTrustService
     public function evaluateTrust($url)
     {
         try {
-            var_dump($url . 'in evaluate trust service');
+            var_dump($url . ' ' . 'in evaluate trust service');
             //removing www from all ulrs
             $modifiedUrl = $this->removeWWW->removeWWW($url);
             //handeling urls with IP address

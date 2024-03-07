@@ -21,7 +21,7 @@ class ScanProcessingService
     protected $evaluateTrustService;
 
     //MAJID REMEMBER TO ALWAYS UPDATE THIS CHEERS LOVE JOEL
-    protected $currentTestVersion = '1.0.2';
+    protected $currentTestVersion = '1.0.3';
 
 
     public function __construct(ShortURLMain $shortURLMain, EvaluateTrustService $evaluateTrustService)
@@ -36,7 +36,7 @@ class ScanProcessingService
         $redirectionValue = new RedirectionValue();
         $headlessBrowser = new HeadlessBrowser();
         if ($redirectionValue->redirectionValue($url)) {
-            var_dump($url . PHP_EOL . 'the entery url');
+            var_dump('entered url' . $url);
             //$url = $this->shortURLMain->unshorten($url);
             $url = $headlessBrowser->interactWithPage($url);
         }
