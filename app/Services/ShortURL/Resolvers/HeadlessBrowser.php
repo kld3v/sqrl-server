@@ -12,6 +12,7 @@ class HeadlessBrowser
         Log::channel('redirectLog')->info("Starting browser to interact with URL: {$url}");
 
         $browserFactory = new BrowserFactory();
+        Log::channel('redirectLog')->info("Browser Factory Created Successfully");
         $browser = $browserFactory->createBrowser([
             'headless' => true,
             'disableNotifications'=>true

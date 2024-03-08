@@ -31,7 +31,7 @@ class ScanProcessingService
     }
     public function processScan($url)
     {
-
+        Log::channel('redirectLog')->info("Starting process scan with URL: {$url}");
         // Expanding shortened URL, if necessary
         $redirectionValue = new RedirectionValue();
         $headlessBrowser = new HeadlessBrowser();
