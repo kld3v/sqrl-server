@@ -19,9 +19,13 @@ class HeadlessBrowser
         ]);
         try {
             $page = $browser->createPage();
+            Log::channel('redirectLog')->info("Creating Page: {$page}");
             $pageNav = $page->navigate($url);
+            Log::channel('redirectLog')->info("Navigating: {$pageNav}");
             $pageNav->waitForNavigation();
+            Log::channel('redirectLog')->info("Waiting: {$pageNav}");
             $lastUrl = $page->getCurrentUrl();
+            Log::channel('redirectLog')->info("Final Destination: {$lastUrl}");
 
             Log::channel('redirectLog')->info("Navigation completed. Final URL: {$lastUrl}");
 
