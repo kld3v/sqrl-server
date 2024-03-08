@@ -15,7 +15,7 @@ class RedirectionValue
         $httpStatusCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 
         curl_close($curl);
-        var_dump('curl status is' . $httpStatusCode);
+        // var_dump('curl status is' . $httpStatusCode);
         if ($httpStatusCode >= 300 && $httpStatusCode < 400) {
            return true;
         } else {

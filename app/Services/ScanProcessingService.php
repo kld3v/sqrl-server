@@ -36,7 +36,7 @@ class ScanProcessingService
         $redirectionValue = new RedirectionValue();
         $headlessBrowser = new HeadlessBrowser();
         if ($redirectionValue->redirectionValue($url)) {
-            var_dump('entered url' . $url);
+            // var_dump('entered url' . $url);
             //$url = $this->shortURLMain->unshorten($url);
             $url = $headlessBrowser->interactWithPage($url);
         }
