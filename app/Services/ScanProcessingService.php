@@ -36,8 +36,6 @@ class ScanProcessingService
         $redirectionValue = new RedirectionValue();
         $headlessBrowser = new HeadlessBrowser();
         if ($redirectionValue->redirectionValue($url)) {
-            // var_dump('entered url' . $url);
-            //$url = $this->shortURLMain->unshorten($url);
             $url = $headlessBrowser->interactWithPage($url);
         }
         // Check if URL is already in the database
@@ -90,5 +88,23 @@ class ScanProcessingService
     {
 
         return $storedVersion !== $currentVersion;
+    }
+
+
+    public function testProcessScan($url)
+    {
+        // Expanding shortened URL, if necessary
+        $redirectionValue = new RedirectionValue();
+        $headlessBrowser = new HeadlessBrowser();
+        if ($redirectionValue->redirectionValue($url)) {
+            $url = $headlessBrowser->interactWithPage($url);
+        }
+        
+        $trustScore = $this->evaluateTrustService->evaluateTrust($url);
+
+        return [
+            'trust_score' => $trustScore,
+            'test_version' => $this->currentTestVersion,
+        ];
     }
 }

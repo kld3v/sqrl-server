@@ -46,3 +46,4 @@ Route::post('/agreements/sign', [UserAgreementController::class, 'signDocument']
 
 //DO NOT GO PUBLIC WITH THIS ROUTE
 Route::get('/getscans', [ScanController::class, 'getScans']);
+Route::post('/test/scan', [ScanController::class, 'testProcessRequest']);

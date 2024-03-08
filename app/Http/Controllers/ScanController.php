@@ -155,4 +155,22 @@ class ScanController extends Controller
         return response()->json($scans);
     }
 
+
+    public function testProcessRequest(Request $request)
+    {   
+
+        $request->validate([
+            'url' => 'required',         
+        ]);
+    
+        $url = $request->input('url');
+    
+        $scanData = $this->ScanProcessingService->testProcessScan($url);
+        
+        return response()->json([
+            'trust_score' => $scanData['trust_score'],
+            'test_version' => $scanData['test_version']
+        ]);
+    }
+
 }
