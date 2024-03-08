@@ -36,6 +36,8 @@ return [
         'trace' => false,
     ],
 
+    
+
     /*
     |--------------------------------------------------------------------------
     | Log Channels
@@ -125,6 +127,12 @@ return [
 
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
+        ],
+
+        'redirectLog' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/redirectLog.log'),
+            'level' => 'debug',
         ],
 
     ],
