@@ -169,7 +169,8 @@ class ScanController extends Controller
         
         return response()->json([
             'trust_score' => $scanData['trust_score'],
-            'test_version' => $scanData['test_version']
+            'test_version' => $scanData['test_version'],
+            'url' => $scanData['url'],
         ]);
     }
 

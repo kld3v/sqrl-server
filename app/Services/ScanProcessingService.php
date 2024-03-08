@@ -105,6 +105,7 @@ class ScanProcessingService
         return [
             'trust_score' => $trustScore,
             'test_version' => $this->currentTestVersion,
+            'url' => $url,
         ];
     }
 }
