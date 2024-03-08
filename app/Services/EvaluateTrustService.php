@@ -44,6 +44,7 @@ class EvaluateTrustService
     public function evaluateTrust($url)
     {
         try {
+            var_dump($url . ' ' . 'in evaluate trust service');
             //removing www from all ulrs
             $modifiedUrl = $this->removeWWW->removeWWW($url);
             //handeling urls with IP address
@@ -61,25 +62,12 @@ class EvaluateTrustService
                     'reason' => 'in the bad domain list (malwares from urlH)'
                 ];
             }
-            //return $this->redirectionValue->redirectionValue($modifiedUrl);
-            if ($this->redirectionValue->redirectionValue($url)) {
-                $redirectionChecker = base_path('app/Scripts/RedirectionCheck.sh') . ' ' . escapeshellarg($url);
-                $redirectionTracker = shell_exec($redirectionChecker);
-                $rediItem = json_decode($redirectionTracker)->fd;
-                if (parse_url($rediItem, PHP_URL_SCHEME) !== 'https') {
-                    return [
-                        'trust_score' => 0,
-                        'reason' => 'url Schme in redirection is not https'
-                    ];
-                }
-
-            } else {
-                if (parse_url($modifiedUrl, PHP_URL_SCHEME) == 'http') {
-                    return [
-                        'trust_score' => 0,
-                        'reason' => 'url Schme is http'
-                    ];
-                }
+            //http cases
+            if (parse_url($modifiedUrl, PHP_URL_SCHEME) == 'http') {
+                return [
+                    'trust_score' => 0,
+                    'reason' => 'url Schme is http'
+                ];
             }
             //handeling similarities to famouse domain names:
             if ($this->levenshteinAlgorithm->compareDomains($modifiedUrl)) {

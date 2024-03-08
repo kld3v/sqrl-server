@@ -5,13 +5,14 @@ namespace App\Services;
 
 use App\Http\Controllers\URLController;
 use App\Http\Controllers\ScanController;
+use App\Services\ShortURL\Resolvers\HeadlessBrowser;
 use Illuminate\Support\Facades\App;
 use App\Services\EvaluateTrustService;
 use App\Services\ShortURL\ShortURLMain;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\URL;
-
+use App\Services\UrlManipulations\RedirectionValue;
 use Illuminate\Support\Facades\Log;
 
 class ScanProcessingService
@@ -20,7 +21,7 @@ class ScanProcessingService
     protected $evaluateTrustService;
 
     //MAJID REMEMBER TO ALWAYS UPDATE THIS CHEERS LOVE JOEL
-    protected $currentTestVersion = '1.0.1';
+    protected $currentTestVersion = '1.0.3';
 
 
     public function __construct(ShortURLMain $shortURLMain, EvaluateTrustService $evaluateTrustService)
@@ -32,13 +33,15 @@ class ScanProcessingService
     {
 
         // Expanding shortened URL, if necessary
-        if ($this->shortURLMain->isShortURL($url)) {
-            $url = $this->shortURLMain->unshorten($url);
+        $redirectionValue = new RedirectionValue();
+        $headlessBrowser = new HeadlessBrowser();
+        if ($redirectionValue->redirectionValue($url)) {
+            var_dump('entered url' . $url);
+            //$url = $this->shortURLMain->unshorten($url);
+            $url = $headlessBrowser->interactWithPage($url);
         }
-
         // Check if URL is already in the database
         $existingUrl = URL::where('url', $url)->first();
-
 
         if ($existingUrl) {
             // Check if the trust score needs to be updated
@@ -64,8 +67,6 @@ class ScanProcessingService
             $trustScore = $this->evaluateTrustService->evaluateTrust($url);
 
             $score = $trustScore['trust_score'];
-
-
             $existingUrl = URL::create([
                 'url' => $url,
                 'trust_score' => $score,

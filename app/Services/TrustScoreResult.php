@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Services;
-
+//this file was added by nathan
+//use this for scoring system as a weighted sum:
 class TrustScoreResult
 {
     private $reasons;
