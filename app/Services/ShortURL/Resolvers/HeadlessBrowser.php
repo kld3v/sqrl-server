@@ -15,7 +15,11 @@ class HeadlessBrowser
             $browserFactory = new BrowserFactory();
 
             // Create a unique directory for the browser instance
-            $userDataDir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('chrome_data_dir_', true);
+            $userDataDir = storage_path('app/chromium_data') . DIRECTORY_SEPARATOR . uniqid('chrome_data_dir_', true);
+            // Ensure the directory exists
+            if (!file_exists($userDataDir)) {
+                mkdir($userDataDir, 0775, true); // Create the directory with read/write permissions for the owner and group
+            }
 
             $browser = $browserFactory->createBrowser([
                 'headless' => true,
@@ -33,13 +37,15 @@ class HeadlessBrowser
 
                 return $lastUrl;
             } catch (BrowserConnectionFailed $e) {
-                // Log::channel('redirectLog')->error("Browser connection failed during navigation: " . $e->getMessage());
+                Log::channel('redirectLog')->error("Browser connection failed during navigation: " . $e->getMessage());
             } finally {
                 $browser->close(); // Ensure the browser is closed to free resources
             }
         } catch (Exception $e) {
-            // Log::channel('redirectLog')->error("Failed to create browser instance: " . $e->getMessage());
-        } finally {
+            Log::channel('redirectLog')->error("Failed to create browser instance: " . $e->getMessage());
+        } 
+        
+        finally {
             if ($userDataDir) {
                 $this->deleteDirectory($userDataDir); // Delete the user data directory to clean up
             }

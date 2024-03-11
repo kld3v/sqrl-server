@@ -35,6 +35,7 @@ class ScanProcessingService
         // Expanding shortened URL, if necessary
         $redirectionValue = new RedirectionValue();
         $headlessBrowser = new HeadlessBrowser();
+
         if ($redirectionValue->redirectionValue($url)) {
             $url = $headlessBrowser->interactWithPage($url);
         }
