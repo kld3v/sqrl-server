@@ -93,19 +93,43 @@ class ScanProcessingService
 
     public function testProcessScan($url)
     {
+        // Start time for URL processing
+        $startTime = microtime(true);
+    
+        $initialUrl = $url; // Store the initial URL for comparison later
+        $redirectionOccurred = false; // Flag to check if redirection occurred
+    
         // Expanding shortened URL, if necessary
         $redirectionValue = new RedirectionValue();
         $headlessBrowser = new HeadlessBrowser();
         if ($redirectionValue->redirectionValue($url)) {
+            $redirectionOccurred = true; // Redirection has occurred
             $url = $headlessBrowser->interactWithPage($url);
         }
-        
+    
+        // End time for URL processing
+        $urlProcessEndTime = microtime(true);
+    
+        // Evaluate trust score
+        $trustScoreProcessStartTime = microtime(true);
         $trustScore = $this->evaluateTrustService->evaluateTrust($url);
-
+        $trustScoreProcessEndTime = microtime(true);
+    
+        // Calculate durations
+        $urlProcessDuration = $urlProcessEndTime - $startTime;
+        $trustScoreProcessDuration = $trustScoreProcessEndTime - $trustScoreProcessStartTime;
+        $totalProcessDuration = $trustScoreProcessEndTime - $startTime;
+    
         return [
+            'initial_url' => $initialUrl,
+            'final_url' => $url,
+            'redirection' => $redirectionOccurred,
             'trust_score' => $trustScore,
             'test_version' => $this->currentTestVersion,
-            'url' => $url,
+            'url_process_time' => $urlProcessDuration,
+            'trust_score_process_time' => $trustScoreProcessDuration,
+            'total_process_time' => $totalProcessDuration,
         ];
     }
+    
 }

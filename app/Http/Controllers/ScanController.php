@@ -157,8 +157,7 @@ class ScanController extends Controller
 
 
     public function testProcessRequest(Request $request)
-    {   
-
+    {
         $request->validate([
             'url' => 'required',         
         ]);
@@ -167,11 +166,8 @@ class ScanController extends Controller
     
         $scanData = $this->ScanProcessingService->testProcessScan($url);
         
-        return response()->json([
-            'trust_score' => $scanData['trust_score'],
-            'test_version' => $scanData['test_version'],
-            'destination_url' => $scanData['url'],
-        ]);
+        return response()->json($scanData);
     }
+    
 
 }
