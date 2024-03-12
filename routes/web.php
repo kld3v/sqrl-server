@@ -1,8 +1,11 @@
 <?php
 
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Services\EvaluateTrustService;
 use App\Http\Controllers\URLmainController;
+use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\RiskEvaluationController;
 use App\Http\Controllers\TestEvaluateTrustController;
 
@@ -18,8 +21,17 @@ use App\Http\Controllers\TestEvaluateTrustController;
 */
 
 Route::get('/', function () {
+
+   return Auth::user();
+
    return view('welcome');
 });
+
+Route::get('/login/google', [GoogleAuthController::class, 'redirect'])->name('auth.google');
+
+Route::get('/login/google/callback', [GoogleAuthController::class, 'callback'])->name('auth.google.callback');
+
+
 Route::get('/check-web-risk', [EvaluateTrustService::class, 'evaluateTrust']);
 Route::get('/test-evaluate-trust', function () {
    $url = "http://59.89.3.109:58853/i";

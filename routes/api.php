@@ -19,13 +19,20 @@ use App\Http\Controllers\UserAgreementController;
 */
 
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+// Route for all closed API endpoints (i.e., routes that require a user to be authenticated)
+Route::middleware('auth:sanctum')->group(function () {
+
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
+
+    Route::post('/scan', [ScanController::class, 'processRequest']);
+
 });
 
 
 //SCAN
-Route::post('/scan', [ScanController::class, 'processRequest']);
+
 
 
 //GEO

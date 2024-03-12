@@ -15,8 +15,10 @@
 		"io-developer/php-whois": "^4.1",
 		"laravel/framework": "^10.10",
 		"laravel/sanctum": "^3.3",
+		"laravel/socialite": "^5.12",
 		"laravel/tinker": "^2.8",
-		"php-ai/php-ml": "^0.10.0"
+		"php-ai/php-ml": "^0.10.0",
+		"socialiteproviders/google": "^4.1"
 	},
 	"require-dev": {
 		"fakerphp/faker": "^1.9.1",
