@@ -3,17 +3,19 @@
 
 namespace App\Services;
 
-use App\Http\Controllers\URLController;
-use App\Http\Controllers\ScanController;
-use App\Services\ShortURL\Resolvers\HeadlessBrowser;
-use Illuminate\Support\Facades\App;
-use App\Services\EvaluateTrustService;
-use App\Services\ShortURL\ShortURLMain;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use App\Models\URL;
-use App\Services\UrlManipulations\RedirectionValue;
+use VXM\Async\AsyncFacade as Async;
+use App\Jobs\ProcessScanJob;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
+use App\Services\EvaluateTrustService;
+use App\Http\Controllers\URLController;
+use App\Services\ShortURL\ShortURLMain;
+use App\Http\Controllers\ScanController;
+use App\Services\UrlManipulations\RedirectionValue;
+use App\Services\ShortURL\Resolvers\HeadlessBrowser;
 
 class ScanProcessingService
 {
@@ -31,12 +33,14 @@ class ScanProcessingService
     }
     public function processScan($url)
     {
-        Log::channel('redirectLog')->info("Starting process scan with URL: {$url}");
+        $startTime = microtime(true);
         // Expanding shortened URL, if necessary
         $redirectionValue = new RedirectionValue();
         $headlessBrowser = new HeadlessBrowser();
+        //var_dump($redirectionValue->redirectionValue($url));
         if ($redirectionValue->redirectionValue($url)) {
-            $url = $headlessBrowser->interactWithPage($url);
+          
+            ProcessScanJob::dispatch($url);
         }
         // Check if URL is already in the database
         $existingUrl = URL::where('url', $url)->first();
@@ -60,7 +64,7 @@ class ScanProcessingService
                 $trustScore = $existingUrl->trust_score;
             }
         } else {
-
+            Log::channel('redirectLog')->info("new Url: {$url}");
             // URL not in DB, evaluate and add
             $trustScore = $this->evaluateTrustService->evaluateTrust($url);
 
@@ -71,7 +75,11 @@ class ScanProcessingService
                 'test_version' => $this->currentTestVersion,
             ]);
         }
+        $endTime = microtime(true);
 
+        // Calculate the elapsed time in seconds
+        $elapsedTime = $endTime - $startTime;
+        var_dump('time ' . $elapsedTime);
         return $existingUrl;
     }
 
@@ -88,23 +96,5 @@ class ScanProcessingService
     {
 
         return $storedVersion !== $currentVersion;
-    }
-
-
-    public function testProcessScan($url)
-    {
-        // Expanding shortened URL, if necessary
-        $redirectionValue = new RedirectionValue();
-        $headlessBrowser = new HeadlessBrowser();
-        if ($redirectionValue->redirectionValue($url)) {
-            $url = $headlessBrowser->interactWithPage($url);
-        }
-        
-        $trustScore = $this->evaluateTrustService->evaluateTrust($url);
-
-        return [
-            'trust_score' => $trustScore,
-            'test_version' => $this->currentTestVersion,
-        ];
     }
 }

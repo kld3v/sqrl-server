@@ -15,19 +15,21 @@ class HeadlessBrowser
             // Log::channel('redirectLog')->info("Browser Factory Created Successfully");
             $browser = $browserFactory->createBrowser([
                 'headless' => true,
-                'disableNotifications'=>true
+                'disableNotifications'=>true,
+                'keepAlive'=>true
             ]);
 
             try {
+                Log::channel('redirectLog')->info("Processing URL in the Headless mode: {$url}");
                 $page = $browser->createPage();
-                // Log::channel('redirectLog')->info("Creating Page");
+               
                 $pageNav = $page->navigate($url);
                 // Log::channel('redirectLog')->info("Navigating");
                 $pageNav->waitForNavigation();
                 // Log::channel('redirectLog')->info("Waiting");
                 $lastUrl = $page->getCurrentUrl();
 
-                Log::channel('redirectLog')->info("Navigation completed. Final URL");
+                Log::channel('redirectLog')->info("Navigation completed. Final URL {$lastUrl}");
 
                 return $lastUrl;
             } catch (BrowserConnectionFailed $e) {

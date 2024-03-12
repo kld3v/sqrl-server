@@ -8,6 +8,7 @@ use SpecificException;
 use AnotherSpecificException;
 use App\Services\ScanLayers\Whois;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Log;
 use App\Services\ScanLayers\UrlHaus;
 use App\Http\Controllers\URLController;
 use App\Http\Controllers\ScanController;
@@ -44,7 +45,7 @@ class EvaluateTrustService
     public function evaluateTrust($url)
     {
         try {
-            // var_dump($url . ' ' . 'in evaluate trust service');
+            //Log::info("Processing URL: $url");
             //removing www from all ulrs
             $modifiedUrl = $this->removeWWW->removeWWW($url);
             //handeling urls with IP address
@@ -237,3 +238,4 @@ class EvaluateTrustService
         return $finalResult;
     }
 }
+ 

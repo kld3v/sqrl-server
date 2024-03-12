@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Services\EvaluateTrustService;
 use App\Http\Controllers\URLmainController;
+use App\Http\Controllers\ScanProcessPerformance;
 use App\Http\Controllers\RiskEvaluationController;
 use App\Http\Controllers\TestEvaluateTrustController;
 
