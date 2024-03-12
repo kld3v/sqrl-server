@@ -89,8 +89,8 @@ class ScanProcessingService
         // Start time for URL processing
         $startTime = microtime(true);
     
-        $initialUrl = $url; // Store the initial URL for comparison later
-        $redirectionOccurred = false; // Flag to check if redirection occurred
+        $initialUrl = $url; 
+        $redirectionOccurred = false; 
     
         // Expanding shortened URL, if necessary
         $redirectionValue = new RedirectionValue();
