@@ -77,19 +77,12 @@ class ScanProcessingService
 
     private function isTrustScoreOutdated($urlRecord)
     {
-        // Check if the updated_at column is older than 2 weeks or if test version has changed significantly
+        // Check if the updated_at column is older than 2 weeks or if test version has changed
         $isDateOutdated = $urlRecord->updated_at->lt(Carbon::now()->subWeeks(2));
-        $isVersionOutdated = $this->isVersionChangeSignificant($urlRecord->test_version, $this->currentTestVersion);
-
+        $isVersionOutdated = $urlRecord->test_version !== $this->currentTestVersion;
+        
         return $isDateOutdated || $isVersionOutdated;
     }
-
-    private function isVersionChangeSignificant($storedVersion, $currentVersion)
-    {
-
-        return $storedVersion !== $currentVersion;
-    }
-
 
     public function testProcessScan($url)
     {
