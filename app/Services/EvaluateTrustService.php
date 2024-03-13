@@ -16,6 +16,7 @@ use App\Services\ScanLayers\SubdomainEnum;
 use App\Services\ScanLayers\BadDomainCheck;
 use App\Services\UrlManipulations\IpChecker;
 use App\Services\UrlManipulations\RemoveWww;
+use App\Services\ScanLayers\DomainReputation;
 use App\Services\ScanLayers\VirusTotalService;
 use App\Services\UrlManipulations\HasSubdomain;
 use App\Services\UrlManipulations\StringEntropy;
@@ -44,6 +45,12 @@ class EvaluateTrustService
     public function evaluateTrust($url)
     {
         try {
+            $domainReputationService = new DomainReputation();
+            $result = $domainReputationService->domain_reputation_check($url);
+            var_dump(gettype($result));
+            var_dump($result);
+            return 1;
+
             // var_dump($url . ' ' . 'in evaluate trust service');
             //removing www from all ulrs
             $modifiedUrl = $this->removeWWW->removeWWW($url);
