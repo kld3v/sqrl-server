@@ -31,11 +31,12 @@ class ScanProcessingService
     }
     public function processScan($url)
     {
-        Log::channel('redirectLog')->info("Starting process scan with URL: {$url}");
         // Expanding shortened URL, if necessary
         $redirectionValue = new RedirectionValue();
         $headlessBrowser = new HeadlessBrowser();
+        var_dump($redirectionValue->redirectionValue($url));
         if ($redirectionValue->redirectionValue($url)) {
+            Log::channel('redirectLog')->info("this url has redirection: {$url}");
             $url = $headlessBrowser->interactWithPage($url);
         }
         // Check if URL is already in the database
