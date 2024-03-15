@@ -36,6 +36,12 @@ return [
         'client_secret' => env('GOOGLE_CLIENT_SECRET'),  
         'redirect' => env('GOOGLE_REDIRECT_URI'),
         'web_risk_api_key' => env('WEB_RISK_API_KEY')
-    ]
+    ],
+
+    'apple' => [
+        'client_id' => env('APPLE_CLIENT_ID'),
+        'client_secret' => env('APPLE_CLIENT_SECRET'),
+        'redirect' => env('APPLE_REDIRECT_URI')
+      ],
 
 ];
