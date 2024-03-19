@@ -24,27 +24,11 @@ class AppleAuthController extends Controller
 
         if ($appleUser = Socialite::driver('apple')->user())
         {
-            // Here if google trusts the user!
             
             return $appleUser;
-            // Ensure we have a local user that matches the given details. If not, create one!
-            // $user = User::updateOrCreate([
-            //     'email' => $appleUser->email,
-            // ], [
-            //     'name' => $appleUser->name,
-            //     'email' => $appleUser->email,
-            //     'password' => Hash::make(Str::random())
-            // ]);
 
-            // // If the user is coming to us from a Web APP perspective, log them in!
-            // Auth::login($user);
-
-            // // Create a new personal access token!
-            
-            // $token = $user->createToken('app');
-            // return $token->plainTextToken;
         }
         
-        abort(401, 'Could not authenticate with Google');
+        abort(401, 'Could not authenticate with Apple');
     }
 }
