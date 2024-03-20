@@ -34,7 +34,7 @@ Route::get('/login/google/callback', [GoogleAuthController::class, 'callback'])-
 
 //Apple Login
 Route::get('/login/apple', [AppleAuthController::class, 'redirect'])->name('auth.apple');
-Route::get('/login/apple/callback', [AppleAuthController::class, 'callback'])->name('auth.apple.callback');
+Route::post('/login/apple/callback', [AppleAuthController::class, 'callback'])->name('auth.apple.callback');
 
 
 Route::get('/check-web-risk', [EvaluateTrustService::class, 'evaluateTrust']);

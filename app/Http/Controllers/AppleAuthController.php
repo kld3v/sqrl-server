@@ -25,7 +25,7 @@ class AppleAuthController extends Controller
         if ($appleUser = Socialite::driver('apple')->user())
         {
             
-            return $appleUser;
+            return json_encode($appleUser);
 
         }
         
