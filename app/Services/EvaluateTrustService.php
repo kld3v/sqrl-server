@@ -4,10 +4,9 @@
 namespace App\Services;
 
 use DateTime;
-use SpecificException;
-use AnotherSpecificException;
 use App\Services\ScanLayers\Whois;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Log;
 use App\Services\ScanLayers\UrlHaus;
 use App\Http\Controllers\URLController;
 use App\Http\Controllers\ScanController;
@@ -16,7 +15,7 @@ use App\Services\ScanLayers\SubdomainEnum;
 use App\Services\ScanLayers\BadDomainCheck;
 use App\Services\UrlManipulations\IpChecker;
 use App\Services\UrlManipulations\RemoveWww;
-use App\Services\ScanLayers\VirusTotalService;
+use App\Services\ScanLayers\DomainReputation;
 use App\Services\UrlManipulations\HasSubdomain;
 use App\Services\UrlManipulations\StringEntropy;
 use App\Services\ScanLayers\LevenshteinAlgorithm;
@@ -39,12 +38,12 @@ class EvaluateTrustService
         private HasSubdomain $hasSub,
         private SubdomainEnum $subEnum,
         private UrlHaus $urlHaus,
+        private DomainReputation $domainReputaton
     ) {
     }
     public function evaluateTrust($url)
     {
         try {
-            // var_dump($url . ' ' . 'in evaluate trust service');
             //removing www from all ulrs
             $modifiedUrl = $this->removeWWW->removeWWW($url);
             //handeling urls with IP address
@@ -92,6 +91,7 @@ class EvaluateTrustService
                     'reason' => "ssl certification expired"
                 ];
             }
+            //creating a domain reputation instance:
             //if there is a subdomain:
             if ($this->hasSub->hasSubdomain($modifiedUrl)) {
                 //.uk cases:
@@ -109,6 +109,24 @@ class EvaluateTrustService
                             'reason' => '.uk case with less than a week age or bad domain name'
                         ];
                     }
+                    //domain Reputation :
+                    $domainRepInfo = $this->domainReputaton->domain_reputation_check($url);
+                    if ($domainRepInfo['reputationScore'] < 90.0) {
+                        if ($domainRepInfo['reputationScore'] >= 75.0) {
+                            return [
+                                'trust_score' => 750,
+                                'reason' => 'domain reputation is below 90% but higher than or equal to 75%'
+                            ];
+                        } else {
+                            return [
+                                'trust_score' => 450,
+                                'reason' => 'domain reputation is below 75%'
+                            ];
+                        }
+                    }
+
+
+
                 } else {
                     //has subdomain but there is no .uk
                     $whoisCheck = $this->subdomainExtract->extractSubdomainsFromUrl($modifiedUrl)['domain'];
@@ -168,7 +186,7 @@ class EvaluateTrustService
             $googleWebRiskResult = $this->webRiskService->checkForThreats($modifiedUrl);
             //var_dump($googleWebRiskResult);
             foreach (['UNWANTED_SOFTWARE', 'MALWARE', 'SOCIAL_ENGINEERING'] as $threatType) {
-                if (isset($googleWebRiskResult[$threatType]['threat']) && $googleWebRiskResult[$threatType]['threat'] !== null) {
+                if (isset ($googleWebRiskResult[$threatType]['threat']) && $googleWebRiskResult[$threatType]['threat'] !== null) {
                     return [
                         'trust_score' => 0,
                         'reason' => 'Google Web Risk detected a ' . $threatType . ' threat'
