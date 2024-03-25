@@ -91,7 +91,6 @@ class EvaluateTrustService
                     'reason' => "ssl certification expired"
                 ];
             }
-            //creating a domain reputation instance:
             //if there is a subdomain:
             if ($this->hasSub->hasSubdomain($modifiedUrl)) {
                 //.uk cases:
@@ -109,24 +108,6 @@ class EvaluateTrustService
                             'reason' => '.uk case with less than a week age or bad domain name'
                         ];
                     }
-                    //domain Reputation :
-                    $domainRepInfo = $this->domainReputaton->domain_reputation_check($url);
-                    if ($domainRepInfo['reputationScore'] < 90.0) {
-                        if ($domainRepInfo['reputationScore'] >= 75.0) {
-                            return [
-                                'trust_score' => 750,
-                                'reason' => 'domain reputation is below 90% but higher than or equal to 75%'
-                            ];
-                        } else {
-                            return [
-                                'trust_score' => 450,
-                                'reason' => 'domain reputation is below 75%'
-                            ];
-                        }
-                    }
-
-
-
                 } else {
                     //has subdomain but there is no .uk
                     $whoisCheck = $this->subdomainExtract->extractSubdomainsFromUrl($modifiedUrl)['domain'];
@@ -143,10 +124,10 @@ class EvaluateTrustService
                     $creationDateTime = new DateTime($creationDate);
                     $currentDateTime = new DateTime();
                     $interval = $currentDateTime->diff($creationDateTime);
-                    if ($entropyResult > 3 || $interval->days < 7 || ($output->register_country !== 'GB' && $output->register_country !== 'US')) {
+                    if ($entropyResult > 3 || $interval->days < 7) {
                         return [
                             'trust_score' => 0,
-                            'reason' => "domain was created less than a week ago or not in UK/US or has high entropy"
+                            'reason' => "domain was created less than a week ago"
                         ];
                     }
                 }
@@ -162,10 +143,10 @@ class EvaluateTrustService
                 $currentDateTime = new DateTime();
                 $interval = $currentDateTime->diff($creationDateTime);
                 //very bad logic here for google/yahoo and etc--->these cases dont have country in their info
-                if ($interval->days < 7 || ($output->register_country !== 'GB' && $output->register_country !== 'US' && $output->register_country !== '')) {
+                if ($interval->days < 7) {
                     return [
                         'trust_score' => 0,
-                        'reason' => "domain was created less than a week ago or not in UK/US"
+                        'reason' => "domain was created less than a week"
                     ];
                 }
                 //.uk cases with no subdomains::
@@ -190,6 +171,21 @@ class EvaluateTrustService
                     return [
                         'trust_score' => 0,
                         'reason' => 'Google Web Risk detected a ' . $threatType . ' threat'
+                    ];
+                }
+            }
+            //domain reputation
+            $domainRepInfo = $this->domainReputaton->domain_reputation_check($url);
+            if ($domainRepInfo['reputationScore'] < 85.0) {
+                if ($domainRepInfo['reputationScore'] >= 60.0) {
+                    return [
+                        'trust_score' => 800,
+                        'reason' => "domain reputation is below 85% but higher than or equal to 60%"
+                    ];
+                } else {
+                    return [
+                        'trust_score' => 450,
+                        'reason' => 'domain reputation is below 60%'
                     ];
                 }
             }
@@ -222,8 +218,6 @@ class EvaluateTrustService
             ];
         }
     }
-
-
     // See above - consider refactoring checks into separate functions
     //Nathan wrote these
     private function checkIpOk($url): TrustScoreResult
