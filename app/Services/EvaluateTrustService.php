@@ -4,10 +4,9 @@
 namespace App\Services;
 
 use DateTime;
-use SpecificException;
-use AnotherSpecificException;
 use App\Services\ScanLayers\Whois;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Log;
 use App\Services\ScanLayers\UrlHaus;
 use App\Http\Controllers\URLController;
 use App\Http\Controllers\ScanController;
@@ -16,7 +15,7 @@ use App\Services\ScanLayers\SubdomainEnum;
 use App\Services\ScanLayers\BadDomainCheck;
 use App\Services\UrlManipulations\IpChecker;
 use App\Services\UrlManipulations\RemoveWww;
-use App\Services\ScanLayers\VirusTotalService;
+use App\Services\ScanLayers\DomainReputation;
 use App\Services\UrlManipulations\HasSubdomain;
 use App\Services\UrlManipulations\StringEntropy;
 use App\Services\ScanLayers\LevenshteinAlgorithm;
@@ -39,12 +38,12 @@ class EvaluateTrustService
         private HasSubdomain $hasSub,
         private SubdomainEnum $subEnum,
         private UrlHaus $urlHaus,
+        private DomainReputation $domainReputaton
     ) {
     }
     public function evaluateTrust($url)
     {
         try {
-            // var_dump($url . ' ' . 'in evaluate trust service');
             //removing www from all ulrs
             $modifiedUrl = $this->removeWWW->removeWWW($url);
             //handeling urls with IP address
@@ -125,10 +124,10 @@ class EvaluateTrustService
                     $creationDateTime = new DateTime($creationDate);
                     $currentDateTime = new DateTime();
                     $interval = $currentDateTime->diff($creationDateTime);
-                    if ($entropyResult > 3 || $interval->days < 7 || ($output->register_country !== 'GB' && $output->register_country !== 'US')) {
+                    if ($entropyResult > 3 || $interval->days < 7) {
                         return [
                             'trust_score' => 0,
-                            'reason' => "domain was created less than a week ago or not in UK/US or has high entropy"
+                            'reason' => "domain was created less than a week ago"
                         ];
                     }
                 }
@@ -144,10 +143,10 @@ class EvaluateTrustService
                 $currentDateTime = new DateTime();
                 $interval = $currentDateTime->diff($creationDateTime);
                 //very bad logic here for google/yahoo and etc--->these cases dont have country in their info
-                if ($interval->days < 7 || ($output->register_country !== 'GB' && $output->register_country !== 'US' && $output->register_country !== '')) {
+                if ($interval->days < 7) {
                     return [
                         'trust_score' => 0,
-                        'reason' => "domain was created less than a week ago or not in UK/US"
+                        'reason' => "domain was created less than a week"
                     ];
                 }
                 //.uk cases with no subdomains::
@@ -168,10 +167,25 @@ class EvaluateTrustService
             $googleWebRiskResult = $this->webRiskService->checkForThreats($modifiedUrl);
             //var_dump($googleWebRiskResult);
             foreach (['UNWANTED_SOFTWARE', 'MALWARE', 'SOCIAL_ENGINEERING'] as $threatType) {
-                if (isset($googleWebRiskResult[$threatType]['threat']) && $googleWebRiskResult[$threatType]['threat'] !== null) {
+                if (isset ($googleWebRiskResult[$threatType]['threat']) && $googleWebRiskResult[$threatType]['threat'] !== null) {
                     return [
                         'trust_score' => 0,
                         'reason' => 'Google Web Risk detected a ' . $threatType . ' threat'
+                    ];
+                }
+            }
+            //domain reputation
+            $domainRepInfo = $this->domainReputaton->domain_reputation_check($url);
+            if ($domainRepInfo['reputationScore'] < 85.0) {
+                if ($domainRepInfo['reputationScore'] >= 60.0) {
+                    return [
+                        'trust_score' => 800,
+                        'reason' => "domain reputation is below 85% but higher than or equal to 60%"
+                    ];
+                } else {
+                    return [
+                        'trust_score' => 450,
+                        'reason' => 'domain reputation is below 60%'
                     ];
                 }
             }
@@ -204,8 +218,6 @@ class EvaluateTrustService
             ];
         }
     }
-
-
     // See above - consider refactoring checks into separate functions
     //Nathan wrote these
     private function checkIpOk($url): TrustScoreResult

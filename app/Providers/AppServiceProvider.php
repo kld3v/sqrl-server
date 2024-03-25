@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Services\ScanLayers\DomainReputation;
 use App\Services\ScanLayers\WhoIs;
 use App\Services\ScanLayers\UrlHaus;
 use App\Services\EvaluateTrustService;
@@ -48,6 +49,7 @@ class AppServiceProvider extends ServiceProvider
                 $app->make(HasSubdomain::class),
                 $app->make(SubdomainEnum::class),
                 $app->make(UrlHaus::class),
+                $app->make(DomainReputation::class)
             );
         });
         $this->app->singleton(ScanProcessingService::class, function ($app) {
