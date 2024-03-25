@@ -145,15 +145,18 @@ class ScanController extends Controller
     public function getScans(Request $request)
     {
         $urlId = $request->input('url_id');
-
+    
         if ($urlId) {
-            $scans = Scan::where('url_id', $urlId)->get();
+            $scans = Scan::where('url_id', $urlId)
+                         ->whereRaw('LENGTH(device_uuid) = 16')
+                         ->get();
         } else {
-            $scans = Scan::all();
+            $scans = Scan::whereRaw('LENGTH(device_uuid) = 16')->get();
         }
-
+    
         return response()->json($scans);
     }
+    
 
 
     public function testProcessRequest(Request $request)
