@@ -26,7 +26,6 @@ class HeadlessBrowser
                 $pageNav->waitForNavigation();
                 Log::channel('redirectLog')->info("Waiting");
                 $lastUrl = $page->getCurrentUrl();
-
                 Log::channel('redirectLog')->info("Navigation completed. Final URL");
                 $browser->close();
                 return $lastUrl;
