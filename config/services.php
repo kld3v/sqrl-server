@@ -35,7 +35,7 @@ return [
         'web_risk_api_key' => env('WEB_RISK_API_KEY')
     ],
     'Domain_reputation_key'=>[
-        'domain_rep_key'=>env('Domain_reputation_key')
+        'domain_rep_key'=>env('DOMAIN_REPUTATION_KEY')
     ]
 
 ];
