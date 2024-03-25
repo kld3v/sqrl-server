@@ -177,8 +177,8 @@ class EvaluateTrustService
             //domain reputation
             $domainRepInfo = $this->domainReputaton->domain_reputation_check($url);
             $domainRepScore = $domainRepInfo['reputationScore'];
-            if ($domainRepScore < 85.0) {
-                if ($domainRepScore >= 60.0) {
+            if ($domainRepScore < 60.0) {
+                if ($domainRepScore >= 45.0) {
                     return [
                         'trust_score' => 800,
                         'reason' => "domain reputation is below 85% but higher than or equal to 60%",

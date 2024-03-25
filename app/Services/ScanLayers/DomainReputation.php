@@ -41,7 +41,7 @@ class DomainReputation
         $apiUrl = 'https://api.threatintelligenceplatform.com/v2/reputation';
         $parameters = array(
             'domainName' => $url,
-            'mode' => 'full',
+            'mode' => 'fast',
             'apiKey' => $this->apiKey
         );
 
