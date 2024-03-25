@@ -34,7 +34,7 @@ class HeadlessBrowser
                 $lastUrl = $page->getCurrentUrl();
 
                 // Log::channel('redirectLog')->info("Navigation completed. Final URL: " . $lastUrl);
-
+                $browser->close();
                 return $lastUrl;
             } catch (BrowserConnectionFailed $e) {
                 Log::channel('redirectLog')->error("Browser connection failed during navigation: " . $e->getMessage());
