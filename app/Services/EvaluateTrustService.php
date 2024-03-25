@@ -182,13 +182,13 @@ class EvaluateTrustService
                     return [
                         'trust_score' => 800,
                         'reason' => "domain reputation is below 85% but higher than or equal to 60%",
-                        'domainRepScore' => "$domainRepScore"
+                        // 'domainRepScore' => "$domainRepScore"
                     ];
                 } else {
                     return [
                         'trust_score' => 450,
                         'reason' => 'domain reputation is below 60%',
-                        'domainRepScore' => "$domainRepScore"
+                        // 'domainRepScore' => "$domainRepScore"
                     ];
                 }
             }
