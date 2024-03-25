@@ -20,8 +20,8 @@ class ScanProcessingService
     protected $shortURLMain;
     protected $evaluateTrustService;
 
-    //MAJID REMEMBER TO ALWAYS UPDATE THIS CHEERS LOVE JOEL
-    protected $currentTestVersion = '1.0.3';
+    //DARYA REMEMBER TO ALWAYS UPDATE THIS CHEERS LOVE JOEL
+    protected $currentTestVersion = '1.0.5';
 
 
     public function __construct(ShortURLMain $shortURLMain, EvaluateTrustService $evaluateTrustService)
@@ -78,27 +78,20 @@ class ScanProcessingService
 
     private function isTrustScoreOutdated($urlRecord)
     {
-        // Check if the updated_at column is older than 2 weeks or if test version has changed significantly
+        // Check if the updated_at column is older than 2 weeks or if test version has changed
         $isDateOutdated = $urlRecord->updated_at->lt(Carbon::now()->subWeeks(2));
-        $isVersionOutdated = $this->isVersionChangeSignificant($urlRecord->test_version, $this->currentTestVersion);
-
+        $isVersionOutdated = $urlRecord->test_version !== $this->currentTestVersion;
+        
         return $isDateOutdated || $isVersionOutdated;
     }
-
-    private function isVersionChangeSignificant($storedVersion, $currentVersion)
-    {
-
-        return $storedVersion !== $currentVersion;
-    }
-
 
     public function testProcessScan($url)
     {
         // Start time for URL processing
         $startTime = microtime(true);
     
-        $initialUrl = $url; // Store the initial URL for comparison later
-        $redirectionOccurred = false; // Flag to check if redirection occurred
+        $initialUrl = $url; 
+        $redirectionOccurred = false; 
     
         // Expanding shortened URL, if necessary
         $redirectionValue = new RedirectionValue();
