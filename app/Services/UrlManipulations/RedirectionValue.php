@@ -24,7 +24,7 @@ class RedirectionValue
         // var_dump('curl status is' . $httpStatusCode);
         if ($httpStatusCode >= 300 && $httpStatusCode < 400) {
             // Log::channel('redirectLog')->info("URL {$url} is a redirect.");
-           return true;
+            return true;
         } else {
             // Log::channel('redirectLog')->info("URL {$url} is not a redirect.");
             return false;
