@@ -39,7 +39,7 @@ Route::get('/ping', [PingController::class, 'ping']);
 
 
 
-Route::get('/randomleaderboard', [FakeLeaderboardController::class, 'index']);
+Route::get('/random-leaderboard', [FakeLeaderboardController::class, 'index']);
 
 
 
