@@ -27,6 +27,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 //SCAN
 Route::post('/scan', [ScanController::class, 'processRequest']);
+Route::get('/scan-history', [ScanController::class, 'getHistory']);
 
 
 //GEO
