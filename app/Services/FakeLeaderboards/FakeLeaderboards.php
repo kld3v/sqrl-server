@@ -22,6 +22,13 @@ class FakeLeaderboards
         "Pompous", "Quixotic", "Reckless", "Stubborn", "Tactless", "Undisciplined", "Voluble", "Whiny", "Exasperating",
         "Yokelish", "Zealot", "Shortsighted"
     ];
+
+    protected $interests = [
+        "Gamer", "Skater", "Blogger", "Coder", "Runner", "Reader", "Traveler", "Chef", "Artist", "Musician",
+        "Photographer", "Writer", "Designer", "Inventor", "Explorer", "Historian", "Astronomer", "Boxer",
+        "Philosopher", "Athlete"
+    ];
+    
     
     protected $symbols = ["_", "-"];
 
@@ -69,14 +76,14 @@ class FakeLeaderboards
 
     protected function randomUsernameGenerator()
     {
-        $numbers = range(1, 999);
+        $number = (string)rand(1, 999);
 
         $firstName = $this->loadRandomLine('first-names.txt');
         $secondName = $this->loadRandomLine('surnames.txt');
         $adjective = $this->adjectives[array_rand($this->adjectives)];
         $insult = $this->insults[array_rand($this->insults)];
         $symbol = $this->symbols[array_rand($this->symbols)];
-        $number = (string)$numbers[array_rand($numbers)];
+        $interest = $this->interests[array_rand($this->interests)];
 
         $formats = [
             $firstName . $secondName,
@@ -99,6 +106,14 @@ class FakeLeaderboards
             $secondName . $symbol . $firstName . $number,
             $firstName . $adjective . $number,
             $secondName . $adjective . $number,
+            $interest . $firstName,
+            $interest . $secondName,
+            $adjective . $symbol . $interest,
+            $interest . $number,
+            $interest . $adjective . $number,
+            $firstName . $interest . $number,
+            $secondName . $interest . $number,
+            $interest .  $adjective . $number,
         ];
 
         return strtolower($formats[array_rand($formats)]);
