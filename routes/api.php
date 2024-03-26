@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ScanController;
 use App\Http\Controllers\VenueController;
 use App\Http\Controllers\UserAgreementController;
+use App\Http\Controllers\FakeLeaderboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,6 +36,12 @@ Route::get('/venues/nearby', [VenueController::class, 'getNearbyVenues']);
 
 
 Route::get('/ping', [PingController::class, 'ping']);
+
+
+
+Route::get('/random-leaderboard', [FakeLeaderboardController::class, 'index']);
+
+
 
 //AGREEMENTS
 // Check if user has agreed to active documents
