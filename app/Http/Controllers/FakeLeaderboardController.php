@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\FakeLeaderboards;
+use App\Services\FakeLeaderboards\FakeLeaderboards;
 use Illuminate\Http\Request;
 
 class FakeLeaderboardController extends Controller
