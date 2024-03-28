@@ -124,10 +124,10 @@ class EvaluateTrustService
                     $creationDateTime = new DateTime($creationDate);
                     $currentDateTime = new DateTime();
                     $interval = $currentDateTime->diff($creationDateTime);
-                    if ($entropyResult > 3 || $interval->days < 7) {
+                    if ($entropyResult > 4 || $interval->days < 7) {
                         return [
                             'trust_score' => 0,
-                            'reason' => "domain was created less than a week ago"
+                            'reason' => "domain was created less than a week ago/high entropy subdomain"
                         ];
                     }
                 }
