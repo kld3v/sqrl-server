@@ -43,183 +43,19 @@ class EvaluateTrustService
     }
     public function evaluateTrust($url)
     {
-        try {
-            //removing www from all ulrs
-            $modifiedUrl = $this->removeWWW->removeWWW($url);
-            //handeling urls with IP address
-            if ($this->ipChecker->isIpAddress($modifiedUrl)) {
-                return [
-                    'trust_score' => 0,
-                    'reason' => 'IP address detected. Only domain names are allowed.'
-                ];
-            }
+        $results = [];
+        $results[] = $this->checkIpOk($url);
+        $results[] = $this->checkDomainInBadList($url);
+        $results[] = $this->checkSchemeIsHttps($url);
+        $results[] = $this->checkDomainSimilarity($url);
+        $results[] = $this->checkSslCertificate($url);
+        $results[] = $this->checkSubdomainDetails($url);
+        $results[] = $this->checkGoogleWebRisk($url);
+        $results[] = $this->checkDomainReputation($url);
+        $results[] = $this->checkUrlHaus($url);
 
-            //looking in to the bad domain list:
-            if ($this->badDomainlist->isDomainInJson($modifiedUrl)) {
-                return [
-                    'trust_score' => 0,
-                    'reason' => 'in the bad domain list (malwares from urlH)'
-                ];
-            }
-            //http cases
-            if (parse_url($modifiedUrl, PHP_URL_SCHEME) == 'http') {
-                return [
-                    'trust_score' => 0,
-                    'reason' => 'url Schme is http'
-                ];
-            }
-            //handeling similarities to famouse domain names:
-            if ($this->levenshteinAlgorithm->compareDomains($modifiedUrl)) {
-                return [
-                    'trust_score' => 800,
-                    'reason' => "similar domain found"
-                ];
-            }
-            //checking for ssl/tls props:
-            $ssl_whois_Entery = parse_url($modifiedUrl, PHP_URL_HOST);
-            $command = base_path('app/Scripts/Sslkey.sh') . ' ' . escapeshellarg($ssl_whois_Entery);
-            $output = shell_exec($command);
-            $sslCheckResult = json_decode($output, true);
-            if ($sslCheckResult['resolved'] == false) {
-                return [
-                    'trust_score' => 0,
-                    'reason' => "ssl certification didnt resolve"
-                ];
-            } elseif ($sslCheckResult['resolved'] == true && $sslCheckResult['days_left'] < 1) {
-                return [
-                    'trust_score' => 0,
-                    'reason' => "ssl certification expired"
-                ];
-            }
-            //if there is a subdomain:
-            if ($this->hasSub->hasSubdomain($modifiedUrl)) {
-                //.uk cases:
-                if (strpos($url, '.uk') !== false) {
-                    $Uk_sub_subExtract = $this->subdomainExtract->extractSubdomainsFromUrl($url)['subdomains'];
-                    $subDomainlist = $this->subEnum->subdomainEnum($Uk_sub_subExtract);
-                    $whoisDateCheck_UK = $this->subdomainExtract->extractSubdomainsFromUrl($url)['domain'];
-                    $creationDate = $this->whois->getDomainInfo($whoisDateCheck_UK)['Domain created'];
-                    $creationDateTime = new DateTime($creationDate);
-                    $currentDateTime = new DateTime();
-                    $interval = $currentDateTime->diff($creationDateTime);
-                    if ($interval->days < 7) {
-                        return [
-                            'trust_score' => 0,
-                            'reason' => '.uk case with less than a week age or bad domain name'
-                        ];
-                    }
-                } else {
-                    //has subdomain but there is no .uk
-                    $whoisCheck = $this->subdomainExtract->extractSubdomainsFromUrl($modifiedUrl)['domain'];
-                    $subExtract = $this->subdomainExtract->extractSubdomainsFromUrl($modifiedUrl)['subdomains'];
-                    $subDomainlist = $this->subEnum->subdomainEnum($subExtract);
-                    $whoisCountry = base_path('app/Scripts/Whois.sh') . ' ' . escapeshellarg($whoisCheck);
-                    $command = shell_exec($whoisCountry);
-                    $output = json_decode($command);
-                    //return $output->register_country;
-                    $stringEntropy = new StringEntropy();
-                    $entropyResult = $stringEntropy->calculateEntropy($subExtract);
-                    $creationDate = $this->whois->getDomainInfo($whoisCheck)['Domain created'];
-                    //var_dump($this->whois->getDomainInfo(['data']));
-                    $creationDateTime = new DateTime($creationDate);
-                    $currentDateTime = new DateTime();
-                    $interval = $currentDateTime->diff($creationDateTime);
-                    if ($entropyResult > 4 || $interval->days < 7) {
-                        return [
-                            'trust_score' => 0,
-                            'reason' => "domain was created less than a week ago/high entropy subdomain"
-                        ];
-                    }
-                }
-            }
-            //no subdomain:::
-            if ($this->hasSub->hasSubdomain($modifiedUrl) === false) {
-                $whoisCountry = base_path('app/Scripts/Whois.sh') . ' ' . escapeshellarg($ssl_whois_Entery);
-                $command = shell_exec($whoisCountry);
-                $output = json_decode($command);
-                $creationDate = $this->whois->getDomainInfo($modifiedUrl)['Domain created'];
-                // var_dump($this->whois->getDomainInfo(['data']));
-                $creationDateTime = new DateTime($creationDate);
-                $currentDateTime = new DateTime();
-                $interval = $currentDateTime->diff($creationDateTime);
-                //very bad logic here for google/yahoo and etc--->these cases dont have country in their info
-                if ($interval->days < 7) {
-                    return [
-                        'trust_score' => 0,
-                        'reason' => "domain was created less than a week"
-                    ];
-                }
-                //.uk cases with no subdomains::
-                if (strpos($url, '.uk') !== false) {
-                    $creationDate = $this->whois->getDomainInfo($modifiedUrl)['Domain created'];
-                    $creationDateTime = new DateTime($creationDate);
-                    $currentDateTime = new DateTime();
-                    $interval = $currentDateTime->diff($creationDateTime);
-                    if ($interval->days < 7) {
-                        return [
-                            'trust_score' => 0,
-                            'reason' => "domain in ithe UK but and was created less than a week ago"
-                        ];
-                    }
-                }
-            }
-            //google
-            $googleWebRiskResult = $this->webRiskService->checkForThreats($modifiedUrl);
-            //var_dump($googleWebRiskResult);
-            foreach (['UNWANTED_SOFTWARE', 'MALWARE', 'SOCIAL_ENGINEERING'] as $threatType) {
-                if (isset ($googleWebRiskResult[$threatType]['threat']) && $googleWebRiskResult[$threatType]['threat'] !== null) {
-                    return [
-                        'trust_score' => 0,
-                        'reason' => 'Google Web Risk detected a ' . $threatType . ' threat'
-                    ];
-                }
-            }
-            //domain reputation
-            $domainRepInfo = $this->domainReputaton->domain_reputation_check($url);
-            $domainRepScore = $domainRepInfo['reputationScore'];
-            if ($domainRepScore < 60.0) {
-                if ($domainRepScore >= 45.0) {
-                    return [
-                        'trust_score' => 800,
-                        'reason' => "domain reputation is below 60% but higher than or equal to 45%",
-                        'domainRepScore' => "$domainRepScore"
-                    ];
-                } else {
-                    return [
-                        'trust_score' => 450,
-                        'reason' => 'domain reputation is below 60%',
-                        'domainRepScore' => "$domainRepScore"
-                    ];
-                }
-            }
-            //urlHaus
-            if ($this->urlHaus->queryUrl($url)) {
-                return [
-                    'trust_score' => 0,
-                    'reason' => 'urlHaus detected an online and active Malware'
-                ];
-            }
-            return [
-                'trust_score' => 1000,
-            ];
-        } catch (\Exception $exception) {
-            if ($exception instanceof someKnownExention) {
-                return [
-                    'trust_score' => 500,
-                    'reason' => $exception->getMessage(),
-                ];
-            }
-            return [
-                'trust_score' => 500,
-                'reason' => 'unknown'
-            ];
-        } catch (\Throwable $throwable) {
-            // Catch any other throwable that might not be Exception -> this catches everything.
-            return [
-                'trust_score' => 500,
-                'reason' => 'unknown - Big error'
-            ];
-        }
+
+        return $this->resolveFinalResult($results);
     }
     // See above - consider refactoring checks into separate functions
     //Nathan wrote these
@@ -232,6 +68,154 @@ class EvaluateTrustService
 
         return $trustScore;
     }
+
+    private function checkDomainInBadList($url): TrustScoreResult
+    {
+        $trustScore = new TrustScoreResult();
+        if ($this->badDomainlist->isDomainInJson($url)) {
+            $trustScore->setScore(0, 'Domain is in the bad domain list.');
+        }
+        return $trustScore;
+    }
+
+    private function checkSchemeIsHttps($url): TrustScoreResult
+    {
+        $trustScore = new TrustScoreResult();
+        if (parse_url($url, PHP_URL_SCHEME) != 'https') {
+            $trustScore->setScore(0, 'URL scheme is not HTTPS.');
+        }
+        return $trustScore;
+    }
+
+    private function checkDomainSimilarity($url): TrustScoreResult
+    {
+        $trustScore = new TrustScoreResult();
+        if ($this->levenshteinAlgorithm->compareDomains($url)) {
+            $trustScore->setScore(800, 'Similar domain found.');
+        } 
+        return $trustScore;
+    }
+
+    private function checkSslCertificate($url): TrustScoreResult
+    {
+        $trustScore = new TrustScoreResult();
+        $sslWhoisEntry = parse_url($url, PHP_URL_HOST);
+        $command = base_path('app/Scripts/Sslkey.sh') . ' ' . escapeshellarg($sslWhoisEntry);
+        $output = shell_exec($command);
+        $sslCheckResult = json_decode($output, true);
+        if ($sslCheckResult['resolved'] === false) {
+            $trustScore->setScore(0, "SSL certification didn't resolve.");
+        } elseif ($sslCheckResult['resolved'] === true && $sslCheckResult['days_left'] < 1) {
+            $trustScore->setScore(0, "SSL certification expired.");
+        }
+        return $trustScore;
+    }
+    
+    private function checkSubdomainDetails($url): TrustScoreResult
+    {
+        $trustScore = new TrustScoreResult(); // Start with a default full score
+
+        // Extract subdomains and domain
+        $domainInfo = $this->subdomainExtract->extractSubdomainsFromUrl($url);
+        $subdomains = $domainInfo['subdomains'] ?? '';
+        $domain = $domainInfo['domain'] ?? '';
+
+        // Check for .uk domains and their creation date
+        if (strpos($url, '.uk') !== false) {
+            if (!empty($subdomains)) {
+                // Handle subdomain logic for .uk domains
+                $subDomainlist = $this->subEnum->subdomainEnum($subdomains);
+            }
+            $creationDate = $this->whois->getDomainInfo($domain)['Domain created'] ?? null;
+            if ($creationDate) {
+                $creationDateTime = new DateTime($creationDate);
+                $currentDateTime = new DateTime();
+                $interval = $currentDateTime->diff($creationDateTime);
+                if ($interval->days < 7) {
+                    $trustScore->setScore(0, '.uk domain with less than a week age or bad domain name');
+                    return $trustScore; // Early return for fail condition
+                }
+            }
+        } else {
+            // Handle non-.uk domains
+            if ($this->hasSub->hasSubdomain($url)) {
+                $whoisCountry = base_path('app/Scripts/Whois.sh') . ' ' . escapeshellarg($domain);
+                $command = shell_exec($whoisCountry);
+                $whoisResult = json_decode($command, true);
+                // Example of handling possible whois info, adapt based on actual whois result structure
+                $stringEntropy = new StringEntropy();
+                $entropyResult = $stringEntropy->calculateEntropy($subdomains);
+                $creationDate = $this->whois->getDomainInfo($domain)['Domain created'] ?? null;
+                if ($creationDate) {
+                    $creationDateTime = new DateTime($creationDate);
+                    $currentDateTime = new DateTime();
+                    $interval = $currentDateTime->diff($creationDateTime);
+                    if ($entropyResult > 4 || $interval->days < 7) {
+                        $trustScore->setScore(0, "Domain was created less than a week ago/high entropy subdomain");
+                        return $trustScore;
+                    }
+                }
+            }
+        }
+
+        // Handle domains with no subdomains
+        if (!$this->hasSub->hasSubdomain($url)) {
+            $whoisCountry = base_path('app/Scripts/Whois.sh') . ' ' . escapeshellarg($domain);
+            $command = shell_exec($whoisCountry);
+            $whoisResult = json_decode($command, true);
+            $creationDate = $this->whois->getDomainInfo($domain)['Domain created'] ?? null;
+            if ($creationDate) {
+                $creationDateTime = new DateTime($creationDate);
+                $currentDateTime = new DateTime();
+                $interval = $currentDateTime->diff($creationDateTime);
+                if ($interval->days < 7) {
+                    $trustScore->setScore(0, "Domain was created less than a week ago.");
+                    return $trustScore;
+                }
+            }
+        }
+
+        return $trustScore; 
+    }
+
+
+    private function checkGoogleWebRisk($url): TrustScoreResult
+    {
+        $trustScore = new TrustScoreResult();
+        $googleWebRiskResult = $this->webRiskService->checkForThreats($url);
+        foreach (['UNWANTED_SOFTWARE', 'MALWARE', 'SOCIAL_ENGINEERING'] as $threatType) {
+            if (isset($googleWebRiskResult[$threatType]['threat']) && $googleWebRiskResult[$threatType]['threat'] !== null) {
+                $trustScore->setScore(0, "Google Web Risk detected a $threatType threat.");
+                return $trustScore;
+            }
+        }
+        return $trustScore;
+    }
+
+    private function checkDomainReputation($url): TrustScoreResult
+    {
+        $trustScore = new TrustScoreResult();
+        $domainRepInfo = $this->domainReputation->domain_reputation_check($url);
+        $domainRepScore = $domainRepInfo['reputationScore'];
+        if ($domainRepScore < 60.0) {
+            $reason = 'Domain reputation is below 60%';
+            if ($domainRepScore >= 45.0) {
+                $trustScore->setScore(800, "$reason but higher than or equal to 45%");
+            } else {
+                $trustScore->setScore(450, $reason);
+            }
+        }
+        return $trustScore;
+    }
+    private function checkUrlHaus($url): TrustScoreResult
+    {
+        $trustScore = new TrustScoreResult();
+        if ($this->urlHaus->queryUrl($url)) {
+            $trustScore->setScore(0, "URLHaus detected an online and active malware.");
+        }
+        return $trustScore;
+    }
+
 
     private function resolveFinalResult($results)
     {
