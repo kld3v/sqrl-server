@@ -103,9 +103,9 @@ class EvaluateTrustService
         $command = base_path('app/Scripts/Sslkey.sh') . ' ' . escapeshellarg($sslWhoisEntry);
         $output = shell_exec($command);
         $sslCheckResult = json_decode($output, true);
-        if ($sslCheckResult['resolved'] === false) {
+        if ($sslCheckResult['resolved'] == false) {
             $trustScore->setScore(0, "SSL certification didn't resolve.");
-        } elseif ($sslCheckResult['resolved'] === true && $sslCheckResult['days_left'] < 1) {
+        } elseif ($sslCheckResult['resolved'] == true && $sslCheckResult['days_left'] < 1) {
             $trustScore->setScore(0, "SSL certification expired.");
         }
         return $trustScore;
@@ -114,12 +114,19 @@ class EvaluateTrustService
     private function checkSubdomainDetails($url): TrustScoreResult
     {
         $trustScore = new TrustScoreResult(); // Start with a default full score
-
+    
         // Extract subdomains and domain
         $domainInfo = $this->subdomainExtract->extractSubdomainsFromUrl($url);
         $subdomains = $domainInfo['subdomains'] ?? '';
         $domain = $domainInfo['domain'] ?? '';
-
+    
+        // Always calculate entropy if subdomains exist
+        $entropyResult = null;
+        if (!empty($subdomains)) {
+            $stringEntropy = new StringEntropy();
+            $entropyResult = $stringEntropy->calculateEntropy($subdomains);
+        }
+    
         // Check for .uk domains and their creation date
         if (strpos($url, '.uk') !== false) {
             if (!empty($subdomains)) {
@@ -131,20 +138,19 @@ class EvaluateTrustService
                 $creationDateTime = new DateTime($creationDate);
                 $currentDateTime = new DateTime();
                 $interval = $currentDateTime->diff($creationDateTime);
-                if ($interval->days < 7) {
-                    $trustScore->setScore(0, '.uk domain with less than a week age or bad domain name');
+                if ($interval->days < 7 || ($entropyResult !== null && $entropyResult > 4)) {
+                    $trustScore->setScore(0, '.uk domain with less than a week age or high entropy');
                     return $trustScore; // Early return for fail condition
                 }
             }
         } else {
             // Handle non-.uk domains
             if ($this->hasSub->hasSubdomain($url)) {
+                // Fetch WHOIS information for entropy and creation date checks
                 $whoisCountry = base_path('app/Scripts/Whois.sh') . ' ' . escapeshellarg($domain);
                 $command = shell_exec($whoisCountry);
                 $whoisResult = json_decode($command, true);
-                // Example of handling possible whois info, adapt based on actual whois result structure
-                $stringEntropy = new StringEntropy();
-                $entropyResult = $stringEntropy->calculateEntropy($subdomains);
+                
                 $creationDate = $this->whois->getDomainInfo($domain)['Domain created'] ?? null;
                 if ($creationDate) {
                     $creationDateTime = new DateTime($creationDate);
@@ -157,12 +163,14 @@ class EvaluateTrustService
                 }
             }
         }
-
+    
         // Handle domains with no subdomains
         if (!$this->hasSub->hasSubdomain($url)) {
+            // Fetch WHOIS information for domains without subdomains
             $whoisCountry = base_path('app/Scripts/Whois.sh') . ' ' . escapeshellarg($domain);
             $command = shell_exec($whoisCountry);
             $whoisResult = json_decode($command, true);
+            
             $creationDate = $this->whois->getDomainInfo($domain)['Domain created'] ?? null;
             if ($creationDate) {
                 $creationDateTime = new DateTime($creationDate);
@@ -174,9 +182,10 @@ class EvaluateTrustService
                 }
             }
         }
-
-        return $trustScore; 
+    
+        return $trustScore;
     }
+    
 
 
     private function checkGoogleWebRisk($url): TrustScoreResult
