@@ -200,8 +200,6 @@ class EvaluateTrustService
         return $trustScore;
     }
     
-
-
     private function checkGoogleWebRisk($url): TrustScoreResult
     {
         $trustScore = new TrustScoreResult();
@@ -238,7 +236,6 @@ class EvaluateTrustService
         }
         return $trustScore;
     }
-
 
     private function resolveFinalResult($results)
     {
