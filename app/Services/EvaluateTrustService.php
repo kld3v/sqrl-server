@@ -43,16 +43,19 @@ class EvaluateTrustService
     }
     public function evaluateTrust($url)
     {
+        $wwwUrl = $url;
+        $url = $this->removeWWW->removeWWW($url);
+
         $results = [];
         $results[] = $this->checkIpOk($url);
         $results[] = $this->checkDomainInBadList($url);
         $results[] = $this->checkSchemeIsHttps($url);
         $results[] = $this->checkDomainSimilarity($url);
-        $results[] = $this->checkSslCertificate($url);
-        $results[] = $this->checkSubdomainDetails($url);
+        // $results[] = $this->checkSslCertificate($url);
+        $results[] = $this->checkSubdomainDetails($wwwUrl, $url);
         $results[] = $this->checkGoogleWebRisk($url);
-        $results[] = $this->checkDomainReputation($url);
-        $results[] = $this->checkUrlHaus($url);
+        $results[] = $this->checkDomainReputation($wwwUrl);
+        $results[] = $this->checkUrlHaus($wwwUrl);
 
 
         return $this->resolveFinalResult($results);
@@ -111,12 +114,12 @@ class EvaluateTrustService
         return $trustScore;
     }
     
-    private function checkSubdomainDetails($url): TrustScoreResult
+    private function checkSubdomainDetails($wwwUrl, $url): TrustScoreResult
     {
         $trustScore = new TrustScoreResult(); // Start with a default full score
     
         // Extract subdomains and domain
-        $domainInfo = $this->subdomainExtract->extractSubdomainsFromUrl($url);
+        $domainInfo = $this->subdomainExtract->extractSubdomainsFromUrl($wwwUrl);
         $subdomains = $domainInfo['subdomains'] ?? '';
         $domain = $domainInfo['domain'] ?? '';
     
@@ -128,7 +131,7 @@ class EvaluateTrustService
         }
     
         // Check for .uk domains and their creation date
-        if (strpos($url, '.uk') !== false) {
+        if (strpos($wwwUrl, '.uk') !== false) {
             if (!empty($subdomains)) {
                 // Handle subdomain logic for .uk domains
                 $subDomainlist = $this->subEnum->subdomainEnum($subdomains);
