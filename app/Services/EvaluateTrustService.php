@@ -45,14 +45,16 @@ class EvaluateTrustService
     {
         $wwwUrl = $url;
         $url = $this->removeWWW->removeWWW($url);
+        var_dump($wwwUrl);
+        var_dump($url);
 
         $results = [];
         $results[] = $this->checkIpOk($url);
         $results[] = $this->checkDomainInBadList($url);
         $results[] = $this->checkSchemeIsHttps($url);
         $results[] = $this->checkDomainSimilarity($url);
-        $results[] = $this->checkSslCertificate($url);
-        $results[] = $this->checkSubdomainDetails($wwwUrl, $url);
+        // $results[] = $this->checkSslCertificate($url);
+        // $results[] = $this->checkSubdomainDetails($wwwUrl, $url);
         $results[] = $this->checkGoogleWebRisk($url);
         $results[] = $this->checkDomainReputation($wwwUrl);
         $results[] = $this->checkUrlHaus($wwwUrl);
@@ -245,6 +247,8 @@ class EvaluateTrustService
         if ($totalWeights)
             $finalResult->setScore($finalResult->getScore() / $totalWeights);
 
+
+        var_dump($finalResult);
         return $finalResult;
     }
 }

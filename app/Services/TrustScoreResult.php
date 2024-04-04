@@ -50,6 +50,12 @@ class TrustScoreResult
         return $this->score;
     }
 
+    public function getWeight()
+    {
+        return $this->weight;
+    }
+
+
     public function getWeightedScore()
     {
         return $this->score * $this->weight;
