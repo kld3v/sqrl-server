@@ -45,8 +45,6 @@ class EvaluateTrustService
     {
         $wwwUrl = $url;
         $url = $this->removeWWW->removeWWW($url);
-        var_dump($wwwUrl);
-        var_dump($url);
 
         $results = [];
         $results[] = $this->checkIpOk($url);
@@ -247,8 +245,6 @@ class EvaluateTrustService
         if ($totalWeights)
             $finalResult->setScore($finalResult->getScore() / $totalWeights);
 
-
-        var_dump($finalResult);
         return $finalResult;
     }
 }

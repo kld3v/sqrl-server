@@ -32,49 +32,42 @@ class ScanProcessingService
     public function processScan($url)
     {
         Log::channel('redirectLog')->info("Starting process scan with URL: {$url}");
-        // Expanding shortened URL, if necessary
         $redirectionValue = new RedirectionValue();
         $headlessBrowser = new HeadlessBrowser();
-
+    
         if ($redirectionValue->redirectionValue($url)) {
             $url = $headlessBrowser->interactWithPage($url);
         }
-        // Check if URL is already in the database
+    
         $existingUrl = URL::where('url', $url)->first();
-
+    
         if ($existingUrl) {
-            // Check if the trust score needs to be updated
             if ($this->isTrustScoreOutdated($existingUrl)) {
-
-                $trustScore = $this->evaluateTrustService->evaluateTrust($url);
-                $score = $trustScore['trust_score'];
-
-                $existingUrl->update(
-                    [
-                        'trust_score' => $score,
-                        'test_version' => $this->currentTestVersion,
-                    ]
-                );
-
+      
+                $trustScoreResult = $this->evaluateTrustService->evaluateTrust($url);
+                $score = $trustScoreResult->getScore(); 
+    
+                $existingUrl->update([
+                    'trust_score' => $score,
+                    'test_version' => $this->currentTestVersion,
+                ]);
             } else {
-
-                $trustScore = $existingUrl->trust_score;
+                $score = $existingUrl->trust_score;
             }
         } else {
-
-            // URL not in DB, evaluate and add
-            $trustScore = $this->evaluateTrustService->evaluateTrust($url);
-
-            $score = $trustScore['trust_score'];
+            $trustScoreResult = $this->evaluateTrustService->evaluateTrust($url);
+            $score = $trustScoreResult->getScore(); 
+    
             $existingUrl = URL::create([
                 'url' => $url,
                 'trust_score' => $score,
                 'test_version' => $this->currentTestVersion,
             ]);
         }
-
+    
         return $existingUrl;
     }
+    
 
     private function isTrustScoreOutdated($urlRecord)
     {
@@ -107,6 +100,7 @@ class ScanProcessingService
         // Evaluate trust score
         $trustScoreProcessStartTime = microtime(true);
         $trustScore = $this->evaluateTrustService->evaluateTrust($url);
+
         $trustScoreProcessEndTime = microtime(true);
     
         // Calculate durations
@@ -118,7 +112,8 @@ class ScanProcessingService
             'initial_url' => $initialUrl,
             'final_url' => $url,
             'redirection' => $redirectionOccurred,
-            'trust_score' => $trustScore,
+            'trust_score' => $trustScore->getScore(),
+            'reasons' => $trustScore->getReasons(),
             'test_version' => $this->currentTestVersion,
             'url_process_time' => $urlProcessDuration,
             'trust_score_process_time' => $trustScoreProcessDuration,
