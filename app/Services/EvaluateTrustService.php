@@ -38,7 +38,7 @@ class EvaluateTrustService
         private HasSubdomain $hasSub,
         private SubdomainEnum $subEnum,
         private UrlHaus $urlHaus,
-        private DomainReputation $domainReputaton
+        private DomainReputation $domainReputation
     ) {
     }
     public function evaluateTrust($url)
