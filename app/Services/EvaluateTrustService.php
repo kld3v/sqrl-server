@@ -51,7 +51,7 @@ class EvaluateTrustService
         $results[] = $this->checkDomainInBadList($url);
         $results[] = $this->checkSchemeIsHttps($url);
         $results[] = $this->checkDomainSimilarity($url);
-        // $results[] = $this->checkSslCertificate($url);
+        $results[] = $this->checkSslCertificate($url);
         $results[] = $this->checkSubdomainDetails($wwwUrl, $url);
         $results[] = $this->checkGoogleWebRisk($url);
         $results[] = $this->checkDomainReputation($wwwUrl);
