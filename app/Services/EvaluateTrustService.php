@@ -47,21 +47,32 @@ class EvaluateTrustService
         $url = $this->removeWWW->removeWWW($url);
 
         $results = [];
-        $results[] = $this->checkIpOk($url);
-        $results[] = $this->checkDomainInBadList($url);
-        $results[] = $this->checkSchemeIsHttps($url);
-        $results[] = $this->checkDomainSimilarity($url);
-        // $results[] = $this->checkSslCertificate($url);
-        // $results[] = $this->checkSubdomainDetails($wwwUrl, $url);
-        $results[] = $this->checkGoogleWebRisk($url);
-        $results[] = $this->checkDomainReputation($wwwUrl);
-        $results[] = $this->checkUrlHaus($wwwUrl);
-
-
+    
+        $checks = [
+            fn() => $this->checkIpOk($url),
+            fn() => $this->checkDomainInBadList($url),
+            fn() => $this->checkSchemeIsHttps($url),
+            fn() => $this->checkDomainSimilarity($url),
+            fn() => $this->checkSslCertificate($url),
+            fn() => $this->checkSubdomainDetails($wwwUrl, $url),
+            fn() => $this->checkGoogleWebRisk($url),
+            fn() => $this->checkDomainReputation($wwwUrl),
+            fn() => $this->checkUrlHaus($wwwUrl),
+        ];
+    
+        foreach ($checks as $check) {
+            $result = $check();
+            $results[] = $result;
+    
+            // If the score of a check is 0, stop executing further checks.
+            if ($result->getScore() === 0) {
+                break;
+            }
+        }
+    
         return $this->resolveFinalResult($results);
     }
-    // See above - consider refactoring checks into separate functions
-    //Nathan wrote these
+    
     private function checkIpOk($url): TrustScoreResult
     {
         $trustScore = new TrustScoreResult();
@@ -94,7 +105,7 @@ class EvaluateTrustService
     {
         $trustScore = new TrustScoreResult();
         if ($this->levenshteinAlgorithm->compareDomains($url)) {
-            $trustScore->setScore(800, 'Similar domain found.');
+            $trustScore->setScore(100, 'Similar domain found.');
         } 
         return $trustScore;
     }
