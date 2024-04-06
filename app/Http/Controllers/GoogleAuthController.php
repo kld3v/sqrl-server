@@ -41,11 +41,11 @@ class GoogleAuthController extends Controller
             // ]);
 
             // If the user is coming to us from a Web APP perspective, log them in!
-            Auth::login($user);
+            // Auth::login($googleUser);
 
             // Create a new personal access token!
             
-            $token = $user->createToken('app');
+            $token = $googleUser->createToken('app');
             return $token->plainTextToken;
         }
         
