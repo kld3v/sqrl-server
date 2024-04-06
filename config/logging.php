@@ -134,6 +134,11 @@ return [
             'path' => storage_path('logs/redirectLog.log'),
             'level' => 'debug',
         ],
+        'domainrepLog' =>[
+            'driver' => 'single',
+            'path' => storage_path('logs/domainrepLog.log'),
+            'level' => 'debug',
+        ]
 
     ],
 

@@ -43,5 +43,9 @@ return [
         'client_secret' => env('APPLE_CLIENT_SECRET'),
         'redirect' => env('APPLE_REDIRECT_URI')
       ],
+  
+    'Domain_reputation_key'=>[
+        'domain_rep_key'=>env('DOMAIN_REPUTATION_KEY')
+    ]
 
 ];

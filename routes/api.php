@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ScanController;
 use App\Http\Controllers\VenueController;
 use App\Http\Controllers\UserAgreementController;
+use App\Http\Controllers\FakeLeaderboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,6 +34,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
 //SCAN
 
+Route::post('/scan', [ScanController::class, 'processRequest']);
+Route::get('/scan-history', [ScanController::class, 'getHistory']);
 
 
 //GEO
@@ -43,6 +46,12 @@ Route::get('/venues/nearby', [VenueController::class, 'getNearbyVenues']);
 
 Route::get('/ping', [PingController::class, 'ping']);
 
+
+
+Route::get('/random-leaderboard', [FakeLeaderboardController::class, 'index']);
+
+
+
 //AGREEMENTS
 // Check if user has agreed to active documents
 Route::get('/agreements/check', [UserAgreementController::class, 'checkAgreements']);
@@ -52,5 +61,5 @@ Route::post('/agreements/sign', [UserAgreementController::class, 'signDocument']
 
 
 //DO NOT GO PUBLIC WITH THIS ROUTE
-Route::get('/getscans', [ScanController::class, 'getScans']);
-Route::post('/test/scan', [ScanController::class, 'testProcessRequest']);
+// Route::get('/getscans', [ScanController::class, 'getScans']);
+Route::post('/test/scan', [ScanController::class, 'testProcessRequest'])->middleware('check.basic.phrase');
