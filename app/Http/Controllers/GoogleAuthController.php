@@ -32,13 +32,13 @@ class GoogleAuthController extends Controller
             
             
             // Ensure we have a local user that matches the given details. If not, create one!
-            $user = User::updateOrCreate([
-                'email' => $googleUser->email,
-            ], [
-                'name' => $googleUser->name,
-                'email' => $googleUser->email,
-                'password' => Hash::make(Str::random())
-            ]);
+            // $user = User::updateOrCreate([
+            //     'email' => $googleUser->email,
+            // ], [
+            //     'name' => $googleUser->name,
+            //     'email' => $googleUser->email,
+            //     'password' => Hash::make(Str::random())
+            // ]);
 
             // If the user is coming to us from a Web APP perspective, log them in!
             Auth::login($user);
