@@ -5,8 +5,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Services\EvaluateTrustService;
 use App\Http\Controllers\URLmainController;
-use App\Http\Controllers\GoogleAuthController;
-use App\Http\Controllers\AppleAuthController;
+use App\Http\Controllers\Auth\GoogleAuthController;
+use App\Http\Controllers\Auth\AppleAuthController;
 use App\Http\Controllers\RiskEvaluationController;
 use App\Http\Controllers\TestEvaluateTrustController;
 
@@ -29,12 +29,12 @@ Route::get('/', function () {
 });
 
 //Google Login
-Route::get('/login/google', [GoogleAuthController::class, 'redirect'])->name('auth.google');
-Route::get('/login/google/callback', [GoogleAuthController::class, 'callback'])->name('auth.google.callback');
+Route::get('/auth/google', [GoogleAuthController::class, 'redirect'])->name('auth.google');
+Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])->name('auth.google.callback');
 
 //Apple Login
-Route::get('/login/apple', [AppleAuthController::class, 'redirect'])->name('auth.apple');
-Route::post('/login/apple/callback', [AppleAuthController::class, 'callback'])->name('auth.apple.callback');
+Route::get('/auth/apple', [AppleAuthController::class, 'redirect'])->name('auth.apple');
+Route::post('/auth/apple/callback', [AppleAuthController::class, 'callback'])->name('auth.apple.callback');
 
 
 Route::get('/check-web-risk', [EvaluateTrustService::class, 'evaluateTrust']);

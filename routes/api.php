@@ -7,6 +7,7 @@ use App\Http\Controllers\ScanController;
 use App\Http\Controllers\VenueController;
 use App\Http\Controllers\UserAgreementController;
 use App\Http\Controllers\FakeLeaderboardController;
+use App\Http\Controllers\Auth\AppleAuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,24 +34,22 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
 //SCAN
-
 Route::post('/scan', [ScanController::class, 'processRequest']);
 Route::get('/scan-history', [ScanController::class, 'getHistory']);
 
-
 //GEO
 Route::get('/venues/location', [VenueController::class, 'getVenuesByLocation']);
-
 Route::get('/venues/nearby', [VenueController::class, 'getNearbyVenues']);
 
 
 Route::get('/ping', [PingController::class, 'ping']);
 
 
-
+//Leaderboard
 Route::get('/random-leaderboard', [FakeLeaderboardController::class, 'index']);
 
-
+//Apple Sign In
+Route::post('/auth/apple/signin', [AppleAuthController::class, 'handleAppleSignIn']);
 
 //AGREEMENTS
 // Check if user has agreed to active documents
