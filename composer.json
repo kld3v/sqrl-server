@@ -13,11 +13,13 @@
 		"google/cloud-web-risk": "^1.5",
 		"guzzlehttp/guzzle": "^7.8",
 		"io-developer/php-whois": "^4.1",
+		"laravel/breeze": "^1.29",
 		"laravel/framework": "^10.10",
 		"laravel/sanctum": "^3.3",
 		"laravel/socialite": "^5.12",
 		"laravel/tinker": "^2.8",
 		"php-ai/php-ml": "^0.10.0",
+		"snipe/banbuilder": "^2.3",
 		"socialiteproviders/apple": "^5.6",
 		"socialiteproviders/google": "^4.1",
 		"socialiteproviders/manager": "^4.5"

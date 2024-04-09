@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Auth;
 
+use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -28,27 +29,24 @@ class GoogleAuthController extends Controller
 
         if ($googleUser = Socialite::driver('google')->user())
         {
-            // Here if google trusts the user!
             
-            
-            // Ensure we have a local user that matches the given details. If not, create one!
-            // $user = User::updateOrCreate([
-            //     'email' => $googleUser->email,
-            // ], [
-            //     'name' => $googleUser->name,
-            //     'email' => $googleUser->email,
-            //     'password' => Hash::make(Str::random())
-            // ]);
-
-            // If the user is coming to us from a Web APP perspective, log them in!
+            $user = User::updateOrCreate([
+                'email' => $googleUser->email,
+            ], [
+                'name' => $googleUser->name,
+                'email' => $googleUser->email,
+                'password' => Hash::make(Str::random())
+            ]);
+    
             Auth::login($user);
-
-            // Create a new personal access token!
+    
+            $token = $user->createToken('GoogleSignInToken')->plainTextToken;
             
-            $token = $user->createToken('app');
-            return $token->plainTextToken;
+            return response()->json([
+                'username' => $user->username,
+                'token' => $token,
+            ]);
         }
-        
         abort(401, 'Could not authenticate with Google');
     }
 
