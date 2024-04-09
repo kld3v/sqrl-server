@@ -14,26 +14,34 @@ class AppleAuthController extends Controller
 {
     public function handleAppleSignIn(Request $request)
     {
-        $code = $request->authorizationCode;
+        if (!$request->has('identityToken')) {
+            return response()->json(['message' => 'Identity token is required'], 400);
+        }
 
-        // Use Socialite to get the user from Apple
-        $appleUser = Socialite::driver('apple')->userFromToken($code);
+        $code = $request->input('identityToken');
 
-        // Find or create the user in your database
-        // $user = User::updateOrCreate([
-        //     'email' => $appleUser->email,
-        // ], [
-        //     'name' => $appleUser->name, // Handle name appropriately
-        //     'apple_id' => $appleUser->id, // Use a column to store Apple ID if you want
-        // ]);
+        try {
+            $appleUser = Socialite::driver('apple')->userFromToken($code);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Invalid identity token provided'], 401);
+        }
 
-        // // Authenticate the user
-        // Auth::login($user);
+        $user = User::updateOrCreate([
+            'email' => $appleUser->email,
+        ], [
+            'name' => $appleUser->name,
+            'email' => $appleUser->email,
+            'password' => Hash::make(Str::random())
+        ]);
 
-        // // Return a response, such as a token or user data
-        // // This is a placeholder, adjust based on your auth system
-        // return response()->json($user);
-        return response()->json($appleUser);
+        Auth::login($user);
+
+        $token = $user->createToken('AppleSignInToken')->plainTextToken;
+
+        return response()->json([
+            'user' => $user,
+            'token' => $token,
+        ]);
     }
 
 

@@ -8,6 +8,7 @@ use App\Http\Controllers\VenueController;
 use App\Http\Controllers\UserAgreementController;
 use App\Http\Controllers\FakeLeaderboardController;
 use App\Http\Controllers\Auth\AppleAuthController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,6 +30,8 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::post('/scan', [ScanController::class, 'processRequest']);
+
+    Route::post('/user/update-username', [UserController::class, 'updateUsername']);
 
 });
 
