@@ -86,28 +86,36 @@ class ScanController extends Controller
     }
 
     public function getHistory(Request $request)
-    {   
-        
-        $validatedData = $request->validate([
-            'device_uuid' => 'required',
-        ]);
-
-      
-        $deviceUuid = $validatedData['device_uuid'];
+    {
+        $user = auth()->user();
+    
+        if (!$user) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
     
         $history = Scan::with('url')
-                    ->where('device_uuid', $deviceUuid)
-                    ->get(['url_id', 'created_at as date_and_time', 'trust_score'])
+                    ->where('user_id', $user->id)
+                    ->get([
+                        'url_id', 
+                        'created_at as date_and_time', 
+                        'trust_score',
+                        'is_favourite',
+                        'scan_type' 
+                    ])
                     ->map(function ($scan) {
                         return (object)[
+                            'url_id' => $scan->url_id,
                             'url' => $scan->url->url,
                             'date_and_time' => $scan->date_and_time,
                             'trust_score' => $scan->trust_score,
+                            'is_favourite' => $scan->is_favourite,
+                            'scan_type' => $scan->scan_type,
                         ];
                     });
     
         return $history;
     }
+    
 
     
     // Retrieve a specific Scan instance

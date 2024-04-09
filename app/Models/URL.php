@@ -25,4 +25,9 @@ class URL extends Model
     {
         return $this->hasMany(Venue::class, 'url_id');
     }
+
+    public function favoredByUsers()
+    {
+        return $this->belongsToMany(User::class, 'user_url_favorites')->withTimestamps();
+    }
 }

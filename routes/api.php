@@ -29,6 +29,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/scan', [ScanController::class, 'processRequest']);
 
+    
+    Route::get('/scan-history', [ScanController::class, 'getHistory']);
+
 });
 
 
