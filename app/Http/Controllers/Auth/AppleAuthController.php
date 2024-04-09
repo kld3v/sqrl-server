@@ -14,11 +14,11 @@ class AppleAuthController extends Controller
 {
     public function handleAppleSignIn(Request $request)
     {
-        if (!$request->has('identityToken')) {
+        if (!$request->has('identity_token')) {
             return response()->json(['message' => 'Identity token is required'], 400);
         }
 
-        $code = $request->input('identityToken');
+        $code = $request->input('identity_token');
 
         try {
             $appleUser = Socialite::driver('apple')->userFromToken($code);
@@ -39,7 +39,7 @@ class AppleAuthController extends Controller
         $token = $user->createToken('AppleSignInToken')->plainTextToken;
 
         return response()->json([
-            'user' => $user,
+            'username' => $user->username,
             'token' => $token,
         ]);
     }

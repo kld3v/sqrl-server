@@ -29,8 +29,6 @@ class GoogleAuthController extends Controller
 
         if ($googleUser = Socialite::driver('google')->user())
         {
-            // Here if google trusts the user!
-            
             
             $user = User::updateOrCreate([
                 'email' => $googleUser->email,
@@ -45,7 +43,7 @@ class GoogleAuthController extends Controller
             $token = $user->createToken('GoogleSignInToken')->plainTextToken;
             
             return response()->json([
-                'user' => $user,
+                'username' => $user->username,
                 'token' => $token,
             ]);
         }

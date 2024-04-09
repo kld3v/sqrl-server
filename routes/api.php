@@ -1,14 +1,13 @@
 <?php
 
-use App\Http\Controllers\PingController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ScanController;
-use App\Http\Controllers\VenueController;
-use App\Http\Controllers\UserAgreementController;
-use App\Http\Controllers\FakeLeaderboardController;
-use App\Http\Controllers\Auth\AppleAuthController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\VenueController;
+use App\Http\Controllers\PingController;
+use App\Http\Controllers\FakeLeaderboardController;
+use App\Http\Controllers\UserAgreementController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,11 +15,10 @@ use App\Http\Controllers\UserController;
 |--------------------------------------------------------------------------
 |
 | Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
+| routes are loaded by the RouteServiceProvider within a group which
+| is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
 
 // Route for all closed API endpoints (i.e., routes that require a user to be authenticated)
 Route::middleware('auth:sanctum')->group(function () {
@@ -51,8 +49,6 @@ Route::get('/ping', [PingController::class, 'ping']);
 //Leaderboard
 Route::get('/random-leaderboard', [FakeLeaderboardController::class, 'index']);
 
-//Apple Sign In
-Route::post('/auth/apple/signin', [AppleAuthController::class, 'handleAppleSignIn']);
 
 //AGREEMENTS
 // Check if user has agreed to active documents

@@ -13,6 +13,7 @@
 		"google/cloud-web-risk": "^1.5",
 		"guzzlehttp/guzzle": "^7.8",
 		"io-developer/php-whois": "^4.1",
+		"laravel/breeze": "^1.29",
 		"laravel/framework": "^10.10",
 		"laravel/sanctum": "^3.3",
 		"laravel/socialite": "^5.12",
