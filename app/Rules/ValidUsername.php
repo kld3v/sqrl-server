@@ -5,7 +5,8 @@ namespace App\Rules;
 use Closure;
 use Illuminate\Contracts\Validation\Rule;
 use App\Models\User;
-use Snipe\BanBuilder\CensorWords;
+use Libraries\Snipe\BanBuilder\CensorWords;
+//use Snipe\BanBuilder\CensorWords;
 
 class ValidUsername implements Rule
 {
