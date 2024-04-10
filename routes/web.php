@@ -20,6 +20,14 @@ Route::get('/', function () {
     return view('welcome');
  });
   
+//Google Login
+Route::get('/auth/google', [GoogleAuthController::class, 'redirect'])->name('auth.google');
+Route::get('/auth/callback', [GoogleAuthController::class, 'callback'])->name('auth.google.callback');
+  
+//Apple Login
+Route::get('/auth/apple', [AppleAuthController::class, 'redirect'])->name('auth.apple');
+Route::post('/auth/apple/callback', [AppleAuthController::class, 'callback'])->name('auth.apple.callback');
+
  
  Route::get('/check-web-risk', [EvaluateTrustService::class, 'evaluateTrust']);
  Route::get('/test-evaluate-trust', function () {
