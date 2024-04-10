@@ -24,7 +24,7 @@ Route::get('/', function () {
   
 //Google Login
 Route::get('/auth/google', [GoogleAuthController::class, 'redirect'])->name('auth.google');
-Route::get('/auth/callback', [GoogleAuthController::class, 'callback'])->name('auth.google.callback');
+Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])->name('auth.google.callback');
   
 //Apple Login
 Route::get('/auth/apple', [AppleAuthController::class, 'redirect'])->name('auth.apple');
