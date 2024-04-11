@@ -7,6 +7,7 @@ use App\Http\Controllers\ScanController;
 use App\Http\Controllers\VenueController;
 use App\Http\Controllers\UserAgreementController;
 use App\Http\Controllers\FakeLeaderboardController;
+use App\Http\Controllers\FavoriteController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,19 +28,15 @@ Route::middleware('auth:sanctum')->group(function () {
         return $request->user();
     });
 
-    Route::post('/scan', [ScanController::class, 'processRequest']);
-
     
     Route::get('/scan-history', [ScanController::class, 'getHistory']);
+    Route::get('/favourites', [FavoriteController::class, 'getFavorites']);
 
 });
 
 
 //SCAN
-
 Route::post('/scan', [ScanController::class, 'processRequest']);
-Route::get('/scan-history', [ScanController::class, 'getHistory']);
-
 
 //GEO
 Route::get('/venues/location', [VenueController::class, 'getVenuesByLocation']);
