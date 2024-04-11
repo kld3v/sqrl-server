@@ -23,11 +23,11 @@ Route::get('/', function () {
  });
   
 //Google Login
-Route::get('/auth/google', [GoogleAuthController::class, 'redirect'])->name('auth.google');
+Route::get('/auth/google/signin', [GoogleAuthController::class, 'redirect'])->name('auth.google');
 Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])->name('auth.google.callback');
   
 //Apple Login
-Route::get('/auth/apple', [AppleAuthController::class, 'redirect'])->name('auth.apple');
+Route::get('/auth/apple/signin', [AppleAuthController::class, 'redirect'])->name('auth.apple');
 Route::post('/auth/apple/callback', [AppleAuthController::class, 'callback'])->name('auth.apple.callback');
 
  

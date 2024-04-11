@@ -45,6 +45,78 @@ class FavoriteController extends Controller
         return response()->json($favoriteUrls);
     }
     
+    public function addFavorite(Request $request)
+    {
+        $data = $request->validate([
+            'url' => 'sometimes|required|url',
+            'url_id' => 'sometimes|required|integer',
+        ]);
+    
+        // Ensure that either url or url_id is provided
+        if (empty($data['url']) && empty($data['url_id'])) {
+            return response()->json(['error' => 'Either URL or URL ID is required'], 422);
+        }
+    
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+    
+        try {
+            if (!empty($data['url'])) {
+                $url = URL::where('url', $data['url'])->firstOrFail();
+            } elseif (!empty($data['url_id'])) {
+                $url = URL::findOrFail($data['url_id']);
+            }
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'URL not found'], 404);
+        }
+    
+        if ($user->favoriteUrls()->find($url->id)) {
+            return response()->json(['message' => 'URL is already a favorite'], 409);
+        }
+    
+        $user->favoriteUrls()->attach($url->id);
+    
+        return response()->json(['message' => 'URL added to favorites successfully'], 200);
+    }
+
+    public function removeFavorite(Request $request)
+    {
+        $data = $request->validate([
+            'url' => 'sometimes|required|url',
+            'url_id' => 'sometimes|required|integer',
+        ]);
+
+        // Ensure that either url or url_id is provided
+        if (empty($data['url']) && empty($data['url_id'])) {
+            return response()->json(['error' => 'Either URL or URL ID is required'], 422);
+        }
+
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        try {
+            if (!empty($data['url'])) {
+                $url = URL::where('url', $data['url'])->firstOrFail();
+            } elseif (!empty($data['url_id'])) {
+                $url = URL::findOrFail($data['url_id']);
+            }
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'URL not found'], 404);
+        }
+
+        if (!$user->favoriteUrls()->find($url->id)) {
+            return response()->json(['message' => 'URL is not a favorite'], 404);
+        }
+
+        $user->favoriteUrls()->detach($url->id);
+
+        return response()->json(['message' => 'URL removed from favorites successfully'], 200);
+    }
+
     
 
 }
