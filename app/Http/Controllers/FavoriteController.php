@@ -15,40 +15,36 @@ use Illuminate\Support\Facades\Auth;
 class FavoriteController extends Controller
 {
     public function getFavorites(Request $request)
-{
-    $user = auth()->user();
-
-    if (!$user) {
-        return response()->json(['error' => 'Unauthorized'], 401);
+    {
+        $user = auth()->user();
+    
+        if (!$user) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+    
+        $favoriteUrls = $user->favoriteUrls()
+            ->with(['scans' => function ($query) {
+                $query->orderBy('created_at', 'desc');
+            }])
+            ->get()
+            ->map(function ($favoriteUrl) {
+                $favoriteUrl->is_favourite = true;
+                $favoriteUrl->date_and_time = $favoriteUrl->pivot->created_at ?? null;
+                $lastScan = $favoriteUrl->scans->first();
+    
+                return [
+                    'url_id' => $favoriteUrl->id,
+                    'url' => $favoriteUrl->url,
+                    'date_and_time' => $favoriteUrl->date_and_time,
+                    'trust_score' => $favoriteUrl->trust_score,
+                    'is_favourite' => $favoriteUrl->is_favourite,
+                    'scan_type' => $lastScan ? $lastScan->scan_type : null,
+                ];
+            });
+    
+        return response()->json($favoriteUrls);
     }
-
-    // Fetch the user's favorite URLs with the current trust_score
-    $favoriteUrls = $user->favoriteUrls()
-        ->with(['scans' => function ($query) {
-            $query->orderBy('created_at', 'desc')->limit(1);
-        }])
-        ->get(['urls.url', 'urls.trust_score'])
-        ->map(function ($favoriteUrl) {
-            // Assuming there's at least one scan, otherwise you might need additional checks
-            $lastScan = $favoriteUrl->scans->first();
-            
-            // Add last scan details if available
-            if ($lastScan) {
-                $favoriteUrl->last_scan_type = $lastScan->scan_type;
-                $favoriteUrl->last_scan_time = $lastScan->created_at;
-            } else {
-                // Default values or handling in case there's no scan
-                $favoriteUrl->last_scan_type = null;
-                $favoriteUrl->last_scan_time = null;
-            }
-
-            // You may unset the scans attribute if you don't want it in your final response
-            unset($favoriteUrl->scans);
-
-            return $favoriteUrl;
-        });
-
-    return response()->json($favoriteUrls);
-}
+    
+    
 
 }

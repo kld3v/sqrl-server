@@ -30,7 +30,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     
     Route::get('/scan-history', [ScanController::class, 'getHistory']);
-    Route::get('/favourites', [FavoriteController::class, 'getFavorites']);
+    Route::get('/favorites', [FavoriteController::class, 'getFavorites']);
 
     Route::post('/user/update-username', [UserController::class, 'updateUsername']);
 

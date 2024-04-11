@@ -46,7 +46,7 @@ class User extends Authenticatable
 
     public function favoriteUrls()
     {
-        return $this->belongsToMany(Url::class, 'user_url_favorites')->withTimestamps();
+        return $this->belongsToMany(URL::class, 'user_url_favorites', 'user_id', 'url_id')->withTimestamps();
     }
 
     public function scans()

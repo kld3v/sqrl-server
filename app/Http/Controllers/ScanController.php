@@ -25,10 +25,6 @@ class ScanController extends Controller
     public function processRequest(Request $request)
     {   
 
-        if ($request->hasHeader('Authorization')) {
-            Auth::guard('sanctum')->check();
-        }
-
         $request->validate([
             'url' => 'required',
             'device_uuid' => 'required',
@@ -36,19 +32,20 @@ class ScanController extends Controller
             'longitude' => 'nullable|numeric',
             'scan_type' => 'nullable|string'            
         ]);
+        
     
         $url = $request->input('url');
     
         $scanData = $this->ScanProcessingService->processScan($url);
-    
-    
+        
+        
         // Format data for the 'scans' table
         $formattedScanData = [
             'url_id' => $scanData['id'],
             'trust_score' =>  $scanData['trust_score'],
             'test_version' => $scanData['test_version'],
             'device_uuid' => $request->input('device_uuid'),
-            'user_id' => Auth::check() ? Auth::user()->id : null,
+            'user_id' => Auth::id(),
         ];
 
         if ($request->filled('scan_type')) {
@@ -62,7 +59,7 @@ class ScanController extends Controller
         if ($request->has('longitude')) {
                 $formattedScanData['longitude'] = $request->input('longitude');
         }
-        // Create scan record using the store method
+
         $scanRequest = new Request($formattedScanData);
         $this->store($scanRequest);
         
@@ -79,6 +76,8 @@ class ScanController extends Controller
             'device_uuid' => 'required',
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
+            'scan_type' => 'nullable|string',
+            'user_id' => 'nullable',
         ];
 
         return $request->validate($rules);

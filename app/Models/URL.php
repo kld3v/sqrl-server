@@ -28,6 +28,7 @@ class URL extends Model
 
     public function favoredByUsers()
     {
-        return $this->belongsToMany(User::class, 'user_url_favorites')->withTimestamps();
+        return $this->belongsToMany(User::class, 'user_url_favorites', 'url_id')->withTimestamps();
     }
+    
 }
