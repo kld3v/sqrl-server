@@ -129,6 +129,25 @@ class ScanController extends Controller
     
         return $history;
     }
+
+    public function removeScanHistory(Request $request, $scanId)
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        $scan = Scan::where('id', $scanId)->where('user_id', $user->id)->first();
+
+        if (!$scan) {
+            return response()->json(['error' => 'Scan history not found or access denied'], 404);
+        }
+
+        $scan->delete();
+
+        return response()->json(['message' => 'Scan history removed successfully'], 200);
+    }
     
 
     

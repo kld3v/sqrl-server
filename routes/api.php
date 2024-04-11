@@ -30,6 +30,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     
     Route::get('/scan-history', [ScanController::class, 'getHistory']);
+    Route::delete('/scan-history/{scanId}', [ScanController::class, 'removeScanHistory']);
 
     Route::get('/favorites', [FavoriteController::class, 'getFavorites']);
     Route::post('/favorites/add', [FavoriteController::class, 'addFavorite']);
