@@ -7,6 +7,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\VenueController;
 use App\Http\Controllers\PingController;
 use App\Http\Controllers\FakeLeaderboardController;
+use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\UserAgreementController;
 
 /*
@@ -27,7 +28,9 @@ Route::middleware('auth:sanctum')->group(function () {
         return $request->user();
     });
 
-    Route::post('/scan', [ScanController::class, 'processRequest']);
+    
+    Route::get('/scan-history', [ScanController::class, 'getHistory']);
+    Route::get('/favourites', [FavoriteController::class, 'getFavorites']);
 
     Route::post('/user/update-username', [UserController::class, 'updateUsername']);
 
@@ -36,7 +39,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
 //SCAN
 Route::post('/scan', [ScanController::class, 'processRequest']);
-Route::get('/scan-history', [ScanController::class, 'getHistory']);
 
 //GEO
 Route::get('/venues/location', [VenueController::class, 'getVenuesByLocation']);

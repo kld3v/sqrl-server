@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\ValidationException;
 use App\Services\ScanProcessingService;
 use Illuminate\Support\Facades\Log; 
+use Illuminate\Support\Facades\Auth;
 
 class ScanController extends Controller
 {   
@@ -18,16 +19,22 @@ class ScanController extends Controller
     public function __construct(ScanProcessingService $ScanProcessingService)
     {
         $this->ScanProcessingService = $ScanProcessingService;
+        $this->middleware('auth:sanctum')->only(['getHistory']);
     }
 
     public function processRequest(Request $request)
     {   
 
+        if ($request->hasHeader('Authorization')) {
+            Auth::guard('sanctum')->check();
+        }
+
         $request->validate([
             'url' => 'required',
             'device_uuid' => 'required',
             'latitude' => 'nullable|numeric',
-            'longitude' => 'nullable|numeric'            
+            'longitude' => 'nullable|numeric',
+            'scan_type' => 'nullable|string'            
         ]);
     
         $url = $request->input('url');
@@ -41,7 +48,12 @@ class ScanController extends Controller
             'trust_score' =>  $scanData['trust_score'],
             'test_version' => $scanData['test_version'],
             'device_uuid' => $request->input('device_uuid'),
+            'user_id' => Auth::check() ? Auth::user()->id : null,
         ];
+
+        if ($request->filled('scan_type')) {
+            $formattedScanData['scan_type'] = $request->input('scan_type');
+        }
 
         if ($request->has('latitude')) {
             $formattedScanData['latitude'] = $request->input('latitude');
@@ -86,28 +98,39 @@ class ScanController extends Controller
     }
 
     public function getHistory(Request $request)
-    {   
-        
-        $validatedData = $request->validate([
-            'device_uuid' => 'required',
-        ]);
-
-      
-        $deviceUuid = $validatedData['device_uuid'];
+    {
+        $user = auth()->user();
+    
+        if (!$user) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+    
+        $favoriteUrlIds = $user->favoriteUrls()->pluck('url_id')->toArray();
     
         $history = Scan::with('url')
-                    ->where('device_uuid', $deviceUuid)
-                    ->get(['url_id', 'created_at as date_and_time', 'trust_score'])
-                    ->map(function ($scan) {
+                    ->where('user_id', $user->id)
+                    ->get([
+                        'url_id', 
+                        'created_at as date_and_time', 
+                        'trust_score',
+                        'scan_type' 
+                    ])
+                    ->map(function ($scan) use ($favoriteUrlIds) {
+                        $isFavourite = in_array($scan->url_id, $favoriteUrlIds);
+    
                         return (object)[
+                            'url_id' => $scan->url_id,
                             'url' => $scan->url->url,
                             'date_and_time' => $scan->date_and_time,
                             'trust_score' => $scan->trust_score,
+                            'is_favourite' => $isFavourite,
+                            'scan_type' => $scan->scan_type,
                         ];
                     });
     
         return $history;
     }
+    
 
     
     // Retrieve a specific Scan instance

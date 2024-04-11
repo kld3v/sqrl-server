@@ -6,12 +6,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class Scan extends Model
 {
-    
-    protected $fillable = ['url_id', 'trust_score', 'device_uuid', 'latitude', 'longitude', 'test_version'];
+    protected $fillable = [
+        'url_id', 'trust_score', 'device_uuid', 'latitude', 'longitude', 'test_version', 'user_id', 'scan_type'
+    ];
 
     public function url()
     {
         return $this->belongsTo(URL::class, 'url_id');
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }

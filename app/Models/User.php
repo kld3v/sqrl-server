@@ -44,5 +44,14 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+    public function favoriteUrls()
+    {
+        return $this->belongsToMany(Url::class, 'user_url_favorites')->withTimestamps();
+    }
+
+    public function scans()
+    {
+        return $this->hasMany(Scan::class, 'user_id');
+    }
 
 }

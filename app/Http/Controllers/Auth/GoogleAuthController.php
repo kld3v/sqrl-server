@@ -37,7 +37,7 @@ class GoogleAuthController extends Controller
                 'email' => $googleUser->email,
                 'password' => Hash::make(Str::random())
             ]);
-    
+
             Auth::login($user);
     
             $token = $user->createToken('GoogleSignInToken')->plainTextToken;
