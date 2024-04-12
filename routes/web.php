@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AppleAuthController;
 use App\Http\Controllers\Auth\GoogleAuthController;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,6 +30,10 @@ Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])->
 //Apple Login
 Route::get('/auth/apple/signin', [AppleAuthController::class, 'redirect'])->name('auth.apple');
 Route::post('/auth/apple/callback', [AppleAuthController::class, 'callback'])->name('auth.apple.callback');
+
+Route::get('/google/', function (Request $request) {
+   return ''; 
+});
 
  
  Route::get('/check-web-risk', [EvaluateTrustService::class, 'evaluateTrust']);

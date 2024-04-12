@@ -26,33 +26,25 @@ class GoogleAuthController extends Controller
      */
     public function callback()
     {
-
         if ($googleUser = Socialite::driver('google')->user())
         {
-            
             $user = User::updateOrCreate([
                 'email' => $googleUser->email,
             ], [
                 'name' => $googleUser->name,
                 'email' => $googleUser->email,
-                'password' => Hash::make(Str::random())
+                'password' => Hash::make(Str::random()) 
             ]);
-
+    
             Auth::login($user);
     
             $token = $user->createToken('GoogleSignInToken')->plainTextToken;
-            
-            if (!is_null($user->username)) {
-                return redirect("?username={$user->username}&token={$token}");
-            }
-            return redirect("?token={$token}");
-            
-            // return response()->json([
-            //     'username' => $user->username,
-            //     'token' => $token,
-            // ]);
+    
+            $urlSuffix = !is_null($user->username) ? "username={$user->username}&token={$token}" : "token={$token}";
+    
+            return redirect("/google/?{$urlSuffix}");
         }
         abort(401, 'Could not authenticate with Google');
-    }
+    }    
 
 }
