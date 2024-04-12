@@ -22,6 +22,19 @@ class ScanController extends Controller
         $this->middleware('auth:sanctum')->only(['getHistory']);
     }
 
+    public function checkUser(Request $request)
+    {
+        // Attempt to authenticate using Sanctum
+        $user = Auth::guard('sanctum')->user();
+        
+        // Check if a user was authenticated
+        if ($user) {
+            return response()->json(['user_id' => $user->id]);
+        } else {
+            return response()->json(['user_id' => null]);
+        }
+    }
+
     public function processRequest(Request $request)
     {   
 
@@ -33,6 +46,7 @@ class ScanController extends Controller
             'scan_type' => 'nullable|string'            
         ]);
         
+        $user = Auth::guard('sanctum')->user();
     
         $url = $request->input('url');
     
@@ -45,8 +59,11 @@ class ScanController extends Controller
             'trust_score' =>  $scanData['trust_score'],
             'test_version' => $scanData['test_version'],
             'device_uuid' => $request->input('device_uuid'),
-            'user_id' => Auth::id(),
         ];
+
+        if ($user) {
+            $formattedScanData['user_id'] = $user->id;
+        }
 
         if ($request->filled('scan_type')) {
             $formattedScanData['scan_type'] = $request->input('scan_type');
