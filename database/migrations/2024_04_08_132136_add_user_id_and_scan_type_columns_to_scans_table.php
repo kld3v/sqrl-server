@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('user_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
 
-            $table->enum('scan_type', ['Camera', 'EQR', 'NFC', 'History', 'Favourites'])->default('Camera');
+            $table->enum('scan_type', ['Camera', 'EQR', 'NFC', 'History', 'Favorites'])->default('Camera');
         });
 
         DB::table('scans')->update(['scan_type' => 'Camera']);
