@@ -28,7 +28,7 @@ class FavoriteController extends Controller
             }])
             ->get()
             ->map(function ($favoriteUrl) {
-                $favoriteUrl->is_favourite = true;
+                $favoriteUrl->is_favorite = true;
                 $favoriteUrl->date_and_time = $favoriteUrl->pivot->created_at ?? null;
                 $lastScan = $favoriteUrl->scans->first();
     
@@ -37,7 +37,7 @@ class FavoriteController extends Controller
                     'url' => $favoriteUrl->url,
                     'date_and_time' => $favoriteUrl->date_and_time,
                     'trust_score' => $favoriteUrl->trust_score,
-                    'is_favourite' => $favoriteUrl->is_favourite,
+                    'is_favorite' => $favoriteUrl->is_favorite,
                     'scan_type' => $lastScan ? $lastScan->scan_type : null,
                 ];
             });

@@ -12,7 +12,9 @@ class UserController extends Controller
 {
     public function updateUsername(Request $request)
     {
-        $validator = \Validator::make($request->all(), [
+        $lowercaseUsername = strtolower($request->username);
+  
+        $validator = \Validator::make(['username' => $lowercaseUsername], [
             'username' => ['required', new ValidUsername],
         ]);
     
@@ -22,12 +24,12 @@ class UserController extends Controller
         }
     
         $user = Auth::user();
-        $newUsername = $request->username;
-    
-        $user->username = $newUsername;
+        
+        $user->username = $lowercaseUsername;
         $user->save();
     
         return response()->json(['message' => 'Username updated successfully'], 200);
     }
+    
     
 }

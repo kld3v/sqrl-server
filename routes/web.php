@@ -31,7 +31,8 @@ Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])->
 Route::get('/auth/apple/signin', [AppleAuthController::class, 'redirect'])->name('auth.apple');
 Route::post('/auth/apple/callback', [AppleAuthController::class, 'callback'])->name('auth.apple.callback');
 
-Route::get('/google/', function (Request $request) {
+Route::get('/auth/google/', function (Request $request) {
+   //THIS ROUTE IS JUST THE BLANK PAGE SHOWN ONCE A USER HAS LOGGED IN
    return ''; 
 });
 

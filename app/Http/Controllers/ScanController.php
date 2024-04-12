@@ -132,14 +132,14 @@ class ScanController extends Controller
                         'scan_type' 
                     ])
                     ->map(function ($scan) use ($favoriteUrlIds) {
-                        $isFavourite = in_array($scan->url_id, $favoriteUrlIds);
+                        $isFavorite = in_array($scan->url_id, $favoriteUrlIds);
     
                         return (object)[
                             'url_id' => $scan->url_id,
                             'url' => $scan->url->url,
                             'date_and_time' => $scan->date_and_time,
                             'trust_score' => $scan->trust_score,
-                            'is_favourite' => $isFavourite,
+                            'is_favorite' => $isFavorite,
                             'scan_type' => $scan->scan_type,
                         ];
                     });

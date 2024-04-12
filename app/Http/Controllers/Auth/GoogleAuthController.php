@@ -42,7 +42,7 @@ class GoogleAuthController extends Controller
     
             $urlSuffix = !is_null($user->username) ? "username={$user->username}&token={$token}" : "token={$token}";
     
-            return redirect("/google/?{$urlSuffix}");
+            return redirect("/auth/google/?{$urlSuffix}");
         }
         abort(401, 'Could not authenticate with Google');
     }    

@@ -23,30 +23,33 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): \Illuminate\Http\JsonResponse
     {
+        $request->merge(['username' => strtolower($request->username)]);
+    
         $validator = $this->validateRegistration($request);
-
+    
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
-
+    
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'username' => $request->username,
             'password' => Hash::make($request->password),
         ]);
-
+    
         event(new Registered($user));
-
+    
         Auth::login($user);
-
+    
         $token = $user->createToken('NativeSignInToken')->plainTextToken;
-            
+    
         return response()->json([
             'username' => $user->username,
             'token' => $token,
         ]);
     }
+    
 
     /**
      * Validate the registration request.
