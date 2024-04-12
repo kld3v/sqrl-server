@@ -29,8 +29,8 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     
-    Route::get('/scan-history', [ScanController::class, 'getHistory']);
-    Route::delete('/scan-history/{scanId}', [ScanController::class, 'removeScanHistory']);
+    Route::get('/scans/history', [ScanController::class, 'getHistory']);
+    Route::delete('/scans/history/{scanId}', [ScanController::class, 'removeScanHistory']);
 
     Route::get('/favorites', [FavoriteController::class, 'getFavorites']);
     Route::post('/favorites', [FavoriteController::class, 'addFavorite']);
