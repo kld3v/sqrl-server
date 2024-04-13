@@ -32,27 +32,7 @@ Route::get('/auth/apple/signin', [AppleAuthController::class, 'redirect'])->name
 Route::post('/auth/apple/callback', [AppleAuthController::class, 'callback'])->name('auth.apple.callback');
 
 Route::get('/auth/google/', function (Request $request) {
-   $html = <<<HTML
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Close Window</title>
-    <script>
-        window.onload = function() {
-            setTimeout(function() {
-                window.close();
-            }, 1000); // Close after 1 second
-        };
-    </script>
-</head>
-<body>
-    <p>If the window does not close automatically, you may close it manually.</p>
-</body>
-</html>
-HTML;
-   return response($html)->header('Content-Type', 'text/html');
+   return response()->json(['shouldClose' => true]);
 });
 
 
