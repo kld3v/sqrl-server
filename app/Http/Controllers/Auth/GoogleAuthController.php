@@ -33,7 +33,10 @@ class GoogleAuthController extends Controller
 
             $token = $user->createToken('GoogleSignInToken')->plainTextToken;
 
-            return response()->json(['token' => $token], 200);
+            return response()->json([
+                'username' => $user->username,
+                'token' => $token,
+            ]);
         }
         return response()->json(['error' => 'Invalid Google token'], 401);
     }
