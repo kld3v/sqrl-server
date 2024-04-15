@@ -16,6 +16,28 @@ class GoogleAuthController extends Controller
     /**
      * Bounces the user to the Google auth page
      */
+
+    public function handleGoogleSignIn(Request $request)
+    {
+        $googleUser = Socialite::driver('google')->stateless()->userFromToken($request->accessToken);
+        if ($googleUser) {
+            $user = User::updateOrCreate([
+                'email' => $googleUser->email,
+            ], [
+                'name' => $googleUser->name,
+                'email' => $googleUser->email,
+                'password' => Hash::make(Str::random())
+            ]);
+
+            Auth::login($user);
+
+            $token = $user->createToken('GoogleSignInToken')->plainTextToken;
+
+            return response()->json(['token' => $token], 200);
+        }
+        return response()->json(['error' => 'Invalid Google token'], 401);
+    }
+
     public function redirect()
     {
         return Socialite::driver('google')->redirect();

@@ -42,3 +42,4 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
 
 Route::post('/apple/signin', [AppleAuthController::class, 'handleAppleSignIn']);
 
+Route::post('/google/signin', [GoogleAuthController::class, 'handleGoogleSignIn']);

@@ -24,7 +24,7 @@ Route::get('/', function () {
  });
   
 //Google Login
-Route::get('/auth/google/signin', [GoogleAuthController::class, 'redirect'])->name('auth.google');
+Route::get('/auth/google', [GoogleAuthController::class, 'redirect'])->name('auth.google');
 Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])->name('auth.google.callback');
   
 //Apple Login
