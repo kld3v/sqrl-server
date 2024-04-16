@@ -32,7 +32,7 @@ Route::get('/auth/apple/signin', [AppleAuthController::class, 'redirect'])->name
 Route::post('/auth/apple/callback', [AppleAuthController::class, 'callback'])->name('auth.apple.callback');
 
 Route::get('/auth/google/', function (Request $request) {
-   return response()->json(['shouldClose' => true]);
+   return '';
 });
 
 
