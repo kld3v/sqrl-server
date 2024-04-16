@@ -17,29 +17,38 @@ class GoogleAuthController extends Controller
      * Bounces the user to the Google auth page
      */
 
-    public function handleGoogleSignIn(Request $request)
-    {
-        $googleUser = Socialite::driver('google')->stateless()->userFromToken($request->accessToken);
-        if ($googleUser) {
-            $user = User::updateOrCreate([
-                'email' => $googleUser->email,
-            ], [
-                'name' => $googleUser->name,
-                'email' => $googleUser->email,
-                'password' => Hash::make(Str::random())
-            ]);
-
-            Auth::login($user);
-
-            $token = $user->createToken('GoogleSignInToken')->plainTextToken;
-
-            return response()->json([
-                'username' => $user->username,
-                'token' => $token,
-            ]);
-        }
-        return response()->json(['error' => 'Invalid Google token'], 401);
-    }
+     public function handleGoogleSignIn(Request $request)
+     {
+         if (!$request->has('identity_token')) {
+             return response()->json(['message' => 'Identity token is required'], 400);
+         }
+     
+         $code = $request->input('identity_token');
+     
+         try {
+             $googleUser = Socialite::driver('google')->stateless()->userFromToken($code);
+         } catch (\Exception $e) {
+             return response()->json(['message' => 'Invalid identity token provided'], 401);
+         }
+     
+         $user = User::updateOrCreate([
+             'email' => $googleUser->email,
+         ], [
+             'name' => $googleUser->name,
+             'email' => $googleUser->email,
+             'password' => Hash::make(Str::random())
+         ]);
+     
+         Auth::login($user);
+     
+         $token = $user->createToken('GoogleSignInToken')->plainTextToken;
+     
+         return response()->json([
+             'username' => $user->username,
+             'token' => $token,
+         ]);
+     }
+     
 
     public function redirect()
     {
