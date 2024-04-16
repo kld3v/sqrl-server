@@ -20,7 +20,7 @@ class GoogleAuthController extends Controller
      public function handleGoogleSignIn(Request $request)
      {
          if (!$request->has('identity_token')) {
-             return response()->json(['message' => 'Identity token is required'], 400);
+             return response()->json(['errors' => 'Identity token is required'], 400);
          }
      
          $code = $request->input('identity_token');
@@ -28,7 +28,7 @@ class GoogleAuthController extends Controller
          try {
              $googleUser = Socialite::driver('google')->stateless()->userFromToken($code);
          } catch (\Exception $e) {
-             return response()->json(['message' => 'Invalid identity token provided'], 401);
+             return response()->json(['errors' => 'Invalid identity token provided'], 401);
          }
      
          $user = User::updateOrCreate([
