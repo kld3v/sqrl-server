@@ -28,4 +28,19 @@ class Venue extends Model
     {
         return $this->belongsTo(URL::class, 'url_id');
     }
+
+    public function business()
+    {
+        return $this->belongsTo(Business::class);
+    }
+
+    public function monitoredDomains()
+    {
+        return $this->hasMany(MonitoredDomain::class);
+    }
+
+    public function monitoredRedirectPaths()
+    {
+        return $this->hasMany(MonitoredRedirectPath::class);
+    }
 }

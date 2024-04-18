@@ -13,11 +13,13 @@ return new class extends Migration
     {
         Schema::create('domain_similarity_flags', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('venue_domain_id');
-            $table->foreign('venue_domain_id')->references('id')->on('venue_domains')->onDelete('cascade');
-            $table->string('similar_domain');
+            $table->unsignedBigInteger('monitored_domain_id');
+            $table->unsignedBigInteger('similar_url_id');
             $table->unsignedTinyInteger('trust_score');
             $table->timestamps();
+
+            $table->foreign('monitored_domain_id')->references('id')->on('monitored_domains')->onDelete('cascade');
+            $table->foreign('similar_url_id')->references('id')->on('urls')->onDelete('cascade');
         });
     }
 

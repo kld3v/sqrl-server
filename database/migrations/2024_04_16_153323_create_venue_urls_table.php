@@ -11,13 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('venue_urls', function (Blueprint $table) {
+        Schema::create('monitored_redirect_paths', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('venue_id');
-            $table->foreign('venue_id')->references('id')->on('venues')->onDelete('cascade');
-            $table->string('initial_url');
-            $table->string('expected_url');
+            $table->unsignedBigInteger('initial_url_id');
+            $table->unsignedBigInteger('expected_url_id');
             $table->timestamps();
+
+            $table->foreign('venue_id')->references('id')->on('venues')->onDelete('cascade');
+            $table->foreign('initial_url_id')->references('id')->on('urls')->onDelete('cascade');
+            $table->foreign('expected_url_id')->references('id')->on('urls')->onDelete('cascade');
         });
     }
 
@@ -26,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('venue_urls');
+        Schema::dropIfExists('monitored_redirect_paths');
     }
 };

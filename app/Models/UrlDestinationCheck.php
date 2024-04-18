@@ -1,0 +1,23 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class UrlDestinationCheck extends Model
+{
+    use HasFactory;
+
+    protected $fillable = ['monitored_redirect_path_id', 'final_url_id', 'is_safe'];
+
+    public function monitoredRedirectPath()
+    {
+        return $this->belongsTo(MonitoredRedirectPath::class);
+    }
+
+    public function finalUrl()
+    {
+        return $this->belongsTo(URL::class, 'final_url_id');
+    }
+}

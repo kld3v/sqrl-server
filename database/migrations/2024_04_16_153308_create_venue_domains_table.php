@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('venue_domains', function (Blueprint $table) {
+        Schema::create('monitored_domains', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('venue_id');
-            $table->foreign('venue_id')->references('id')->on('venues')->onDelete('cascade');
-            $table->string('domain');
+            $table->unsignedBigInteger('url_id');
             $table->timestamps();
+
+            $table->foreign('venue_id')->references('id')->on('venues')->onDelete('cascade');
+            $table->foreign('url_id')->references('id')->on('urls')->onDelete('cascade');
         });
     }
 
@@ -25,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('venue_domains');
+        Schema::dropIfExists('monitored_domains');
     }
 };
