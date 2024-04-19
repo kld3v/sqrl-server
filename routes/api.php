@@ -38,6 +38,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/user/update-username', [UserController::class, 'updateUsername']);
 
+    Route::delete('/user', [UserController::class, 'delete']);
+
 });
 
 

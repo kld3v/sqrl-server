@@ -66,6 +66,7 @@ class ScanTestSeeder extends Seeder
                 'trust_score' => $trustScore,
                 'updated_at' => now(),
                 'created_at' => now(),
+                'user_id' => $faker->numberBetween(1, 1500),
             ];
 
             if (count($insertData) > 1000) {
