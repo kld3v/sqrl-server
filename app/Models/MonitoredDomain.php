@@ -9,16 +9,11 @@ class MonitoredDomain extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['venue_id', 'url_id'];
+    protected $fillable = ['venue_id', 'domain'];
 
     public function venue()
     {
         return $this->belongsTo(Venue::class);
-    }
-
-    public function url()
-    {
-        return $this->belongsTo(URL::class, 'url_id');
     }
 
     public function domainSimilarityFlags()

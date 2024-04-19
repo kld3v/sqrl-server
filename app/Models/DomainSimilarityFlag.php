@@ -9,15 +9,10 @@ class DomainSimilarityFlag extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['monitored_domain_id', 'similar_url_id', 'trust_score'];
+    protected $fillable = ['monitored_domain_id', 'similar_url', 'trust_score'];
 
     public function monitoredDomain()
     {
         return $this->belongsTo(MonitoredDomain::class);
-    }
-
-    public function similarUrl()
-    {
-        return $this->belongsTo(URL::class, 'similar_url_id');
     }
 }
