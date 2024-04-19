@@ -26,13 +26,15 @@ class URLTestSeeder extends Seeder
                 'trust_score' => $trustScore,
                 'updated_at' => now(),
                 'created_at' => now(),
+                'test_version' => '1.0.69'
             ];
         }
         URL::insert($insertData);
 
         URL::create([
             'url' => "https://alacrityfoundation.co.uk/",
-            'trust_score' => 0
+            'trust_score' => 0,
+            'test_version' => '1.0.69'
         ]);
     }
 }
