@@ -14,11 +14,10 @@ return new class extends Migration
         Schema::create('monitored_domains', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('venue_id');
-            $table->unsignedBigInteger('url_id');
+            $table->string('domain');
             $table->timestamps();
 
             $table->foreign('venue_id')->references('id')->on('venues')->onDelete('cascade');
-            $table->foreign('url_id')->references('id')->on('urls')->onDelete('cascade');
         });
     }
 
