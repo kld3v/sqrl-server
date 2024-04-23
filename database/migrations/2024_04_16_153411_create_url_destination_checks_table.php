@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('url_destination_checks', function (Blueprint $table) {
+        Schema::create('monitored_redirect_checks', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('monitored_redirect_path_id');
             $table->string('final_url')->nullable();

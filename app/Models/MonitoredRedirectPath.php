@@ -18,6 +18,6 @@ class MonitoredRedirectPath extends Model
 
     public function urlDestinationChecks()
     {
-        return $this->hasMany(UrlDestinationCheck::class);
+        return $this->hasMany(MonitoredRedirectCheck::class);
     }
 }

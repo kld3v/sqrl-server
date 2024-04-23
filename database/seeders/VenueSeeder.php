@@ -17,7 +17,11 @@ class VenueSeeder extends Seeder
      */
     public function run()
     {
-        $alacrityUrl = URL::firstOrCreate(['url' => 'https://alacrityfoundation.co.uk/', 'trust_score' => 0]);
+        $alacrityUrl = URL::firstOrCreate([
+            'url' => 'https://alacrityfoundation.co.uk/',
+            'trust_score' => 0,
+            'test_version' => '1.0.5'
+        ]);
     
         $alacrityMidpoint = $this->calculateMidpoint([
             [51.5877159, -2.9931069],
@@ -37,7 +41,11 @@ class VenueSeeder extends Seeder
     
         // Repeat the process for each venue
         // Example for Nando's venue
-        $nandosUrl = URL::firstOrCreate(['url' => 'https://www.nandos.co.uk/', 'trust_score' => 100]);
+        $nandosUrl = URL::firstOrCreate([
+            'url' => 'https://www.nandos.co.uk/',
+            'trust_score' => 100,
+            'test_version' => '1.0.5'
+        ]);
     
         $nandosMidpoint = $this->calculateMidpoint([
             [51.586312850599846, -2.9922399197930285],
