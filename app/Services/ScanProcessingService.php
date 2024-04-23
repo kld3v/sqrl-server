@@ -55,19 +55,27 @@ class ScanProcessingService
         if ($existingUrl) {
             // Check if the trust score needs to be updated
             $updateStartTime = microtime(true);
+    
             if ($this->isTrustScoreOutdated($existingUrl)) {
+                $evaluationStartTime = microtime(true);
                 $trustScore = $this->evaluateTrustService->evaluateTrust($url);
                 $score = $trustScore['trust_score'];
+                $evaluationEndTime = microtime(true);
+                Log::channel('performanceLog')->info("Trust score evaluation took: " . ($evaluationEndTime - $evaluationStartTime) . " seconds");
     
+                $dbUpdateStartTime = microtime(true);
                 $existingUrl->update([
                     'trust_score' => $score,
                     'test_version' => $this->currentTestVersion,
                 ]);
+                $dbUpdateEndTime = microtime(true);
+                Log::channel('performanceLog')->info("Database update took: " . ($dbUpdateEndTime - $dbUpdateStartTime) . " seconds");
             } else {
                 $trustScore = $existingUrl->trust_score;
             }
+    
             $updateEndTime = microtime(true);
-            Log::channel('performanceLog')->info("Update process took: " . ($updateEndTime - $updateStartTime) . " seconds");
+            Log::channel('performanceLog')->info("Total update process took: " . ($updateEndTime - $updateStartTime) . " seconds");
         } else {
             // URL not in DB, evaluate and add
             $evaluateStartTime = microtime(true);
@@ -87,7 +95,7 @@ class ScanProcessingService
         Log::channel('performanceLog')->info("Total process scan time: " . ($endTime - $startTime) . " seconds");
     
         return $existingUrl;
-    }    
+    }
 
     private function isTrustScoreOutdated($urlRecord)
     {
