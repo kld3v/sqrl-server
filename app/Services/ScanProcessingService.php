@@ -31,51 +31,48 @@ class ScanProcessingService
     }
     public function processScan($url)
     {
-        $startTime = microtime(true);
-        Log::channel('performanceLog')->info("Starting process scan with URL: {$url}");
-    
+        Log::channel('redirectLog')->info("Starting process scan with URL: {$url}");
         // Expanding shortened URL, if necessary
         $redirectionValue = new RedirectionValue();
         $headlessBrowser = new HeadlessBrowser();
+
         if ($redirectionValue->redirectionValue($url)) {
-            $expandStart = microtime(true);
             $url = $headlessBrowser->interactWithPage($url);
-            Log::channel('performanceLog')->info("URL expansion took: " . (microtime(true) - $expandStart) . " seconds");
         }
-    
         // Check if URL is already in the database
-        $dbLookupStart = microtime(true);
         $existingUrl = URL::where('url', $url)->first();
-        Log::channel('performanceLog')->info("Database lookup took: " . (microtime(true) - $dbLookupStart) . " seconds");
-    
+
         if ($existingUrl) {
             // Check if the trust score needs to be updated
             if ($this->isTrustScoreOutdated($existingUrl)) {
-                $trustScoreStart = microtime(true);
+
                 $trustScore = $this->evaluateTrustService->evaluateTrust($url);
                 $score = $trustScore['trust_score'];
-                $existingUrl->update([
-                    'trust_score' => $score,
-                    'test_version' => $this->currentTestVersion,
-                ]);
-                Log::channel('performanceLog')->info("Trust score update took: " . (microtime(true) - trustScoreStart) . " seconds");
+
+                $existingUrl->update(
+                    [
+                        'trust_score' => $score,
+                        'test_version' => $this->currentTestVersion,
+                    ]
+                );
+
             } else {
+
                 $trustScore = $existingUrl->trust_score;
             }
         } else {
+
             // URL not in DB, evaluate and add
-            $evaluateStart = microtime(true);
             $trustScore = $this->evaluateTrustService->evaluateTrust($url);
+
             $score = $trustScore['trust_score'];
             $existingUrl = URL::create([
                 'url' => $url,
                 'trust_score' => $score,
                 'test_version' => $this->currentTestVersion,
             ]);
-            Log::channel('performanceLog')->info("Trust score evaluation and DB insertion took: " . (microtime(true) - evaluateStart) . " seconds");
         }
-    
-        Log::channel('performanceLog')->info("Total process time: " . (microtime(true) - startTime) . " seconds");
+
         return $existingUrl;
     }
 
