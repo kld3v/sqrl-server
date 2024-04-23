@@ -138,7 +138,14 @@ return [
             'driver' => 'single',
             'path' => storage_path('logs/domainrepLog.log'),
             'level' => 'debug',
-        ]
+        ],
+        'performanceLog' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/performanceLog.log'),
+            'level' => 'debug',
+            'days' => 14,
+        ],
+        
 
     ],
 
