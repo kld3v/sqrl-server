@@ -24,13 +24,13 @@ class FavoriteController extends Controller
     
         $favoriteUrls = $user->favoriteUrls()
             ->with(['scans' => function ($query) {
-                $query->orderBy('created_at', 'desc');
+                $query->latest('created_at')->first();
             }])
             ->get()
             ->map(function ($favoriteUrl) {
                 $favoriteUrl->is_favorite = true;
                 $favoriteUrl->date_and_time = $favoriteUrl->pivot->created_at ?? null;
-                $lastScan = $favoriteUrl->scans->first();
+                $lastScan = $favoriteUrl->scans; 
     
                 return [
                     'url_id' => $favoriteUrl->id,
@@ -44,6 +44,7 @@ class FavoriteController extends Controller
     
         return response()->json($favoriteUrls);
     }
+    
     
     public function addFavorite(Request $request)
     {
