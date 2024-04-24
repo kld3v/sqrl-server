@@ -31,74 +31,44 @@ class ScanProcessingService
     }
     public function processScan($url)
     {
-        $startTime = microtime(true);
-    
-        Log::channel('performanceLog')->info("Starting process scan with URL: {$url}");
-    
+        Log::channel('redirectLog')->info("Starting process scan with URL: {$url}");
         // Expanding shortened URL, if necessary
         $redirectionValue = new RedirectionValue();
         $headlessBrowser = new HeadlessBrowser();
-        $urlBeforeRedirection = $url;
-    
+
         if ($redirectionValue->redirectionValue($url)) {
-            $browserStartTime = microtime(true);
             $url = $headlessBrowser->interactWithPage($url);
-            $browserEndTime = microtime(true);
-            Log::channel('performanceLog')->info("URL before redirection: {$urlBeforeRedirection}, redirected to: {$url}");
-            Log::channel('performanceLog')->info("Headless browser interaction took: " . ($browserEndTime - $browserStartTime) . " seconds");
-        } else {
-            Log::channel('performanceLog')->info("No redirection needed for URL: {$url}");
         }
-    
         // Check if URL is already in the database
-        $dbLookupStartTime = microtime(true);
         $existingUrl = URL::where('url', $url)->first();
-        $dbLookupEndTime = microtime(true);
-        Log::channel('performanceLog')->info("Database lookup took: " . ($dbLookupEndTime - $dbLookupStartTime) . " seconds");
-    
+
         if ($existingUrl) {
-            Log::channel('performanceLog')->info("URL found in DB with trust score: {$existingUrl->trust_score}");
-            $updateStartTime = microtime(true);
-    
+            // Check if the trust score needs to be updated
             if ($this->isTrustScoreOutdated($existingUrl)) {
-                Log::channel('performanceLog')->info("Trust score is outdated. Proceeding with update...");
-                $evaluationStartTime = microtime(true);
+
                 $trustScore = $this->evaluateTrustService->evaluateTrust($url);
                 $score = $trustScore['trust_score'];
-                $evaluationEndTime = microtime(true);
-                Log::channel('performanceLog')->info("Trust score evaluation took: " . ($evaluationEndTime - $evaluationStartTime) . " seconds");
-    
-                $dbUpdateStartTime = microtime(true);
-                $existingUrl->update([
-                    'trust_score' => $score,
-                    'test_version' => $this->currentTestVersion,
-                ]);
-                $dbUpdateEndTime = microtime(true);
-                Log::channel('performanceLog')->info("Database update took: " . ($dbUpdateEndTime - $dbUpdateStartTime) . " seconds");
+
+                $existingUrl->update(
+                    [
+                        'trust_score' => $score,
+                        'test_version' => $this->currentTestVersion,
+                        'updated_at' => Carbon::now()
+                    ]
+                );
             } else {
-                Log::channel('performanceLog')->info("Trust score is current. No update required.");
+                $trustScore = $existingUrl->trust_score;
             }
-    
-            $updateEndTime = microtime(true);
-            Log::channel('performanceLog')->info("Total update process took: " . ($updateEndTime - $updateStartTime) . " seconds");
         } else {
-            Log::channel('performanceLog')->info("URL not in DB, evaluating and adding new record.");
-            $evaluateStartTime = microtime(true);
+            // URL not in DB, evaluate and add
             $trustScore = $this->evaluateTrustService->evaluateTrust($url);
-    
             $score = $trustScore['trust_score'];
             $existingUrl = URL::create([
                 'url' => $url,
                 'trust_score' => $score,
                 'test_version' => $this->currentTestVersion,
             ]);
-            $evaluateEndTime = microtime(true);
-            Log::channel('performanceLog')->info("Evaluation and creation took: " . ($evaluateEndTime - $evaluateStartTime) . " seconds");
         }
-    
-        $endTime = microtime(true);
-        Log::channel('performanceLog')->info("Total process scan time: " . ($endTime - $startTime) . " seconds");
-    
         return $existingUrl;
     }
     
@@ -106,10 +76,6 @@ class ScanProcessingService
     {
         $isDateOutdated = $urlRecord->updated_at->lt(Carbon::now()->subWeeks(2));
         $isVersionOutdated = $urlRecord->test_version !== $this->currentTestVersion;
-        $outdatedReason = $isDateOutdated ? "date is outdated (older than 2 weeks)" : "";
-        $outdatedReason .= $isVersionOutdated ? ($outdatedReason ? ", " : "") . "test version has changed" : "";
-    
-        Log::channel('performanceLog')->info("Checking if trust score is outdated: " . ($outdatedReason ?: "No, it's current"));
     
         return $isDateOutdated || $isVersionOutdated;
     }
