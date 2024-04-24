@@ -21,27 +21,29 @@ class FavoriteController extends Controller
         if (!$user) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
-  
-        $favoriteUrls = $user->favoriteUrls()->with(['scans' => function ($query) {
-            $query->latest()->limit(1);
-        }])->get();
     
-        $formattedFavorites = $favoriteUrls->map(function ($favoriteUrl) {
-            $lastScan = $favoriteUrl->scans->first();
+        $favoriteUrls = $user->favoriteUrls()
+            ->with(['scans' => function ($query) {
+                $query->orderBy('created_at', 'desc');
+            }])
+            ->get()
+            ->map(function ($favoriteUrl) {
+                $favoriteUrl->is_favorite = true;
+                $favoriteUrl->date_and_time = $favoriteUrl->pivot->created_at ?? null;
+                $lastScan = $favoriteUrl->scans->first();
     
-            return [
-                'url_id' => $favoriteUrl->id,
-                'url' => $favoriteUrl->url,
-                'date_and_time' => $favoriteUrl->pivot->created_at ?? null,
-                'trust_score' => $favoriteUrl->trust_score,
-                'is_favorite' => true,
-                'scan_type' => $lastScan ? $lastScan->scan_type : null,
-            ];
-        });
+                return [
+                    'url_id' => $favoriteUrl->id,
+                    'url' => $favoriteUrl->url,
+                    'date_and_time' => $favoriteUrl->date_and_time,
+                    'trust_score' => $favoriteUrl->trust_score,
+                    'is_favorite' => $favoriteUrl->is_favorite,
+                    'scan_type' => $lastScan ? $lastScan->scan_type : null,
+                ];
+            });
     
-        return response()->json($formattedFavorites);
+        return response()->json($favoriteUrls);
     }
-    
     
     public function addFavorite(Request $request)
     {
