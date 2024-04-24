@@ -53,9 +53,11 @@ class ScanProcessingService
                     [
                         'trust_score' => $score,
                         'test_version' => $this->currentTestVersion,
-                        'updated_at' => Carbon::now()
                     ]
                 );
+
+                $existingUrl->touch();
+                
             } else {
                 $trustScore = $existingUrl->trust_score;
             }
