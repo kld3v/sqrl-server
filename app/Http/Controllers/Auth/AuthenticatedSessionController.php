@@ -45,7 +45,7 @@ class AuthenticatedSessionController extends Controller
             ]);
         }
 
-        return response()->json(['error' => 'Unauthorized'], 401);
+        return response()->json(['errors' => 'Unauthorized'], 401);
     }
 
     /**
