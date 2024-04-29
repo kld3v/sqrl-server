@@ -29,13 +29,13 @@ class FavoriteController extends Controller
             ->get()
             ->map(function ($favoriteUrl) {
                 $favoriteUrl->is_favorite = true;
-                $favoriteUrl->date_and_time = $favoriteUrl->pivot->created_at ?? null;
+                $date_and_time = $favoriteUrl->pivot->created_at ? $favoriteUrl->pivot->created_at->format('Y-m-d H:i:s') : null;
                 $lastScan = $favoriteUrl->scans->first();
     
                 return [
                     'url_id' => $favoriteUrl->id,
                     'url' => $favoriteUrl->url,
-                    'date_and_time' => $favoriteUrl->date_and_time,
+                    'date_and_time' => $date_and_time,
                     'trust_score' => $favoriteUrl->trust_score,
                     'is_favorite' => $favoriteUrl->is_favorite,
                     'scan_type' => $lastScan ? $lastScan->scan_type : null,
