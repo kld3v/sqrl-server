@@ -9,7 +9,7 @@ class CheckPortalApiKey
     public function handle($request, Closure $next)
     {
         $apiKey = $request->header('X-API-Key');
-        if ($apiKey !== env('PORTAL_API_KEY')) {
+        if ($apiKey !== env('PORTAL_SERVER_API_KEY')) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
