@@ -29,7 +29,7 @@ class ScanProcessingService
         $this->shortURLMain = $shortURLMain;
         $this->evaluateTrustService = $evaluateTrustService;
     }
-    public function processScan($url)
+    public function checkUrl($url)
     {
         Log::channel('redirectLog')->info("Starting process scan with URL: {$url}");
         // Expanding shortened URL, if necessary

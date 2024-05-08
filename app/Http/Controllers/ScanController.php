@@ -50,7 +50,7 @@ class ScanController extends Controller
     
         $url = $request->input('url');
     
-        $scanData = $this->ScanProcessingService->processScan($url);
+        $scanData = $this->ScanProcessingService->checkUrl($url);
         
         
         // Format data for the 'scans' table

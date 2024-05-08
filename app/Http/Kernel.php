@@ -66,5 +66,7 @@ class Kernel extends HttpKernel
         'verified' => \App\Http\Middleware\EnsureEmailIsVerified::class,
 
         'check.basic.phrase' => \App\Http\Middleware\CheckBasicPhraseInHeader::class,
+        'portal.api.key' => \App\Http\Middleware\CheckPortalApiKey::class,
+
     ];
 }
