@@ -6,11 +6,18 @@ use App\Models\URL;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-
+use App\Services\ScanProcessingService;
 use Illuminate\Support\Facades\Log;
 
 class URLController extends Controller
 {
+    protected $scanProcessingService;
+
+    public function __construct(ScanProcessingService $scanProcessingService)
+    {
+        $this->scanProcessingService = $scanProcessingService;
+    }
+
     private function validateURL(Request $request)
     {
         // Validate the request data
@@ -70,4 +77,34 @@ class URLController extends Controller
             return response()->json(['message' => 'An error occurred'], 500);
         }
     }
+
+    public function checkAndRegisterUrl(Request $request)
+    {   
+        $request->validate([
+            'url' => 'required|url'
+        ]);
+
+        $url = $request->input('url');
+
+        $processedUrl = $this->scanProcessingService->checkUrl($url);
+
+        if (!$processedUrl) {
+            return response()->json(['error' => 'Unable to process the URL'], 500);
+        }
+
+        if ($processedUrl->trust_score == 1000) {
+            return response()->json([
+                'message' => 'URL is safe',
+                'url' => $processedUrl->url,
+                'trust_score' => $processedUrl->trust_score,
+            ], 200);
+        } else {
+            return response()->json([
+                'message' => 'URL is unsafe',
+                'url' => $processedUrl->url,
+                'trust_score' => $processedUrl->trust_score,
+            ], 200);
+        }
+    }
+    
 }

@@ -9,7 +9,7 @@ use App\Http\Controllers\PingController;
 use App\Http\Controllers\FakeLeaderboardController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\UserAgreementController;
-
+use App\Http\Controllers\URLController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -57,6 +57,9 @@ Route::get('/ping', [PingController::class, 'ping']);
 //Leaderboard
 Route::get('/random-leaderboard', [FakeLeaderboardController::class, 'index']);
 
+
+//Urls
+Route::post('/urls/portal', [URLController::class, 'checkAndRegisterUrl'])->middleware('portal.api.key');
 
 //AGREEMENTS
 // Check if user has agreed to active documents
