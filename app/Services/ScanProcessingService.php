@@ -21,7 +21,7 @@ class ScanProcessingService
     protected $evaluateTrustService;
 
     //DARYA REMEMBER TO ALWAYS UPDATE THIS CHEERS LOVE JOEL
-    protected $currentTestVersion = '1.0.5';
+    protected $currentTestVersion = '1.0.6';
 
 
     public function __construct(ShortURLMain $shortURLMain, EvaluateTrustService $evaluateTrustService)

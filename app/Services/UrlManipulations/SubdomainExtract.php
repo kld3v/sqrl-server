@@ -6,7 +6,7 @@ class SubdomainExtract
     public function extractSubdomainsFromUrl($url)
     {
         $cleanedURL = $this->removePathFromUrl($url);
-        if (preg_match("/(?P<domain>[a-z0-9][a-z0-9\-]{1,63}\.[a-z\.]{2,6})$/i", $cleanedURL, $matches)) {
+        if (preg_match("/(?:http[s]?:\/\/)?(?:www\.)?(?P<subdomains>[^\.]+)\.(?P<domain>[a-z0-9\-]+\.[a-z]{2,6}(?:\.[a-z]{2,6})?)$/i", $cleanedURL, $matches)) {
             $domain = $matches['domain'];
 
             $subdomains = rtrim(strstr($url, $domain, true), '.');
