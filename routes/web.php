@@ -1,9 +1,12 @@
 <?php
 
+use Illuminate\Http\Request;
+use App\Jobs\PhishingLinkUpdate;
 use Illuminate\Support\Facades\Route;
+use App\Services\EvaluateTrustService;
 use App\Http\Controllers\Auth\AppleAuthController;
 use App\Http\Controllers\Auth\GoogleAuthController;
-use Illuminate\Http\Request;
+use App\Services\SchadualedTasks\Phishing_link_updates;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,10 +42,12 @@ Route::get('/auth/google/', function (Request $request) {
  
  Route::get('/check-web-risk', [EvaluateTrustService::class, 'evaluateTrust']);
  Route::get('/test-evaluate-trust', function () {
-    $url = "http://59.89.3.109:58853/i";
+    $url = "https://www.docs.google.com/presentation/d/e/2PACX-1vSeANQ81f61Ij-lss1JqZYg0iFgZRitGseSNfmFwCK4wVFWYhbFKN602ZjnBP-Wdtokh9Nvsg17wlco/pub?start=false&amp;loop=false&amp;delayms=3000";
     $evaluateTrustService = app(EvaluateTrustService::class);
     $result = $evaluateTrustService->evaluateTrust($url);
     return response()->json($result);
  });
 
+
+Route::get('/task', [Phishing_link_updates::class, 'downloadLinksJob']);
 require __DIR__.'/auth.php';

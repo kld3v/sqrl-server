@@ -5,11 +5,7 @@ namespace App\Services;
 
 use DateTime;
 use App\Services\ScanLayers\Whois;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Log;
 use App\Services\ScanLayers\UrlHaus;
-use App\Http\Controllers\URLController;
-use App\Http\Controllers\ScanController;
 use App\Services\ScanLayers\GoogleWebRisk;
 use App\Services\ScanLayers\SubdomainEnum;
 use App\Services\ScanLayers\BadDomainCheck;
@@ -53,12 +49,12 @@ class EvaluateTrustService
                     'reason' => 'IP address detected. Only domain names are allowed.'
                 ];
             }
-
+            //return $modifiedUrl;
             //looking in to the bad domain list:
             if ($this->badDomainlist->isDomainInJson($modifiedUrl)) {
                 return [
                     'trust_score' => 0,
-                    'reason' => 'in the bad domain list (malwares from urlH)'
+                    'reason' => 'in the bad domain list (malwares from urlH and Phishing dbs)'
                 ];
             }
             //http cases

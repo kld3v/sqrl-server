@@ -3,17 +3,17 @@ namespace App\Services\ScanLayers;
 
 class BadDomainCheck
 {
-    protected $jsonData;
+    protected $badDomains;
 
     public function __construct()
     {
-        $jsonFilePath = public_path('badDomains.json');
-        $this->jsonData = json_decode(file_get_contents($jsonFilePath), true);
+        $jsonFilePath = base_path('bin/badDomains.json');
+        $this->badDomains = json_decode(file_get_contents($jsonFilePath), true);
     }
 
     public function isDomainInJson($domain)
     {
-        $maliciousDomain = parse_url($domain, PHP_URL_HOST);
-        return in_array($maliciousDomain, $this->jsonData['domains']);
+        $maliciousDomain = str_replace(array('http://', 'https://'), '', $domain);
+        return in_array($maliciousDomain, $this->badDomains['domains']);    
     }
 }
