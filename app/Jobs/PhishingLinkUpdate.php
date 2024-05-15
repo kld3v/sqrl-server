@@ -54,10 +54,9 @@ class PhishingLinkUpdate implements ShouldQueue
                 $domains_data['domains'] = $new_domains;
             }
             //Removing possible dublicate data --->dont know it this one is working correctly
-            $domains_data=array_unique($domains_data);
+            $domains_data['domains'] = array_values(array_unique($domains_data['domains']));
             // Encode the updated data back to JSON and save it
             $updated_json_data = json_encode($domains_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-
             if (file_put_contents($json_file_path, $updated_json_data) === false) {
                 throw new \Exception("Failed to save the updated baddomains.json.");
             }
