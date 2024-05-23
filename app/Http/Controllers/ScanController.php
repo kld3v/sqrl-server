@@ -38,6 +38,14 @@ class ScanController extends Controller
     public function processRequest(Request $request)
     {   
 
+        $url = $request->input('url');
+
+        // Check if the URL starts with "http://" or "https://"
+        if ($url && !preg_match('/^http[s]?:\/\//', $url)) {
+            $url = 'http://' . $url;
+            $request->merge(['url' => $url]);
+        }
+    
         $request->validate([
             'url' => 'required',
             'device_uuid' => 'required',
